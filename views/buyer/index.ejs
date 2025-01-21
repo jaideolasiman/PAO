@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title> Buyer Web Page</title>
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/public/css/styles.css">
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">PAO Market
+                <button class="profile-btn" onclick="toggleProfileDropdown()"> 
+                    <img 
+                        src="<%= userLogin.profilePicture ? userLogin.profilePicture : '/public/img/default-profile.png' %>" 
+                        alt="Profile Icon" 
+                        class="profile-icon">
+                </button>
+            </div>
+           
+            <ul class="nav-links">
+                <!-- Edit Information Icon -->
+                <li><button class="edit-info-btn" onclick="editInformation()">
+                    <img src="/public/img/edit-user.png" alt="Edit Icon" class="edit-icon">
+                    <span class="icon-label">Edit Information</span> <!-- Label for Edit Icon -->
+                </button></li>
+    
+                <!-- Enter Full Screen Icon -->
+                <li><button class="fullscreen-btn" onclick="toggleFullscreen()">
+                    <img src="/public/img/monitor.png" alt="Full Screen Icon" class="fullscreen-icon">
+                    <span class="icon-label"> Enter Full Screen</span> <!-- Label for Full Screen Icon -->
+                </button></li>
+    
+                <!-- Currently Bids Icon -->
+                <li><button class="bids-btn" onclick="viewCurrentBids()">
+                    <img src="/public/img/clock_user.png" alt="Currently Bids Icon" class="bids-icon">
+                    <span class="icon-label">Currently in Bid</span> <!-- Label for Bids Icon -->
+                </button></li>
+            </ul>
+            <!-- Dropdown Profile Container -->
+            <div id="profileDropdown" class="profile-dropdown" style="display: none;">
+                <div class="profile-info">
+                    <!-- Display Profile Picture -->
+                    <img 
+                        src="<%= userLogin.profilePicture ? userLogin.profilePicture : '/public/img/default-profile.png' %>" 
+                        alt="Profile Picture" 
+                        class="profile-picture">
+                    
+                    <!-- User Information -->
+                    <p><strong>Name:</strong> <%= userLogin.firstName %> <%= userLogin.lastName %></p>
+                    <p><strong>Email:</strong> <%= userLogin.email %></p>
+                    <p><strong>Phone Number:</strong> <%= userLogin.phoneNumber %></p>
+                    <p><strong>Role:</strong> <%= userLogin.role %></p>
+                    <p><strong>Gender:</strong> <%= userLogin.gender %></p>
+                    <button onclick="toggleProfileDropdown()">Close</button>
+                </div>
+            </div>
+            <div class="search-container">
+                <input type="text" placeholder="Search for products...">
+                <button>Search</button>
+                <button class="cart-button">
+                    <img src="/public/img/ct.webp" alt="Cart Icon" class="cart-icon">
+                    <span class="cart-count">0</span>
+                </button>
+                <div class="settings-container">
+                    <button class="settings-button" onclick="toggleSettingsDropdown()">
+                        <img src="/public/img/settings.png" alt="Settings Icon" class="settings-icon">
+                    </button>
+                    <div class="settings-dropdown" id="settingsDropdown">
+                        <ul>
+                            <form action="/logout" method="post">
+                                <li class="dropdown-item">
+                                <button type="submit" class="btn btn-link nav-link w-100 text-left" >sign out</button>
+                              </li>
+                            </form>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+    <main>
+        
+
+        <section class="banner">
+            <h1>Feed your family the best</h1>
+            <p>Exclusive Offer - 30% Off</p>
+            <span>From ₱50.99</span>
+        </section>
+        <div class="category-bar">
+            <!-- Label Text for Categories -->
+            <label for="categories" class="categories-label">Categories</label>
+        
+            <!-- Categories List (dynamically populated by admin) -->
+            <div class="categories-list" id="categoriesList">
+                <!-- Example Categories (these will be dynamically populated) -->
+                <span class="category-item">Fruits</span>
+                <span class="category-item">Vegetables</span>
+                <span class="category-item">Cereals</span>
+                <span class="category-item">Dairy</span>
+                <!-- More categories will be added here -->
+            </div>
+        
+            <!-- Search Icon on the right side -->
+            <button class="search-icon-btn" onclick="searchProducts()">
+                <img src="/public/img/search.png" alt="Search Icon" class="search-icon">
+            </button>
+        </div>
+        <section class="product-list">
+            <div class="product">
+                <a href="#" onclick="accessProductDetails(event)">
+                    <img src="https://via.placeholder.com/150" alt="Fresh Cavendish Bananas">
+                </a>
+                <h3>Fresh Cavendish Bananas</h3>
+                <span class="price">$7.58</span>
+                <div> 
+                    <button onclick="participateInAuction()">Participate in Auction</button>
+                </div>
+            </div>
+        
+            <div class="product">
+                <img src="https://via.placeholder.com/150" alt="Tomatoes on the Vine">
+                <h3>Tomatoes on the Vine</h3>
+                <span class="price">$1.08 - $4.32</span>
+                <div>
+                 
+                    <button onclick="participateInAuction()">Participate in Auction</button>
+                </div>
+            </div>
+            <div class="product">
+                <img src="https://via.placeholder.com/150" alt="Fresh Organic Strawberry">
+                <h3>Fresh Organic Strawberry</h3>
+                <span class="price">$9.00</span>
+                <div>
+                    <button onclick="participateInAuction()">Participate in Auction</button>
+                </div>
+            </div>
+            <div class="product">
+                <img src="https://via.placeholder.com/150" alt="Fresh Organic Garlic">
+                <h3>Fresh Organic Garlic</h3>
+                <span class="price">$3.48</span>
+                <div>
+                    <button onclick="participateInAuction()">Participate in Auction</button>
+                </div>
+            </div>
+        </section>
+            <!-- Modal Structure -->
+            <div id="auctionModal" class="modal">
+                <div class="modal-content">
+                    <h3 id="productName">Product Name</h3>
+                    <img id="productImage" src="" alt="Product Image" class="product-img">
+                    <p id="productDescription">Product Description</p>
+                    <p><strong>Starting Bid:</strong> <span id="startingBid">$0.00</span></p>
+                    <p><strong>Time Left:</strong> <span id="timeLeft">10:00</span></p>
+                    <h3>Auction Session Info:</h3>
+                    <p><strong>Start Auction Session:</strong> 2024-12-20 10:00 AM</p>
+                    <p><strong>End Auction Session:</strong> 2024-12-20 06:00 PM</p>
+                    <p><strong>Session Date:</strong> 2024-12-20</p>
+                    <button onclick="confirmParticipation()">Participate in Auction</button>
+                    <button onclick="closeModal()">Close</button>
+                </div>
+            </div>
+           
+    </main>
+
+    <footer>
+        <div class="footer-left">
+            <button id="notificationButton" class="notification-button">
+                <img src="/public/img/bell.png" alt="Notification Icon" class="notification-icon">
+                <span class="notification-count" id="notificationCount">0</span>
+            </button>
+            <div id="notificationContainer" class="notification-container">
+                <div class="notification-message">You have a new message!</div>
+            </div>
+        </div>
+        
+        <div class="footer-right">
+            <img src="/public/img/clock.png" alt="Clock Icon" class="clock-icon">
+            <span id="currentTime" class="current-time"></span>
+        </div>
+        
+        <p>&copy; 2024 PAO Market. All rights reserved.</p>
+    </footer>
+<script>
+// Toggle profile dropdown visibility
+function toggleProfileDropdown() {
+    const dropdown = document.getElementById("profileDropdown");
+    // Toggle the display of the dropdown
+    dropdown.style.display = (dropdown.style.display === "block" ? "none" : "block");
+}
+
+// Close the profile dropdown when the "Close" button is clicked
+function closeProfileDropdown() {
+    const dropdown = document.getElementById("profileDropdown");
+    // Simply hide the profile dropdown without logout functionality
+    dropdown.style.display = "none";
+}
+
+// Optional: Automatically hide the dropdown when clicking outside of the dropdown or profile button
+window.onclick = function(event) {
+    if (!event.target.matches('.profile-btn') && !event.target.matches('#profileDropdown') && !event.target.matches('.profile-info')) {
+        // Hide the dropdown if clicking outside
+        document.getElementById("profileDropdown").style.display = "none";
+    }
+}
+
+// Toggle settings dropdown visibility
+function toggleSettingsDropdown() {
+    const settingsDropdown = document.getElementById("settingsDropdown");
+    // Toggle the display of the settings dropdown
+    settingsDropdown.style.display = (settingsDropdown.style.display === "block" ? "none" : "block");
+}
+
+// Function to show the modal and populate it with product information
+function participateInAuction() {
+    const modal = document.getElementById("auctionModal");
+
+    // Example product data (this can be dynamic from the server)
+    const productName = "Fresh Cavendish Bananas";
+    const productImage = "https://via.placeholder.com/150";
+    const productDescription = "Freshly picked Cavendish bananas, great for smoothies and desserts!";
+    const startingBid = "$7.58";
+    const timeLeft = "10:00";
+
+    // Populate the modal with the product information
+    document.getElementById("productName").textContent = productName;
+    document.getElementById("productImage").src = productImage;
+    document.getElementById("productDescription").textContent = productDescription;
+    document.getElementById("startingBid").textContent = startingBid;
+    document.getElementById("timeLeft").textContent = timeLeft;
+
+    // Display the modal
+    modal.style.display = "block";
+}
+
+// Function to close the modal
+function closeModal() {
+    const modal = document.getElementById("auctionModal");
+    modal.style.display = "none";
+}
+function searchProducts() {
+    // Add logic for handling search functionality here
+    console.log("Search button clicked");
+}
+
+// Function to confirm participation in the auction
+function confirmParticipation() {
+    alert("You have successfully participated in the auction!");
+    closeModal();
+}
+
+// Close the modal if the user clicks anywhere outside of it
+window.onclick = function(event) {
+    const modal = document.getElementById("auctionModal");
+    if (event.target === modal) {
+        closeModal();
+    }
+}
+
+// Notification toggle
+document.getElementById('notificationButton').addEventListener('click', function() {
+    const notificationContainer = document.getElementById('notificationContainer');
+    notificationContainer.style.display = notificationContainer.style.display === 'block' ? 'none' : 'block';
+    
+    // If there are unread messages, you can update the notification count and display the messages here
+    const notificationCount = document.getElementById('notificationCount');
+    notificationCount.innerText = '1'; // Example: Update the count dynamically based on unread messages
+});
+
+// Function to display current time and update every second
+function updateClock() {
+    const currentTime = document.getElementById('currentTime');
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const seconds = now.getSeconds().toString().padStart(2, '0');
+    currentTime.textContent = `${hours}:${minutes}:${seconds}`;
+}
+
+// Call updateClock immediately and then every second
+updateClock();
+setInterval(updateClock, 1000);
+
+  // Function to toggle the settings dropdown visibility
+    function toggleSettingsDropdown() {
+        const dropdown = document.getElementById('settingsDropdown');
+        dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
+    }
+
+    // Optional: Close the dropdown when clicking anywhere else on the page
+    window.onclick = function(event) {
+        const dropdown = document.getElementById('settingsDropdown');
+        if (!event.target.matches('.settings-button') && !event.target.matches('.settings-icon')) {
+            if (dropdown.style.display === 'block') {
+                dropdown.style.display = 'none';
+            }
+        }
+    };
+      // Simulate user authentication state
+      let isLoggedIn = false; // Change this to `true` to simulate a logged-in user
+
+// Function to handle product detail access
+function accessProductDetails(event) {
+    if (!isLoggedIn) {
+        event.preventDefault();
+        alert("You need to register and log in to access product details.");
+    } else {
+        window.open("product-details.html", "_blank");
+    }
+}
+
+
+document.getElementById('closeModal').addEventListener('click', closeModal);
+
+window.onclick = function (event) {
+    const modal = document.getElementById('authModal');
+    if (event.target === modal) {
+        closeModal();
+    }
+};
+</script>
+    <script src="/public/js/scriptss.js"></script>
+</body>
+</html>

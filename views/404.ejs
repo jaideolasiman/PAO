@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+
+        .error-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .error-code {
+            font-size: 72px;
+            font-weight: bold;
+            color: #dc3545;
+            margin-bottom: 20px;
+        }
+
+        .error-message {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .back-to-home {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="error-container">
+        <div class="error-code">404</div>
+        <div class="error-message">Oops! The page you are looking for cannot be found.</div>
+        <p>We're sorry, but the page you requested could not be found. It may have been moved, renamed, or deleted. Please check the URL for any mistakes or <br>return to the <a href="/" style="color: #007bff; text-decoration: none;">homepage</a>.</p>
+        <% if(userLogin.role === 'admin'){ %>
+            <a href="/admin" class="btn btn-primary back-to-home">Back to Home</a>
+        <% } else{ %>
+            <a href="/login" class="btn btn-primary back-to-home">Back to Home</a>
+        <% } %>
+    </div>
+
+    <!-- Bootstrap JS (optional, if you need JavaScript) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

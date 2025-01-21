@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <link rel="stylesheet" href="styless.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">PAO Market</div>
+            <ul class="nav-links">
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Shop</a></li>
+                <li><a href="#">Setting</a></li>
+                <li><a href="#">Orders</a></li>
+            </ul>
+            <div class="search-container">
+                <input type="text" placeholder="Search for products...">
+                <button>Search</button>
+                <button class="cart-button">
+                    <img src="ct.webp" alt="Cart Icon" class="cart-icon">
+                    <span class="cart-count">0</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="product-details-container">
+            <div class="product-image">
+                <img src="https://via.placeholder.com/300" alt="Product Image">
+            </div>
+            <div class="product-info">
+                <h2>Fresh Cavendish Bananas</h2>
+                <p>Enjoy the natural sweetness of our freshly harvested Cavendish bananas. Perfect for snacking, baking, or smoothies!</p>
+                <span class="price">₱50.99</span>
+                <button onclick="addToCart()">Add to Cart</button>
+            </div>
+        </div>
+    </main>
+    <section class="auction">
+        <h2>Live Auction</h2>
+        <p>Current Highest Bid: <span id="highestBid">₱0</span></p>
+        <form id="bidForm" onsubmit="placeBid(event)">
+            <input type="number" id="bidAmount" placeholder="Enter your bid" required>
+            <button type="submit">Place Bid</button>
+        </form>
+        <div id="auctionStatus"></div>
+    </section>
+</main>
+
+<footer>
+    <p>&copy; 2024 PAO Market. All rights reserved.</p>
+</footer>
+
+<script>
+    // Check if the user is logged in
+    let isLoggedIn = false; // This would dynamically change based on authentication status
+
+    // Add to Cart Function
+    function addToCart() {
+        if (isLoggedIn) {
+            alert("Product added to cart!");
+        } else {
+            alert("Please log in to add items to your cart.");
+        }
+    }
+
+    // Auction Functionality
+    let highestBid = 0;
+
+    function placeBid(event) {
+        event.preventDefault();
+        if (!isLoggedIn) {
+            alert("Please log in to participate in the auction.");
+            return;
+        }
+
+        const bidAmount = parseFloat(document.getElementById('bidAmount').value);
+        if (bidAmount > highestBid) {
+            highestBid = bidAmount;
+            document.getElementById('highestBid').textContent = `₱${highestBid}`;
+            document.getElementById('auctionStatus').textContent = "Your bid is the highest!";
+        } else {
+            document.getElementById('auctionStatus').textContent = "Your bid must be higher than the current highest bid.";
+        }
+        document.getElementById('bidForm').reset();
+    }
+
+    // Show Modal (placeholder function)
+    function showModal(type) {
+        alert(`Show ${type} modal`); // Replace with actual modal logic
+    }
+</script>
+
+    
+    <script>
+        function addToCart() {
+            alert('You need to log in to add products to your cart!');
+        }
+    </script>
+</body>
+</html>
