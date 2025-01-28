@@ -158,4 +158,8 @@ ________________________________________
 - make sure you have mongodb installed and started
 - create a .env file
 - execute `npm install` in the command line to install the dependencies needed for the school appointment program.
+<<<<<<< HEAD
 - execute `npm start` in the command line to start the program.
+=======
+- execute `npm start` in the command line to start the program.
+>>>>>>> 9cff65a19c15b3f917024cacd4317884390fb03c
