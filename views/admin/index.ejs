@@ -53,25 +53,25 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="/index" onclick="toggleForms()">
+                <a class="nav-link" href="index">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="/manageCategory" onclick="toggleForms()">
-                    <i class="fas fa-list"></i>
-                    <span>Manage Category</span>
+                <a class="nav-link" href="/admin/manageCategory">
+                    <i class="fas fa-box"></i> <!-- Icon for Manage Items -->
+                    <span>ManageCategory</span>
                 </a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="/admin/Manage_Items.ejs">
+                <a class="nav-link" href="/admin/manageItems">
                     <i class="fas fa-box"></i> <!-- Icon for Manage Items -->
                     <span>Manage Items</span>
                 </a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="/admin/Manage_Auctions_Sessions.ejs">
+                <a class="nav-link" href="/admin/manageAuctionSessions">
                     <i class="fas fa-gavel"></i> <!-- Icon for Manage Auction Sessions -->
                     <span>Manage Auction Sessions</span>
                 </a>
@@ -86,36 +86,30 @@
             </div>
 
             <li class="nav-item active">
-                <a class="nav-link" href="/admin/Manage_Users.ejs">
+                <a class="nav-link" href="/admin/manageUsers">
                     <i class="fas fa-users"></i> <!-- Icon for Manage Users -->
                     <span>Manage Users</span>
                 </a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="admin/Manage_Database.ejs">
+                <a class="nav-link" href="admin/manageDatabase">
                     <i class="fas fa-database"></i> <!-- Icon for Manage Database -->
                     <span>Manage Database</span>
                 </a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="/admin/Database_Statistic.ejs">
-                    <i class="fas fa-chart-bar"></i> <!-- Icon for Database Statistics -->
-                    <span>Database Statistics</span>
-                </a>
-            </li>
-            <li class="nav-item active">
-            <a class="nav-link" href="/admin/exit.ejs">
+            <a class="nav-link" href="/admin/exit">
                 <i class="fas fa-door-open"></i> <!-- Icon for Exit -->
                 <span>Exit</span>
             </a>
-        </li>
-        <li class="nav-item active">
-            <form action="/logout" method="post">
-                <li class="dropdown-item">
-                <button type="submit" class="btn btn-link nav-link w-100 text-left" >sign out</button>
-              </li>
-            </form>
-        </li>
+            </li>
+            <li class="nav-item active">
+                <form action="/logout" method="post">
+                    <li class="dropdown-item">
+                    <button type="submit" class="btn btn-link nav-link w-100 text-left" >sign out</button>
+                </li>
+                </form>
+            </li>
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">

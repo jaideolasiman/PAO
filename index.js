@@ -17,7 +17,7 @@ app.use(session({
     //store: store,
 }));
 
-//Set up essential middlewares
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.json());

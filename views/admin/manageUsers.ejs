@@ -10,16 +10,17 @@
     <meta name="author" content="">
 
     <title>PAO Market Admin</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/public/admin/css/style.css">
 
     <!-- Custom fonts for this template-->
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="/public/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+   <!-- Custom styles for this template-->
+   <link href="/public/admin/css/sb-admin-2.min.css" rel="stylesheet">
 
 </head>
 
@@ -39,10 +40,11 @@
                 <div class="sidebar-brand-text mx-3">PAO <sup>MArket</sup></div>
             </a>
             <div class="admin-profile d-flex align-items-center mt-4">
-            <img src="profile.png" alt="Admin Profile" class="admin-avatar">
+                <img
+                    src="<%= userLogin.profilePicture ? userLogin.profilePicture : '/public/img/default-profile.png' %>"
+                    alt="Admin Profile" class="admin-avatar">
                 <div class="admin-details ml-2">
-                    <span class="admin-name">Admin</span>
-                    <span class="admin-role">System Administrator</span>
+                    <span class="admin-name"><%= userLogin.firstName %> <%= userLogin.lastName %></span>
                 </div>
             </div>
 
@@ -51,25 +53,25 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="index.html">
+                <a class="nav-link" href="index">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="Manage_Category.html">
+                <a class="nav-link" href="manageCategory">
                     <i class="fas fa-list"></i>
                     <span>Manage Category</span>
                 </a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="Manage_Items.html">
+                <a class="nav-link" href="manageItems">
                     <i class="fas fa-box"></i> <!-- Icon for Manage Items -->
                     <span>Manage Items</span>
                 </a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="Manage_Auction_Sessions.html">
+                <a class="nav-link" href="manageAuctionSession">
                     <i class="fas fa-gavel"></i> <!-- Icon for Manage Auction Sessions -->
                     <span>Manage Auction Sessions</span>
                 </a>
@@ -84,35 +86,31 @@
             </div>
 
             <li class="nav-item active">
-                <a class="nav-link" href="Manage_Users.html">
+                <a class="nav-link" href="manageUsers">
                     <i class="fas fa-users"></i> <!-- Icon for Manage Users -->
                     <span>Manage Users</span>
                 </a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="Manage_Database.html">
+                <a class="nav-link" href="manageDatabase">
                     <i class="fas fa-database"></i> <!-- Icon for Manage Database -->
                     <span>Manage Database</span>
                 </a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="Database_Statistic.html">
-                    <i class="fas fa-chart-bar"></i> <!-- Icon for Database Statistics -->
-                    <span>Database Statistics</span>
+                <a class="nav-link" href="/admin/exit">
+                    <i class="fas fa-door-open"></i> <!-- Icon for Exit -->
+                    <span>Exit</span>
                 </a>
             </li>
             <li class="nav-item active">
-            <a class="nav-link" href="exit.html">
-                <i class="fas fa-door-open"></i> <!-- Icon for Exit -->
-                <span>Exit</span>
-            </a>
-        </li>
-        <li class="nav-item active">
-            <a class="nav-link" href="/auth/signin.html">
-                <i class="fas fa-sign-out-alt"></i> <!-- Icon for Sign Out -->
-                <span>Sign Out</span>
-            </a>
-        </li>
+                <form action="/logout" method="post">
+                    <li class="dropdown-item">
+                    <button type="submit" class="btn btn-link nav-link w-100 text-left" >sign out</button>
+                  </li>
+                </form>
+            </li>
+       
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
@@ -141,19 +139,7 @@
                         <i class="fa fa-bars"></i>
                     </button>
 
-                    <!-- Topbar Search -->
-                    <form
-                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                        <div class="input-group">
-                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
-                                aria-label="Search" aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">
-                                    <i class="fas fa-search fa-sm"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                    
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
@@ -335,185 +321,57 @@
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
-                    </div>
-
-                    <!-- Content Row -->
-                    <div class="row">
-
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                Earnings (Monthly)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">₱40,000</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+       
+                 
+                    
+                    <!-- Category Table -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold text-primary">Users List</h6>
+                        
                         </div>
-
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-success shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                Earnings (Annual)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">₱215,000</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="categoryTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% users.forEach(function(user) { %>
+                                        <tr>
+                                            <td><%= user.firstName %></td>
+                                            <td><%= user.lastName %></td>
+                                            <td><%= user.email %></td>
+                                            <td><%= user.role %></td>
+                                            <td><%= user.isVerified ? 'Verified' : 'Not Verified' %></td>
+                                            <td>
+                                                <% if (!user.isVerified) { %>
+                                                    <form action="/admin/manageUsers/approve/<%= user._id %>" method="POST" style="display:inline;">
+                                                        <button class="btn btn-success">Approve</button>
+                                                    </form>
+                                                <% } %>
+                                                <form action="/admin/manageUsers/deactivate/<%= user._id %>" method="POST" style="display:inline;">
+                                                    <button class="btn btn-warning">Deactivate</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                </tbody>
+                            </table>
                         </div>
-
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-info shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks
-                                            </div>
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col-auto">
-                                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="progress progress-sm mr-2">
-                                                        <div class="progress-bar bg-info" role="progressbar"
-                                                            style="width: 50%" aria-valuenow="50" aria-valuemin="0"
-                                                            aria-valuemax="100"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Pending Requests Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-warning shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                Pending Requests</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-comments fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
+                        
 
                     <!-- Content Row -->
-
-                    <div class="row">
-
-                        <!-- Area Chart -->
-                        <div class="col-xl-8 col-lg-7">
-                            <div class="card shadow mb-4">
-                                <!-- Card Header - Dropdown -->
-                                <div
-                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Online Auction Sessions</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                            aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Card Body -->
-                                <div class="card-body">
-                                    <div class="chart-area">
-                                        <canvas id="myAreaChart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Pie Chart -->
-                        <div class="col-xl-4 col-lg-5">
-                            <div class="card shadow mb-4">
-                                <!-- Card Header - Dropdown -->
-                                <div
-                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Revenue Sources</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                            aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Card Body -->
-                                <div class="card-body">
-                                    <div class="chart-pie pt-4 pb-2">
-                                        <canvas id="myPieChart"></canvas>
-                                    </div>
-                                    <div class="mt-4 text-center small">
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-primary"></i> Direct
-                                        </span>
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-success"></i> Social
-                                        </span>
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-info"></i> Referral
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Content Row -->
-                    <div class="row">
-
-                        <!-- Content Column -->
-                        <div class="col-lg-6 mb-4">
-
+                   
                             
 
                         </div>
@@ -537,7 +395,7 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2021</span>
+                        <span>Copyright &copy; Your Website 2025</span>
                     </div>
                 </div>
             </footer>
@@ -556,22 +414,63 @@
 
     
     <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/public/vendor/jquery/jquery.min.js"></script>
+    <script src="/public/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="/public/vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
+    <script src="/public/js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
+    <script src="/public/vendor/chart.js/Chart.min.js"></script>
 
     <!-- Page level custom scripts -->
-    <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>
+    <script src="/public/js/demo/chart-area-demo.js"></script>
+    <script src="/public/js/demo/chart-pie-demo.js"></script>
 
+
+<script>
+ // Save category
+ async function saveCategory() {
+    const categoryName = document.getElementById('categoryName').value;
+    if (!categoryName) return alert('Category name is required');
+
+    const res = await fetch('/admin/manageCategory/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: categoryName }),
+    });
+    const data = await res.json();
+    if (data.success) location.reload();
+    else alert(data.message);
+  }
+
+  // Delete category
+  async function deleteCategory(id) {
+    const res = await fetch(`/admin/manageCategory/delete/${id}`, { method: 'DELETE' });
+    const data = await res.json();
+    if (data.success) location.reload();
+    else alert(data.message);
+  }
+
+  // Edit category
+  async function editCategory(id, currentName) {
+    const newName = prompt('Edit Category Name:', currentName);
+    if (!newName || newName === currentName) return;
+
+    const res = await fetch(`/admin/manageCategory/update/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: newName }),
+    });
+    const data = await res.json();
+    if (data.success) location.reload();
+    else alert(data.message);
+  }
+</script>
 </body>
-
 </html>
