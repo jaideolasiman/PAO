@@ -1,0 +1,101 @@
+<!-- Sidebar -->
+<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+    <!-- Sidebar - Brand -->
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+        <div class="sidebar-brand-icon rotate-n-15">
+            <i class="fas fa-laugh-wink"></i>
+        </div>
+        <div class="sidebar-brand-text mx-3">PAO <sup>Market</sup></div>
+    </a>
+    <div class="admin-profile d-flex align-items-center mt-4">
+        <img 
+        src="<%= userLogin.profilePicture ? userLogin.profilePicture : '/public/img/default-profile.png' %>" 
+        alt="Admin Profile" class="admin-avatar">
+        <div class="admin-details ml-2">
+            <span class="admin-name"><%= userLogin.firstName %> <%= userLogin.lastName %></span>
+            <span class="admin-role">System Administrator</span>
+        </div>
+    </div>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider my-0">
+
+    <!-- Nav Item - Dashboard -->
+    <li class="nav-item active">
+        <a class="nav-link" href="/index">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+        </a>
+    </li>
+    <li class="nav-item active">
+        <a class="nav-link" href="/admin/manageCategory.ejs">
+            <i class="fas fa-list"></i>
+            <span>Manage Category</span>
+        </a>
+    </li>
+    <li class="nav-item active">
+        <a class="nav-link" href="/admin/Manage_Items.ejs">
+            <i class="fas fa-box"></i> <!-- Icon for Manage Items -->
+            <span>Manage Items</span>
+        </a>
+    </li>
+    <li class="nav-item active">
+        <a class="nav-link" href="/admin/Manage_Auctions_Sessions.ejs">
+            <i class="fas fa-gavel"></i> <!-- Icon for Manage Auction Sessions -->
+            <span>Manage Auction Sessions</span>
+        </a>
+    </li>
+    
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+
+    <!-- Heading -->
+    <div class="sidebar-heading">
+        Components
+    </div>
+
+    <li class="nav-item active">
+        <a class="nav-link" href="/admin/Manage_Users.ejs">
+            <i class="fas fa-users"></i> <!-- Icon for Manage Users -->
+            <span>Manage Users</span>
+        </a>
+    </li>
+    <li class="nav-item active">
+        <a class="nav-link" href="admin/Manage_Database.ejs">
+            <i class="fas fa-database"></i> <!-- Icon for Manage Database -->
+            <span>Manage Database</span>
+        </a>
+    </li>
+    <li class="nav-item active">
+        <a class="nav-link" href="/admin/Database_Statistic.ejs">
+            <i class="fas fa-chart-bar"></i> <!-- Icon for Database Statistics -->
+            <span>Database Statistics</span>
+        </a>
+    </li>
+    <li class="nav-item active">
+    <a class="nav-link" href="/admin/exit.ejs">
+        <i class="fas fa-door-open"></i> <!-- Icon for Exit -->
+        <span>Exit</span>
+    </a>
+</li>
+<li class="nav-item active">
+    <form action="/logout" method="post">
+        <li class="dropdown-item">
+        <button type="submit" class="btn btn-link nav-link w-100 text-left" >sign out</button>
+      </li>
+    </form>
+</li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider d-none d-md-block">
+
+    <!-- Sidebar Toggler (Sidebar) -->
+    <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+    </div>
+
+   
+
+</ul>
+<!-- End of Sidebar -->

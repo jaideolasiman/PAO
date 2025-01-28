@@ -8,6 +8,7 @@ const authTermsController = require('../controllers/auth/termsController');
 const profileController = require('../controllers/auth/profileController');
 
 const adminIndexController = require('../controllers/admin/indexController');
+const manageCategoryController = require('../controllers/admin/manageCategoryController');
 
 
 const farmerIndexController = require('../controllers/farmer/indexController');
@@ -30,12 +31,16 @@ module.exports = function(app){
     app.get('/terms', authTermsController.index);
     app.post('/upload-profile', profileController.uploadProfilePicture);
     app.get('/profile', profileController.getProfile);
+
+
     app.get('/admin/index', adminIndexController.index);
+    app.get('/admin/manageCategory', manageCategoryController.manageCategory);
    
 
     app.get('/farmer/index', farmerIndexController.index); 
-    app.post('farmer/addProduct', productController.upload, productController.addProduct);
+    app.post('/addProduct', productController.addProduct);
 
 
     app.get('/buyer/index', buyerIndexController.index);
+
 }

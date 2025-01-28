@@ -1,131 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>PAO Market Admin</title>
-    <link rel="stylesheet" href="style.css">
-
-    <!-- Custom fonts for this template-->
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet">
-
-    <!-- Custom styles for this template-->
-    <link href="css/sb-admin-2.min.css" rel="stylesheet">
-
-</head>
+<%- include('admin/partials/header'); %>
+<%- include('admin/partials/navbar'); %>
 
 <body id="page-top">
 
     <!-- Page Wrapper -->
     <div id="wrapper">
 
-        <!-- Sidebar -->
-        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-
-            <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
-                </div>
-                <div class="sidebar-brand-text mx-3">PAO <sup>MArket</sup></div>
-            </a>
-            <div class="admin-profile d-flex align-items-center mt-4">
-            <img src="profile.png" alt="Admin Profile" class="admin-avatar">
-                <div class="admin-details ml-2">
-                    <span class="admin-name">Admin</span>
-                    <span class="admin-role">System Administrator</span>
-                </div>
-            </div>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-            <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
-                <a class="nav-link" href="index.html">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="Manage_Category.html">
-                    <i class="fas fa-list"></i>
-                    <span>Manage Category</span>
-                </a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="Manage_Items.html">
-                    <i class="fas fa-box"></i> <!-- Icon for Manage Items -->
-                    <span>Manage Items</span>
-                </a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="Manage_Auctions_Sessions.html">
-                    <i class="fas fa-gavel"></i> <!-- Icon for Manage Auction Sessions -->
-                    <span>Manage Auction Sessions</span>
-                </a>
-            </li>
-            
-            <!-- Divider -->
-            <hr class="sidebar-divider">
-
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Components
-            </div>
-
-            <li class="nav-item active">
-                <a class="nav-link" href="Manage_Users.html">
-                    <i class="fas fa-users"></i> <!-- Icon for Manage Users -->
-                    <span>Manage Users</span>
-                </a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="Manage_Database.html">
-                    <i class="fas fa-database"></i> <!-- Icon for Manage Database -->
-                    <span>Manage Database</span>
-                </a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="Database_Statistic.html">
-                    <i class="fas fa-chart-bar"></i> <!-- Icon for Database Statistics -->
-                    <span>Database Statistics</span>
-                </a>
-            </li>
-            <li class="nav-item active">
-            <a class="nav-link" href="exit.html">
-                <i class="fas fa-door-open"></i> <!-- Icon for Exit -->
-                <span>Exit</span>
-            </a>
-        </li>
-        <li class="nav-item active">
-            <a class="nav-link" href="/auth/signin.html">
-                <i class="fas fa-sign-out-alt"></i> <!-- Icon for Sign Out -->
-                <span>Sign Out</span>
-            </a>
-        </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
-
-            <!-- Sidebar Toggler (Sidebar) -->
-            <div class="text-center d-none d-md-inline">
-                <button class="rounded-circle border-0" id="sidebarToggle"></button>
-            </div>
-
-           
-
-        </ul>
-        <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
@@ -148,10 +28,6 @@
 
                         <!-- Nav Item - Search Dropdown (Visible Only XS) -->
                         <li class="nav-item dropdown no-arrow d-sm-none">
-                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-search fa-fw"></i>
-                            </a>
                             <!-- Dropdown - Messages -->
                             <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
                                 aria-labelledby="searchDropdown">
@@ -344,16 +220,8 @@
                                     <!-- Form inside Modal -->
                                     <form id="addCategoryForm">
                                         <div class="mb-3">
-                                            <label for="categoryId" class="form-label">Category ID</label>
-                                            <input type="text" class="form-control" id="categoryId" placeholder="Enter Category ID">
-                                        </div>
-                                        <div class="mb-3">
                                             <label for="categoryName" class="form-label">Category Name</label>
                                             <input type="text" class="form-control" id="categoryName" placeholder="Enter Category Name">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="adminName" class="form-label">Admin Name</label>
-                                            <input type="text" class="form-control" id="adminName" placeholder="Enter Admin Name">
                                         </div>
                                     </form>
                                 </div>
@@ -369,13 +237,7 @@
                     <!-- Content Row -->
                     <div class="row">
 
-                        
-
-                        
-
-                        
-
-                       
+                                      
 
                     <!-- Content Row -->
 
