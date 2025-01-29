@@ -32,12 +32,9 @@ module.exports = function (app) {
 
   app.get('/admin/index', adminIndexController.index);
   app.get('/admin/manageCategory', adminManageCategoryController.index);
-
   app.post('/admin/manageCategory/add', adminManageCategoryController.addCategory);
   app.delete('/admin/manageCategory/delete/:id', adminManageCategoryController.deleteCategory);
   app.put('/admin/manageCategory/update/:id', adminManageCategoryController.updateCategory);
-  
-
   app.get('/admin/manageUsers', manageUserController.renderManageUser); // Added
   app.post('/admin/manageUsers/approve/:id', manageUserController.approveUser); // Added
   app.post('/admin/manageUsers/deactivate/:id', manageUserController.deactivateUser); // Added

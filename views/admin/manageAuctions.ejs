@@ -1,0 +1,157 @@
+<%- include('./partials/header.ejs'); %>
+<body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+<%- include('./partials/navbar.ejs'); %>
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <!-- Main Content -->
+            <div id="content">
+<%- include('./partials/topbar.ejs'); %>
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Page Heading -->                   
+
+                    <!-- Content Row -->
+                    <div class="row">
+                                                                                      
+                    <!-- Content Row -->
+
+                    <div class="row">
+
+                        <!-- Area Chart -->
+                        <div class="col-xl-8 col-lg-7">
+                            <div class="card shadow mb-4">
+                                <!-- Card Header -->
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">Auction Sessions</h6>
+                                    <!-- Search Bar -->
+                                    <div class="input-group w-50">
+                                        <input type="text" class="form-control" id="searchCategory" placeholder="Search Category...">
+                                        <button class="btn btn-primary" type="button" onclick="filterCategory()">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- Card Body -->
+                                <div class="card-body">
+                                    <!-- Table -->
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" id="categoryTable" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Session Date</th>
+                                                    <th>Start Time</th>
+                                                    <th>End Time</th>
+                                                    <th>Reserved</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <!-- Example Rows -->
+                                                <tr>
+                                                    <td>1-2-2024</td>
+                                                    <td>12</td>
+                                                    <td>3</td>
+                                                    <td>1</td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                    <td>1-2-2024</td>
+                                                    <td>12</td>
+                                                    <td>3</td>
+                                                    <td>1</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>1-2-2024</td>
+                                                    <td>12</td>
+                                                    <td>3</td>
+                                                    <td>1</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Action Buttons -->
+                        <div class="d-flex justify-content-between mt-3">
+                            <!-- New Session Button -->
+                            <button class="btn btn-warning" onclick="openSessionModal()">
+                                <i class="fas fa-calendar-plus"></i> Add New Session
+                            </button>
+                        </div>
+
+                        <!-- Modal for New Session -->
+                        <div id="sessionModal" class="modal" style="display: none;">
+                            <div class="modal-content">
+                                <span class="close-btn" onclick="closeSessionModal()">&times;</span>
+                                
+                                <h2>Add New Session</h2>
+                                
+                                <div class="form-group">
+                                    <label for="sessionDate"><i class="fas fa-calendar-day"></i> Choose a Session Date:</label>
+                                    <input type="date" id="sessionDate" class="form-control">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="sessionTime"><i class="fas fa-clock"></i> Choose a Session Time:</label>
+                                    <input type="time" id="sessionTime" class="form-control">
+                                </div>
+                                
+                                <!-- Confirm Button -->
+                                <button class="btn btn-success mt-2" onclick="confirmSession()">
+                                    <i class="fas fa-check-circle"></i> Confirm Session
+                                </button>
+                            </div>
+                        </div>
+
+<!-- Content Row -->
+
+                        </div>
+
+                        <div class="col-lg-6 mb-4">
+
+                            
+
+                            
+
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+<%- include('./partials/navbar.ejs'); %>
+<script>
+// Function to open the session modal
+function openSessionModal() {
+    const modal = document.getElementById("sessionModal");
+    modal.style.display = "block";
+}
+
+// Function to close the session modal
+function closeSessionModal() {
+    const modal = document.getElementById("sessionModal");
+    modal.style.display = "none";
+}
+
+// Function to confirm session creation
+function confirmSession() {
+    const sessionDate = document.getElementById("sessionDate").value;
+    const sessionTime = document.getElementById("sessionTime").value;
+
+    if (!sessionDate || !sessionTime) {
+        alert("Please select both session date and time.");
+        return;
+    }
+
+    // Proceed with session creation (this is where you can add your logic to save the session)
+    console.log(`New session created on ${sessionDate} at ${sessionTime}`);
+
+    // Close the modal after confirming
+    closeSessionModal();
+}
+</script>
