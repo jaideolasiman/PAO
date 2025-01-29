@@ -1,324 +1,90 @@
-<%- include('admin/partials/header'); %>
-<%- include('admin/partials/navbar'); %>
-
+<%- include('./partials/header.ejs'); %>
 <body id="page-top">
-
     <!-- Page Wrapper -->
     <div id="wrapper">
-
-
+<%- include('./partials/navbar.ejs'); %>
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
-
             <!-- Main Content -->
             <div id="content">
-
-                <!-- Topbar -->
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-
-                    <!-- Sidebar Toggle (Topbar) -->
-                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-                        <i class="fa fa-bars"></i>
-                    </button>
-
-                    
-
-                    <!-- Topbar Navbar -->
-                    <ul class="navbar-nav ml-auto">
-
-                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-                        <li class="nav-item dropdown no-arrow d-sm-none">
-                            <!-- Dropdown - Messages -->
-                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                                aria-labelledby="searchDropdown">
-                                <form class="form-inline mr-auto w-100 navbar-search">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control bg-light border-0 small"
-                                            placeholder="Search for..." aria-label="Search"
-                                            aria-describedby="basic-addon2">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button">
-                                                <i class="fas fa-search fa-sm"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </li>
-
-                        <!-- Nav Item - Alerts -->
-                        <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-bell fa-fw"></i>
-                                <!-- Counter - Alerts -->
-                                <span class="badge badge-danger badge-counter">3+</span>
-                            </a>
-                            <!-- Dropdown - Alerts -->
-                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="alertsDropdown">
-                                <h6 class="dropdown-header">
-                                    Alerts Center
-                                </h6>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-primary">
-                                            <i class="fas fa-file-alt text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 12, 2019</div>
-                                        <span class="font-weight-bold">A new monthly report is ready to download!</span>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-success">
-                                            <i class="fas fa-donate text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 7, 2019</div>
-                                        $290.29 has been deposited into your account!
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-warning">
-                                            <i class="fas fa-exclamation-triangle text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 2, 2019</div>
-                                        Spending Alert: We've noticed unusually high spending for your account.
-                                    </div>
-                                </a>
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
-                            </div>
-                        </li>
-
-                        <!-- Nav Item - Messages -->
-                        <li class="nav-item dropdown no-arrow mx-1">
-                            <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-envelope fa-fw"></i>
-                                <!-- Counter - Messages -->
-                                <span class="badge badge-danger badge-counter">7</span>
-                            </a>
-                            <!-- Dropdown - Messages -->
-                            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="messagesDropdown">
-                                <h6 class="dropdown-header">
-                                    Message Center
-                                </h6>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_1.svg"
-                                            alt="...">
-                                        <div class="status-indicator bg-success"></div>
-                                    </div>
-                                    <div class="font-weight-bold">
-                                        <div class="text-truncate">Hi there! I am wondering if you can help me with a
-                                            problem I've been having.</div>
-                                        <div class="small text-gray-500">Emily Fowler · 58m</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_2.svg"
-                                            alt="...">
-                                        <div class="status-indicator"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">I have the photos that you ordered last month, how
-                                            would you like them sent to you?</div>
-                                        <div class="small text-gray-500">Jae Chun · 1d</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="img/undraw_profile_3.svg"
-                                            alt="...">
-                                        <div class="status-indicator bg-warning"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">Last month's report looks great, I am very happy with
-                                            the progress so far, keep up the good work!</div>
-                                        <div class="small text-gray-500">Morgan Alvarez · 2d</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60"
-                                            alt="...">
-                                        <div class="status-indicator bg-success"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">Am I a good boy? The reason I ask is because someone
-                                            told me that people say this to all dogs, even if they aren't good...</div>
-                                        <div class="small text-gray-500">Chicken the Dog · 2w</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
-                            </div>
-                        </li>
-
-                        <div class="topbar-divider d-none d-sm-block"></div>
-
-                        <!-- Nav Item - User Information -->
-                        <li class="nav-item dropdown no-arrow">
-                           
-                            </a>
-                            <!-- Dropdown - User Information -->
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Profile
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Settings
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Activity Log
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Logout
-                                </a>
-                            </div>
-                        </li>
-
-                    </ul>
-
-                </nav>
-                <!-- End of Topbar -->
-
+<%- include('./partials/topbar.ejs'); %>
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <!-- Add New Category Button -->
-                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-                            <i class="fas fa-plus"></i> Add New Category
-                        </button>
-                    </div>
-                    
-                    <!-- Modal for Adding New Category -->
+       
+                 <!-- Modal for Adding New Category -->
                     <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="addCategoryModalLabel">Add New Category</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <!-- Form inside Modal -->
-                                    <form id="addCategoryForm">
-                                        <div class="mb-3">
-                                            <label for="categoryName" class="form-label">Category Name</label>
-                                            <input type="text" class="form-control" id="categoryName" placeholder="Enter Category Name">
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                    <button type="button" class="btn btn-primary" onclick="saveCategory()">Save</button>
-                                </div>
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h5 class="modal-title" id="addCategoryModalLabel">Add New Category</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
+                            <div class="modal-body">
+                            <form id="addCategoryForm">
+                                <div class="mb-3">
+                                <label for="categoryName" class="form-label">Category Name</label>
+                                <input type="text" class="form-control" id="categoryName" placeholder="Enter Category Name" required>
+                                </div>
+                            </form>
+                            </div>
+                            <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" onclick="saveCategory()">Save</button>
+                            </div>
+                        </div>
                         </div>
                     </div>
                     
+                    <!-- Category Table -->
+                    <!-- Category Table -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h4 class="m-0 font-weight-bold text-primary">Category List</h4> 
+                            
+                            <!-- Search Bar -->
+                            <div class="input-group w-50">
+                                <input type="text" class="form-control" id="searchCategory" placeholder="Search Category...">
+                                <button class="btn btn-primary" type="button" onclick="filterCategory()">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
 
-                    <!-- Content Row -->
-                    <div class="row">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">Add Category</button>
+                        </div>
 
-                                      
-
-                    <!-- Content Row -->
-
-                    <div class="row">
-
-                        <!-- Area Chart -->
-                        <div class="col-xl-8 col-lg-7">
-                            <div class="card shadow mb-4">
-                                <!-- Card Header -->
-                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Category List</h6>
-                                    <!-- Search Bar -->
-                                    <div class="input-group w-50">
-                                        <input type="text" class="form-control" id="searchCategory" placeholder="Search Category...">
-                                        <button class="btn btn-primary" type="button" onclick="filterCategory()">
-                                            <i class="fas fa-search"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <!-- Card Body -->
-                                <div class="card-body">
-                                    <!-- Table -->
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered" id="categoryTable" width="100%" cellspacing="0">
-                                            <thead>
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>Category Name</th>
-                                                    <th>Admin</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <!-- Example Rows -->
-                                                <tr>
-                                                    <td>1</td>
-                                                    <td>Fruits</td>
-                                                    <td>Admin</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>2</td>
-                                                    <td>Vegetables</td>
-                                                    <td>Admin</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>3</td>
-                                                    <td>Dairy</td>
-                                                    <td>Admin</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover" id="categoryTable" style="width: 100%; table-layout: fixed; font-size: 18px;">
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Category Name</th>
+                                            <th>Admin</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="categoryTableBody">
+                                        <% categories.forEach(category => { %>
+                                        <tr>
+                                            <td><%= category._id %></td>
+                                            <td class="category-name"><%= category.name %></td>
+                                            <td><%= userLogin.firstName %> <%= userLogin.lastName %></td>
+                                            <td>
+                                                <button class="btn btn-warning btn-sm" onclick="editCategory('<%= category._id %>', '<%= category.name %>')">Edit</button>
+                                                <button class="btn btn-danger btn-sm" onclick="deleteCategory('<%= category._id %>')">Delete</button>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-                        <!-- Action Buttons -->
-                        <div class="d-flex justify-content-between mt-3">
-                            <button class="btn btn-danger" onclick="deleteAllRows()">
-                                <i class="fas fa-trash-alt"></i> Delete 
-                            </button>
-                            <button class="btn btn-success" onclick="saveAllRows()">
-                                <i class="fas fa-save"></i> Save 
-                            </button>
-                        </div>
                     </div>
-                </div>
-            </div>
-
                         
-
                     <!-- Content Row -->
                    
-                            
-
                         </div>
-
                         <div class="col-lg-6 mb-4">
-
-                            
-
-                            
-
                         </div>
                     </div>
 
@@ -327,82 +93,52 @@
 
             </div>
             <!-- End of Main Content -->
-
-            <!-- Footer -->
-            <footer class="sticky-footer bg-white">
-                <div class="container my-auto">
-                    <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2021</span>
-                    </div>
-                </div>
-            </footer>
-            <!-- End of Footer -->
-
-        </div>
-        <!-- End of Content Wrapper -->
-
-    </div>
-    <!-- End of Page Wrapper -->
-
-    <!-- Scroll to Top Button-->
-    <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a>
-
-    
-    <!-- Bootstrap core JavaScript-->
-    <script src="vendor/jquery/jquery.min.js"></script>
-    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Core plugin JavaScript-->
-    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-
-    <!-- Custom scripts for all pages-->
-    <script src="js/sb-admin-2.min.js"></script>
-
-    <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
-
-    <!-- Page level custom scripts -->
-    <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>
-
-
+<%- include('./partials/footer.ejs'); %>
 <script>
-    function filterCategory() {
-        const searchValue = document.getElementById('searchCategory').value.toLowerCase();
-        const table = document.getElementById('categoryTable');
-        const rows = table.getElementsByTagName('tr');
+ // Save category
+ async function saveCategory() {
+    const categoryName = document.getElementById('categoryName').value;
+    if (!categoryName) return alert('Category name is required');
 
-        for (let i = 1; i < rows.length; i++) { // Start from 1 to skip header row
-            const cells = rows[i].getElementsByTagName('td');
-            let match = false;
-            for (let j = 0; j < cells.length; j++) {
-                if (cells[j].innerText.toLowerCase().includes(searchValue)) {
-                    match = true;
-                    break;
-                }
-            }
-            rows[i].style.display = match ? '' : 'none';
-        }
-    }
-    function saveCategory() {
-        const categoryId = document.getElementById('categoryId').value;
-        const categoryName = document.getElementById('categoryName').value;
-        const adminName = document.getElementById('adminName').value;
+    const res = await fetch('/admin/manageCategory/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: categoryName }),
+    });
+    const data = await res.json();
+    if (data.success) location.reload();
+    else alert(data.message);
+  }
 
-        if (categoryId && categoryName && adminName) {
-            alert(`Category Added:\nID: ${categoryId}\nName: ${categoryName}\nAdmin: ${adminName}`);
-            // You can add functionality to save the data to your database here.
-            document.getElementById('addCategoryForm').reset();
-            const modal = bootstrap.Modal.getInstance(document.getElementById('addCategoryModal'));
-            modal.hide();
-        } else {
-            alert('Please fill out all fields.');
-        }
-    }
+  // Delete category
+  async function deleteCategory(id) {
+    const res = await fetch(`/admin/manageCategory/delete/${id}`, { method: 'DELETE' });
+    const data = await res.json();
+    if (data.success) location.reload();
+    else alert(data.message);
+  }
+
+  // Edit category
+  async function editCategory(id, currentName) {
+    const newName = prompt('Edit Category Name:', currentName);
+    if (!newName || newName === currentName) return;
+
+    const res = await fetch(`/admin/manageCategory/update/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: newName }),
+    });
+    const data = await res.json();
+    if (data.success) location.reload();
+    else alert(data.message);
+  }
+  function filterCategory() {
+    let input = document.getElementById("searchCategory").value.toLowerCase();
+    let tableRows = document.querySelectorAll("#categoryTableBody tr");
+
+    tableRows.forEach(row => {
+        let categoryName = row.querySelector(".category-name").innerText.toLowerCase();
+        row.style.display = categoryName.includes(input) ? "" : "none";
+    });
+}
 </script>
-</body>
-</html>
