@@ -16,14 +16,12 @@ module.exports.index = async (req, res) => {
       console.warn(`Access Denied: User ${userLogin.email} is not an Admin.`);
       return res.status(403).send('Access Denied: Admins only');
   }
-  
-
-    const categories = await Category.find();
+  const users = await User.find();
     res.render('admin/manageUsers', {
       site_title: SITE_TITLE,
       title: 'Manage Categories',
       session: req.session,
-      categories,
+      users,
       userLogin,
     });
   } catch (error) {

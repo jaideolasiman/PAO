@@ -8,8 +8,9 @@ const profileController = require('../controllers/auth/profileController');
 
 const adminIndexController = require('../controllers/admin/indexController');
 const adminManageCategoryController = require('../controllers/admin/manageCategoryController');
-const manageUserController = require('../controllers/admin/manageUsersController');
-
+const adminManageUserController = require('../controllers/admin/manageUsersController');
+const adminManageAuctionController = require('../controllers/admin/manageAuctionController');
+const adminManageItemController = require('../controllers/admin/manageItemController');
 
 const farmerIndexController = require('../controllers/farmer/indexController');
 const productController = require('../controllers/farmer/productController');
@@ -35,9 +36,11 @@ module.exports = function (app) {
   app.post('/admin/manageCategory/add', adminManageCategoryController.addCategory);
   app.delete('/admin/manageCategory/delete/:id', adminManageCategoryController.deleteCategory);
   app.put('/admin/manageCategory/update/:id', adminManageCategoryController.updateCategory);
-  app.get('/admin/manageUsers', manageUserController.renderManageUser); // Added
-  app.post('/admin/manageUsers/approve/:id', manageUserController.approveUser); // Added
-  app.post('/admin/manageUsers/deactivate/:id', manageUserController.deactivateUser); // Added
+  app.get('/admin/manageUsers', adminManageUserController.renderManageUser); // Added
+  app.post('/admin/manageUsers/approve/:id', adminManageUserController.approveUser); // Added
+  app.post('/admin/manageUsers/deactivate/:id', adminManageUserController.deactivateUser); // Added
+  app.get('/admin/manageAuction', adminManageAuctionController.index);
+  app.get('/admin/manageItem', adminManageItemController.index);
 
   app.get('/farmer/index', farmerIndexController.index);
   app.post('/addProduct', productController.addProduct);

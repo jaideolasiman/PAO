@@ -15,20 +15,18 @@ module.exports.index = async (req, res) => {
       console.warn(`Access Denied: User ${userLogin.email} is not an Admin.`);
       return res.status(403).send('Access Denied: Admins only');
   }
-  
-
-    const categories = await Category.find();
-    res.render('admin/manageAuction', {
+    const users = await User.find();
+    res.render('admin/manageItems', {
       site_title: SITE_TITLE,
-      title: 'Manage Auction',
+      title: 'Manage Item',
       session: req.session,
-      categories,
+      users,
       userLogin,
     });
   } catch (error) {
-    console.error('Error displaying Manage Category:', error);
+    console.error('Error displaying Manage Item:', error);
     res.status(500).render('500', {
-      error: 'An error occurred while loading the Manage Category page.',
+      error: 'An error occurred while loading the Manage Item page.',
     });
   }
 }; 
