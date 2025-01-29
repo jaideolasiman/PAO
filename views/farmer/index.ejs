@@ -99,53 +99,73 @@
             <!-- Label Text for Your Products -->
             <label for="your-products" class="products-label">Your Products</label>
         
-            <!-- Add Product Button -->
+            <!-- Display Categories -->
+            <div class="categories-list">
+                <% if (categories && categories.length > 0) { %>
+                    <% categories.forEach(category => { %>
+                        <span class="category-item"><%= category.name %></span>
+                    <% }) %>
+                <% } else { %>
+                    <span>No categories available</span>
+                <% } %>
+            </div>
+        
             <button class="add-product-button" onclick="openModal()">Add Product</button>
         </div>
-        <!-- Modal for Add Product -->
+        
+        
+            <!-- Modal for Add Product -->
         <div id="productModal" class="modal">
             <div class="modal-content">
                 <span class="close" onclick="closeModal()">&times;</span>
                 <center><h3>Submit New Product</h3></center>
 
-                <form id="productFormSubmit" action="/addProduct" method="POST" enctype="multipart/form-data">
+                <form id="productFormSubmit" action="/farmer/addProduct" method="POST" enctype="multipart/form-data">
+                    <!-- Category Selection -->
                     <label for="category">Category</label>
                     <select id="category" name="category" required>
-                        <option value="fruits">Fruits</option>
-                        <option value="vegetables">Vegetables</option>
-                        <option value="cereals">Grains</option>
+                        <option value="" disabled selected>Select Category</option>
+                        <!-- Loop through categories and display each one -->
+                        <% categories.forEach(category => { %>
+                            <option value="<%= category._id %>"><%= category.name %></option>
+                        <% }) %>
                     </select><br><br>
-                
+
+                    <!-- Product Type Selection: Wholesale or Retail -->
+                    <label for="productType">Product Type</label><br>
+                    <input type="radio" id="wholesaleProduct" name="productType" value="wholesale" onclick="toggleAuctionFields(true)" required>
+                    <label for="wholesaleProduct">Wholesale Product</label>
+                    <input type="radio" id="retailProduct" name="productType" value="retail" onclick="toggleAuctionFields(false)">
+                    <label for="retailProduct">Retail Product</label><br><br>
+
+                    <!-- Name of Product -->
                     <label for="productName">Name of Product</label>
                     <input type="text" id="productName" name="productName" required><br><br>
-                
+
+                    <!-- Minimum Price -->
                     <label for="minPrice">Minimum Price</label>
                     <input type="number" id="minPrice" name="minPrice" required><br><br>
-                
+
+                    <!-- Product Information -->
                     <label for="productInfo">Product Information</label>
                     <textarea id="productInfo" name="productInfo" rows="4" required></textarea><br><br>
-                
-                    <label for="productType">Product Type</label>
-                    <input type="radio" id="auction" name="productType" value="auction" onclick="toggleAuctionFields(true)" required>
-                    <label for="auction">Auction</label>
-                    <input type="radio" id="retail" name="productType" value="retail" onclick="toggleAuctionFields(false)">
-                    <label for="retail">Retail</label>
-                
-                    <!-- Auction-Specific Fields -->
+
+                    <!-- Auction Date and Time (Initially hidden) -->
                     <div id="auctionFields" style="display: none;">
                         <label for="auctionStart">Auction Start Date & Time</label>
                         <input type="datetime-local" id="auctionStart" name="auctionStart"><br><br>
-                
+
                         <label for="auctionEnd">Auction End Date & Time</label>
                         <input type="datetime-local" id="auctionEnd" name="auctionEnd"><br><br>
                     </div>
-                
+
+                    <!-- Product Image -->
                     <label for="productImage">Product Image</label>
                     <input type="file" id="productImage" name="productImage" accept="image/*" required><br><br>
-                
+
+                    <!-- Submit Button -->
                     <center><button type="submit">Submit Product</button></center>
                 </form>
-                  
             </div>
         </div>
         <section class="product-list">
@@ -229,7 +249,7 @@ function closeModal() {
 
 // Function to open the modal
 function openModal() {
-    document.getElementById('productModal').style.display = 'block';
+    document.getElementById('productModal').style.display = 'flex';
 }
 
 // Function to toggle the category list visibility
@@ -447,7 +467,23 @@ window.onclick = function (event) {
         closeModal();
     }
 };
+        // Show Auction fields
+function toggleAuctionFields(isWholesale) {
+        const auctionFields = document.getElementById('auctionFields');
+
+        // Show auction fields if Wholesale is selected, hide if Retail is selected
+        if (isWholesale) {
+            auctionFields.style.display = 'block';
+        } else {
+            auctionFields.style.display = 'none';
+        }
+    }
+
+    // Call the function initially to set the correct state based on radio button default
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check the default state of radio buttons and toggle auction fields accordingly
+        const wholesaleSelected = document.getElementById('wholesaleProduct').checked;
+        toggleAuctionFields(wholesaleSelected);
+    });
 </script>
     <script src="/public/js/scriptss.js"></script>
-</body>
-</html>

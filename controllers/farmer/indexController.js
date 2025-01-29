@@ -1,4 +1,5 @@
 const User = require('../../models/user');
+const Category = require('../../models/category');
 const SITE_TITLE = 'PAO';
 
 module.exports.index = async (req, res) => {
@@ -8,14 +9,16 @@ module.exports.index = async (req, res) => {
 
         // Check if user is logged in
         const userLogin = await User.findById(req.session.login);
+        const categories = await Category.find();
         
         if (userLogin) {
             res.render('farmer/index.ejs', {
                 site_title: SITE_TITLE,
                 title: 'Home',
-                req: req,
+                session: req.session,
+                categories,
+                userLogin,
                 messages: req.flash(),
-                userLogin: userLogin,
                 currentUrl: req.originalUrl,
             });
         } else {
