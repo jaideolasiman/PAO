@@ -1,38 +1,14 @@
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  price: {
-    type: Number,
-    required: true,
-  },
-  imageUrl: {
-    type: String,
-    required: false, // Optional, only if an image URL is provided
-  },
-  category: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Category', // Reference to Category model
-    required: true,
-  },
-  productType: {
-    type: String,
-    enum: ['retail', 'wholesale'], // Only 'retail' or 'wholesale'
-    required: true,
-  },
-  auctionDate: {
-    type: Date,
-    required: false, // Only required for wholesale products
-  },
+    category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
+    productType: { type: String, required: true },
+    name: { type: String, required: true },
+    minPrice: { type: Number, required: true },
+    productInfo: { type: String, required: true },
+    image: { type: String, required: true }  // Storing the relative image path
 });
 
-const Product = mongoose.model('Product', productSchema);
+const Product = mongoose.model('product', productSchema);
 
 module.exports = Product;

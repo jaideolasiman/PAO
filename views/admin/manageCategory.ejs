@@ -36,7 +36,6 @@
                     </div>
                     
                     <!-- Category Table -->
-                    <!-- Category Table -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                             <h4 class="m-0 font-weight-bold text-primary">Category List</h4> 
@@ -49,7 +48,9 @@
                                 </button>
                             </div>
 
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">Add Category</button>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                                <i class="fas fa-plus"></i> Add Category
+                            </button>
                         </div>
 
                         <div class="card-body">
@@ -80,7 +81,6 @@
                             </div>
                         </div>
                     </div>
-                        
                     <!-- Content Row -->
                    
                         </div>
@@ -132,6 +132,7 @@
     if (data.success) location.reload();
     else alert(data.message);
   }
+
   function filterCategory() {
     let input = document.getElementById("searchCategory").value.toLowerCase();
     let tableRows = document.querySelectorAll("#categoryTableBody tr");

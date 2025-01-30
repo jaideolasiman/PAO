@@ -12,9 +12,8 @@ const adminManageUserController = require('../controllers/admin/manageUsersContr
 const adminManageAuctionController = require('../controllers/admin/manageAuctionController');
 const adminManageItemController = require('../controllers/admin/manageItemController');
 
-const upload = require('../middlewares/product-upload-middleware');
 const farmerIndexController = require('../controllers/farmer/indexController');
-
+const productController = require('../controllers/farmer/productController');
 
 const buyerIndexController = require('../controllers/buyer/indexController');
 
@@ -43,10 +42,9 @@ module.exports = function (app) {
   app.get('/admin/manageAuction', adminManageAuctionController.index);
   app.get('/admin/manageItem', adminManageItemController.index);
 
-  app.get('/farmer/index', farmerIndexController.index);
-  app.post('/farmer/addProduct', upload.single('productImage'), farmerIndexController.addProduct);
+  // For the farmer routes
+  app.get('/farmer/index', farmerIndexController.index);  // Ensure this is correct
+  app.post('/farmer/addProduct', farmerIndexController.addProduct);
 
   app.get('/buyer/index', buyerIndexController.index);
-
-  
 };
