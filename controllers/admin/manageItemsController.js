@@ -1,3 +1,4 @@
+const Product = require('../../models/product');  // Import your product model
 const User = require('../../models/user');
 const SITE_TITLE = 'PAO';
 
@@ -9,18 +10,21 @@ module.exports.index = async (req, res) => {
     }
 
     const userLogin = await User.findById(req.session.login);
-    console.log("Logged-in User:", userLogin); // Log user details
+    console.log("Logged-in User:", userLogin);
 
     if (userLogin.role.toLowerCase() !== 'admin') {
       console.warn(`Access Denied: User ${userLogin.email} is not an Admin.`);
       return res.status(403).send('Access Denied: Admins only');
-  }
-    const users = await User.find();
+    }
+
+    // Fetch products and populate the category field with the actual category data
+    const products = await Product.find().populate('category', 'name');  // Populate the category field with 'name'
+
     res.render('admin/manageItems', {
       site_title: SITE_TITLE,
       title: 'Manage Item',
       session: req.session,
-      users,
+      products,  // Pass the populated products
       userLogin,
     });
   } catch (error) {
@@ -29,4 +33,4 @@ module.exports.index = async (req, res) => {
       error: 'An error occurred while loading the Manage Item page.',
     });
   }
-}; 
+};

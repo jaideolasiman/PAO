@@ -10,7 +10,9 @@ const adminIndexController = require('../controllers/admin/indexController');
 const adminManageCategoryController = require('../controllers/admin/manageCategoryController');
 const adminManageUserController = require('../controllers/admin/manageUsersController');
 const adminManageAuctionController = require('../controllers/admin/manageAuctionController');
-const adminManageItemController = require('../controllers/admin/manageItemController');
+const adminManageItemController = require('../controllers/admin/manageItemsController');
+
+
 
 const farmerIndexController = require('../controllers/farmer/indexController');
 const productController = require('../controllers/farmer/productController');
@@ -41,6 +43,7 @@ module.exports = function (app) {
   app.post('/admin/manageUsers/deactivate/:id', adminManageUserController.deactivateUser); // Added
   app.get('/admin/manageAuction', adminManageAuctionController.index);
   app.get('/admin/manageItem', adminManageItemController.index);
+  
 
   // For the farmer routes
   app.get('/farmer/index', farmerIndexController.index);  // Ensure this is correct

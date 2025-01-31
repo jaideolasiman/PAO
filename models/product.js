@@ -6,7 +6,8 @@ const productSchema = new mongoose.Schema({
     name: { type: String, required: true },
     minPrice: { type: Number, required: true },
     productInfo: { type: String, required: true },
-    image: { type: String, required: true }  // Storing the relative image path
+    image: { type: String, required: true }, // Storing the relative image path
+    
 });
 
 const Product = mongoose.model('product', productSchema);

@@ -12,15 +12,15 @@ const SITE_TITLE = 'PAO';
 
 module.exports.index = async (req, res) => {
   try {
-      // Log session for debugging
-      console.log('Session Data:', req.session);
-
-      // Check if user is logged in
       const userLogin = await User.findById(req.session.login);
       const categories = await Category.find();
+      const products = await Product.find();  // Fetch all products
 
-      // Fetch all products from the database
-      const products = await Product.find();  // This line fetches all products
+      // Group products by category
+      const groupedProducts = categories.map(category => ({
+          category,
+          products: products.filter(product => product.category.toString() === category._id.toString())
+      }));
 
       if (userLogin) {
           res.render('farmer/index.ejs', {
@@ -29,7 +29,7 @@ module.exports.index = async (req, res) => {
               session: req.session,
               categories,
               userLogin,
-              products,  // Pass the products to the view
+              groupedProducts,  // Pass grouped products
               messages: req.flash(),
               currentUrl: req.originalUrl,
           });

@@ -74,3 +74,8 @@
     margin-bottom: 15px;
 }
 
+.product-image {
+    width: 50px;  /* Adjust width as needed */
+    height: 50px; /* Adjust height as needed */
+    object-fit: cover;  /* Ensures the image fits well without distortion */
+}

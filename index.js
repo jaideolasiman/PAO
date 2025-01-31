@@ -9,6 +9,7 @@ const conn = dbConnect();
 const User = require('./models/user');
 const app = express();
 
+
 app.use(session({
     secret: 'sessionsecret777',
     //cookie: { maxAge: 1000 * 60 * 60 * 24 * 7 }, // 7 days

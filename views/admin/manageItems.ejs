@@ -14,51 +14,58 @@
                     <div class="card shadow mb-4">
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                             <h4 class="m-0 font-weight-bold text-primary">Product List</h4>
-                            
+                    
                             <!-- Search Bar -->
                             <div class="input-group w-50">
-                                <input type="text" class="form-control" id="searchUser" placeholder="Search...">
-                                <button class="btn btn-primary" type="button" onclick="filterUsers()">
+                                <input type="text" class="form-control" id="searchUser" placeholder="Search Product&Category...">
+                                <button class="btn btn-primary" type="button" onclick="filterProducts()">
                                     <i class="fas fa-search"></i>
                                 </button>
                             </div>
                         </div>
-
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-bordered" id="userTable" width="100%" cellspacing="0">
+                                <table class="table table-bordered" id="productTable" width="100%" cellspacing="0">
                                     <thead class="thead-dark">
                                         <tr>
-                                            <th></th>
-                                            <th></th>
-                                            <th></th>
-                                            <th></th>
-                                            <th></th>
+                                            <th>Product Id</th>
+                                            <th>Product Type</th>
+                                            <th>Product Name</th>
+                                            <th>Category</th>
+                                            <th>Price</th>
+                                            <th>Product Image</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody id="ItemTableBody">
-                                      
-                                            <tr>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td>
-                                                    <form action="" method="POST" style="display:inline;">
-                                                        <button class="btn btn-success">Approve</button>
-                                                    </form>
-                                                    <form action="" method="POST" style="display:inline;">
-                                                        <button class="btn btn-warning">Reject</button>
-                                                    </form>
-                                                </td>
-                                            </tr>
+                                        <% products.forEach(product => { %>
+                                        <tr>
+                                            <td><%= product._id %></td>
+                                            <td><%= product.productType %></td>
+                                            <td><%= product.name %></td>
+                                            <td><%= product.category ? product.category.name : 'N/A' %></td>
+                                            <td>₱<%= product.minPrice.toFixed(2) %></td>
+                                            <td>
+                                                <img src="<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : '/public/img/default.png' %>" 
+                                                     alt="<%= product.name %>" 
+                                                     class="product-image" width="50">
+                                            </td>
+                                            <td>
+                                                <form action="/admin/manageItem/approve/<%= product._id %>" method="POST" style="display:inline;">
+                                                    <button class="btn btn-success">Approve</button>
+                                                </form>
+                                                <form action="/admin/manageItem/reject/<%= product._id %>" method="POST" style="display:inline;">
+                                                    <button class="btn btn-warning">Reject</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        <% }); %>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
+                    
                         
                        
                 </div>
@@ -117,6 +124,34 @@ function saveAction() {
             modal.hide();
         } else {
             alert('Please fill out all fields.');
+        }
+    }
+
+    
+    function filterProducts() {
+        const input = document.getElementById('searchUser');
+        const filter = input.value.toLowerCase(); // Get the search term
+        const table = document.getElementById('productTable');
+        const rows = table.getElementsByTagName('tr'); // Get all rows
+
+        // Loop through all rows (starting from 1 to skip the header)
+        for (let i = 1; i < rows.length; i++) {
+            const cells = rows[i].getElementsByTagName('td');
+            let match = false;
+
+            // Check if both Product Name column (index 2) and Category column (index 3) contain the search term
+            if (cells[2] && cells[3]) {
+                const productName = cells[2].textContent || cells[2].innerText;
+                const productCategory = cells[3].textContent || cells[3].innerText;
+
+                // If the search term matches either Product Name or Category
+                if (productName.toLowerCase().indexOf(filter) > -1 || productCategory.toLowerCase().indexOf(filter) > -1) {
+                    match = true;
+                }
+            }
+
+            // Show or hide the row based on match
+            rows[i].style.display = match ? "" : "none";
         }
     }
 </script>
