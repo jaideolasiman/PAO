@@ -33,10 +33,10 @@
                 </button></li>
     
                 <!-- Enter Full Screen Icon -->
-                <li><button class="fullscreen-btn" onclick="toggleFullscreen()">
+                <!-- <li><button class="fullscreen-btn" onclick="toggleFullscreen()">
                     <img src="/public/img/monitor.png" alt="Full Screen Icon" class="fullscreen-icon">
-                    <span class="icon-label">Retail Products</span> <!-- Label for Full Screen Icon -->
-                </button></li>
+                    <span class="icon-label">Retail Products</span> <!-- Label for Full Screen Icon 
+                </button></li>-->
     
                 <!-- Currently Bids Icon -->
                 <li><button class="bids-btn" onclick="viewCurrentBids()">
@@ -95,62 +95,82 @@
             <p>Exclusive Offer - 30% Off</p>
             <span>From ₱50.99</span>
         </section>
+        
         <div class="category-bar">
-            <!-- Label Text for Categories -->
             <label for="categories" class="categories-label">Categories</label>
-        
-            <!-- Categories List (dynamically populated by admin) -->
-            <div class="categories-list" id="categoriesList">
-                <!-- Example Categories (these will be dynamically populated) -->
-                <span class="category-item">Fruits</span>
-                <span class="category-item">Vegetables</span>
-                <span class="category-item">Grains</span>
-                <!-- More categories will be added here -->
+            <div class="categories-list">
+                <span class="category-item" onclick="showAllProducts()">All Products</span>
+                <% if (categories && categories.length > 0) { %>
+                    <% categories.forEach(category => { %>
+                        <span class="category-item" onclick="filterProducts('<%= category._id %>')">
+                            <%= category.name %>
+                        </span>
+                    <% }) %>
+                <% } else { %>
+                    <span>No categories available</span>
+                <% } %>
             </div>
         
-            <!-- Search Icon on the right side -->
-            <button class="search-icon-btn" onclick="searchProducts()">
-                <img src="/public/img/search.png" alt="Search Icon" class="search-icon">
-            </button>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search for a product..." onkeyup="searchProducts()">
+                <button>Search</button>
+            </div>
         </div>
-        <section class="product-list">
-            <div class="product">
-                <a href="#" onclick="accessProductDetails(event)">
-                    <img src="https://via.placeholder.com/150" alt="Fresh Cavendish Bananas">
-                </a>
-                <h3>Fresh Cavendish Bananas</h3>
-                <span class="price">$7.58</span>
-                <div> 
-                    <button onclick="participateInAuction()">Participate in Auction</button>
-                </div>
-            </div>
         
-            <div class="product">
-                <img src="https://via.placeholder.com/150" alt="Tomatoes on the Vine">
-                <h3>Tomatoes on the Vine</h3>
-                <span class="price">$1.08 - $4.32</span>
-                <div>
-                 
-                    <button onclick="participateInAuction()">Participate in Auction</button>
-                </div>
-            </div>
-            <div class="product">
-                <img src="https://via.placeholder.com/150" alt="Fresh Organic Strawberry">
-                <h3>Fresh Organic Strawberry</h3>
-                <span class="price">$9.00</span>
-                <div>
-                    <button onclick="participateInAuction()">Participate in Auction</button>
-                </div>
-            </div>
-            <div class="product">
-                <img src="https://via.placeholder.com/150" alt="Fresh Organic Garlic">
-                <h3>Fresh Organic Garlic</h3>
-                <span class="price">$3.48</span>
-                <div>
-                    <button onclick="participateInAuction()">Participate in Auction</button>
-                </div>
+        <section id="all-products-section" class="product-list">
+            <h2>All Products</h2>
+            <div class="product-grid">
+                <% if (products && products.length > 0) { %>
+                    <% products.forEach(product => { %>
+                        <div class="product">
+                            <div class="product-image-container">
+                                <img src="<%= product.image ? '/public/img/product/' + (product.image.split('/').pop() || '') : '/public/img/default.png' %>" 
+                                    alt="<%= product.name %>" 
+                                    class="product-image">
+                            </div>
+                            <h4><%= product.name %></h4>
+                            <% if (product.productType === 'retail') { %>
+                                <p>Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
+                            <% } else if (product.productType === 'wholesale') { %>
+                                <p>Minimum Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
+                            <% } %>
+                            <button class="buynow" onclick="buynow()">Buy Now</button>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p>No products available.</p>
+                <% } %>
             </div>
         </section>
+        
+        <!-- Grouped by Category -->
+        <section id="category-products-section">
+            <% groupedProducts.forEach(group => { %>
+                <div class="category-section" data-category-id="<%= group.category._id %>">
+                    
+                    <div class="product-container">
+                        <% group.products.forEach(product => { %>
+                            <div class="product">
+                                <div class="product-image-container">
+                                    <img src="<%= product.image ? '/public/img/product/' + (product.image.split('/').pop() || '') : '/public/img/default.png' %>" 
+                                        alt="<%= product.name %>" 
+                                        class="product-image">
+                                </div>
+                                <h4><%= product.name %></h4>
+                                <% if (product.productType === 'retail') { %>
+                                    <p>Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
+                                <% } else if (product.productType === 'wholesale') { %>
+                                    <p>Minimum Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
+                                <% } %>
+                                <button class="buynow" onclick="buynow()">Buy Now</button>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+            <% }) %>
+        </section>
+        
+        
             <!-- Modal Structure -->
             <div id="auctionModal" class="modal">
                 <div class="modal-content">
@@ -325,7 +345,54 @@ window.onclick = function (event) {
         closeModal();
     }
 };
+document.addEventListener("DOMContentLoaded", function() {
+        showAllProducts();
+    });
+
+    function showAllProducts() {
+        document.getElementById("all-products-section").style.display = "block";
+        document.getElementById("category-products-section").style.display = "none";
+    }
+
+    function filterProducts(categoryId) {
+        document.getElementById("all-products-section").style.display = "none";
+        document.getElementById("category-products-section").style.display = "block";
+        
+        document.querySelectorAll(".category-section").forEach(section => {
+            if (section.getAttribute("data-category-id") === categoryId) {
+                section.style.display = "block";
+            } else {
+                section.style.display = "none";
+            }
+        });
+    }
+    function searchProducts() {
+        let input = document.getElementById("searchInput").value.toLowerCase();
+        let products = document.querySelectorAll(".product");
+
+        products.forEach(product => {
+            let productName = product.querySelector("h4").textContent.toLowerCase();
+            
+            if (productName.includes(input)) {
+                product.style.display = "block"; // Show if it matches
+            } else {
+                product.style.display = "none"; // Hide if it doesn't match
+            }
+        });
+
+        // Hide empty category sections
+        document.querySelectorAll(".category-section").forEach(section => {
+            let visibleProducts = section.querySelectorAll(".product[style='display: block;']").length;
+            
+            if (visibleProducts > 0) {
+                section.style.display = "block";
+            } else {
+                section.style.display = "none";
+            }
+        });
+    }
 </script>
     <script src="/public/js/scriptss.js"></script>
+ 
 </body>
 </html>

@@ -29,6 +29,7 @@
                                     <thead class="thead-dark">
                                         <tr>
                                             <th>Product Id</th>
+                                            <th>Seller</th>
                                             <th>Product Type</th>
                                             <th>Product Name</th>
                                             <th>Category</th>
@@ -41,6 +42,7 @@
                                         <% products.forEach(product => { %>
                                         <tr>
                                             <td><%= product._id %></td>
+                                            <th><%= userLogin.firstName%><%= userLogin.lastName %></th>
                                             <td><%= product.productType %></td>
                                             <td><%= product.name %></td>
                                             <td><%= product.category ? product.category.name : 'N/A' %></td>

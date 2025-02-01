@@ -6,14 +6,7 @@ categoryButton.addEventListener('click', () => {
     categories.style.display = categories.style.display === 'none' || !categories.style.display ? 'flex' : 'none';
 });
 
-// Add to Cart Button Functionality
-const addToCartButtons = document.querySelectorAll('.product button');
 
-addToCartButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        alert('Product added to cart!');
-    });
-});
 
 // Toggle Dropdown in Navbar for All Categories
 const allCategoriesButton = document.querySelector('.navbar .category-dropdown-button');

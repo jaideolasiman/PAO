@@ -994,3 +994,128 @@ button {
     color: #fff; /* White text on hover */
 }
 
+/* Info Icon */
+    .info-icon {
+        cursor: pointer;
+        color: #007bff;
+        margin-left: 5px;
+    }
+
+    .info-icon:hover {
+        color: #0056b3;
+    }
+
+    /* Info Icon */
+    .info-icon {
+        cursor: pointer;
+        color: #007bff;
+        margin-left: 5px;
+    }
+
+    .info-icon:hover {
+        color: #0056b3;
+    }
+
+    /* Popup Styles */
+    .product-popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        z-index: 1000;
+        text-align: center;
+        width: 300px;
+    }
+
+    .popup-content {
+        font-family: Arial, sans-serif;
+    }
+
+    .popup-image {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 20px;
+        cursor: pointer;
+    }
+
+    .close-btn:hover {
+        color: red;
+    }
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr); /* 5 items per row */
+        gap: 20px;
+    }
+
+    .product {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+        background: #fff;
+    }
+
+    .product img {
+        width: 100%;
+        height: auto;
+    }
+    .product-container {
+    display: grid; /* Use grid layout */
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjusts columns automatically */
+    gap: 20px; /* Space between products */
+    justify-content: center; /* Center content */
+    padding: 20px;
+}
+
+.product {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    text-align: center;
+    padding: 15px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.product:hover {
+    transform: scale(1.05);
+}
+
+/* ✅ Ensure all images have the same size */
+.product-image-container {
+    width: 100%;
+    height: 180px; /* Fixed height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Prevents distortion */
+}
+
+.product-image {
+    width: 100%; /* Makes image responsive */
+    height: 100%;
+    object-fit: cover; /* ✅ Ensures image fills the container while maintaining aspect ratio */
+    border-radius: 5px;
+}
+
+/* ✅ Responsive Adjustments */
+@media (max-width: 768px) {
+    .product-container {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Adjust for smaller screens */
+    }
+
+    .product-image-container {
+        height: 150px; /* Adjust for smaller screens */
+    }
+}

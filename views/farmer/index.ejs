@@ -104,7 +104,7 @@
             
                 <!-- Display Categories -->
                 <div class="categories-list">
-                    <span class="category-item" onclick="showAllProducts()">All Products</span>
+                    
                     <% if (categories && categories.length > 0) { %>
                         <% categories.forEach(category => { %>
                             <span class="category-item" onclick="filterProducts('<%= category._id %>')">
@@ -222,13 +222,15 @@
                                         <p>Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
                                     <% } else if (product.productType === 'wholesale') { %>
                                         <p>Minimum Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
+                                        
                                     <% } %>
         
                                     <% if (product.productType === 'retail') { %>
                                         <button class="showbuyer" onclick="showbuyer">Show Buyers</button>
                                     <% } else if (product.productType === 'wholesale') { %>
-                                        <button class="auction-button" onclick="participateAuction('<%= product._id %>')">Show Participated</button>
+                                        <button class="participated" onclick="participateAuction('<%= product._id %>')">Show Participated</button>
                                     <% } %>
+                                   
                                 </div>
                             <% }) %>
                         </div>
@@ -242,6 +244,7 @@
                 <p>No products available.</p>
             <% } %>
         </section>
+        
 
          <!-- Modal Structure -->
          <div id="auctionModal" class="modal">
@@ -279,197 +282,6 @@
         
         <p>&copy; 2024 PAO Market. All rights reserved.</p>
     </footer>
-<script>
-// Function to open the product modal
-function openModal() {
-    document.getElementById("productModal").style.display = "block";
-}
 
-// Function to close the modal
-function closeModal() {
-    document.getElementById("productModal").style.display = "none";
-}
-
-// Function to toggle auction fields based on product type (wholesale/retail)
-function toggleAuctionFields(isWholesale) {
-    const auctionFields = document.getElementById("auctionFields");
-    auctionFields.style.display = isWholesale ? "block" : "none";
-}
-
-// Ensure the correct auction field visibility on page load
-document.addEventListener("DOMContentLoaded", function () {
-    const wholesaleSelected = document.getElementById("wholesaleProduct").checked;
-    toggleAuctionFields(wholesaleSelected);
-});
-
-// Handle the form submission via AJAX
-$(document).ready(function () {
-    $("#productFormSubmit").on("submit", function (e) {
-        e.preventDefault(); // Prevent default form submission
-
-        var formData = new FormData(this); // Get form data (including file)
-        
-        $.ajax({
-            url: "/farmer/addProduct", // Backend route
-            type: "POST",
-            data: formData,
-            contentType: false, // Prevent jQuery from setting contentType
-            processData: false, // Prevent jQuery from processing the data
-            success: function (response) {
-                alert("Product added successfully!");
-                closeModal(); // Close the modal on success
-                location.reload(); // Reload to reflect changes
-            },
-            error: function (err) {
-                alert("Failed to add product. Please try again.");
-                console.error("Error adding product:", err);
-            }
-        });
-    });
-});
-
-// Close the modal if the user clicks outside of it
-window.addEventListener("click", function (event) {
-    const modal = document.getElementById("productModal");
-    if (event.target === modal) {
-        closeModal();
-    }
-});
-
-// Toggle profile dropdown visibility
-function toggleProfileDropdown() {
-    const dropdown = document.getElementById("profileDropdown");
-    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
-}
-
-// Close profile dropdown when clicking outside
-document.addEventListener("click", function (event) {
-    if (!event.target.closest(".profile-btn") && !event.target.closest("#profileDropdown")) {
-        document.getElementById("profileDropdown").style.display = "none";
-    }
-});
-
-// Toggle settings dropdown visibility
-function toggleSettingsDropdown() {
-    const settingsDropdown = document.getElementById("settingsDropdown");
-    settingsDropdown.style.display = settingsDropdown.style.display === "block" ? "none" : "block";
-}
-
-// Close settings dropdown when clicking outside
-document.addEventListener("click", function (event) {
-    if (!event.target.closest(".settings-button") && !event.target.closest("#settingsDropdown")) {
-        document.getElementById("settingsDropdown").style.display = "none";
-    }
-});
-
-// Function to handle product search
-function searchProducts() {
-    console.log("Search button clicked");
-}
-
-// Function to confirm participation in the auction
-function confirmParticipation() {
-    alert("You have successfully participated in the auction!");
-    closeModal();
-}
-
-// Toggle category list visibility
-function toggleCategories() {
-    const categoryList = document.getElementById("categoryList");
-    categoryList.style.display = categoryList.style.display === "block" ? "none" : "block";
-}
-
-// Function to filter products based on category
-function filterProducts(category) {
-    console.log("Filtering products by: " + category);
-}
-
-// Function to check if user is logged in before accessing product details or adding to cart
-let isLoggedIn = false; // Change this to true for a logged-in user simulation
-
-function accessProductDetails(event) {
-    if (!isLoggedIn) {
-        event.preventDefault();
-        alert("You need to register and log in to access product details.");
-    } else {
-        window.open("product-details.html", "_blank");
-    }
-}
-
-function addToCart() {
-    if (!isLoggedIn) {
-        alert("You need to register and log in to add products to the cart.");
-    } else {
-        alert("Product added to cart!");
-    }
-}
-
-// Notification toggle
-document.getElementById("notificationButton").addEventListener("click", function () {
-    const notificationContainer = document.getElementById("notificationContainer");
-    notificationContainer.style.display = notificationContainer.style.display === "block" ? "none" : "block";
-    
-    // Example: Update notification count dynamically
-    document.getElementById("notificationCount").innerText = "1";
-});
-
-// Function to update the clock every second
-function updateClock() {
-    const currentTime = document.getElementById("currentTime");
-    const now = new Date();
-    const hours = now.getHours().toString().padStart(2, "0");
-    const minutes = now.getMinutes().toString().padStart(2, "0");
-    const seconds = now.getSeconds().toString().padStart(2, "0");
-    currentTime.textContent = `${hours}:${minutes}:${seconds}`;
-}
-
-// Start clock updates
-updateClock();
-setInterval(updateClock, 1000);
-document.addEventListener("DOMContentLoaded", function () {
-        showAllProducts(); // Show all products when the page loads
-    });
-
-    function filterProducts(categoryId) {
-        let categorySections = document.querySelectorAll('.category-section');
-
-        categorySections.forEach(section => {
-            if (section.getAttribute('data-category-id') === categoryId) {
-                section.style.display = "block"; // Show selected category
-            } else {
-                section.style.display = "none"; // Hide others
-            }
-        });
-    }
-
-    function showAllProducts() {
-        let categorySections = document.querySelectorAll('.category-section');
-        categorySections.forEach(section => {
-            section.style.display = "block"; // Show all products
-        });
-    }
-    function buyNow(productId) {
-    alert("Redirecting to purchase page for product ID: " + productId);
-        // You can redirect to a buy page or perform an action
-    }
-
-    function participateAuction(productId) {
-        alert("Redirecting to auction page for product ID: " + productId);
-        // You can redirect to an auction page or perform an action
-    }
-            function searchProducts() {
-                let input = document.getElementById('searchInput').value.toLowerCase();
-                let products = document.querySelectorAll('.product');
-        
-                products.forEach(product => {
-                    let productName = product.getAttribute('data-name');
-                    if (productName.includes(input)) {
-                        product.style.display = "block";
-                    } else {
-                        product.style.display = "none";
-                    }
-                });
-            }
-        
-</script>
     <script src="/public/js/scriptss.js"></script>
+     <script src="/public/js/scripts.js"></script>

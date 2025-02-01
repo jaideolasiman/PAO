@@ -77,7 +77,8 @@ module.exports.addProduct = (req, res) => {
               name,
               minPrice,
               productInfo,
-              image: productImagePath  // Save the image path in the database
+              image: productImagePath,  // Save the image path in the databasea
+              farmer: name
           });
 
           // Save the product to the database
