@@ -67,8 +67,7 @@ module.exports.addProduct = (req, res) => {
             return res.redirect('/farmer/index');
         }
 
-        // Ensure all required fields are present
-        const { category, productType, name, minPrice, productInfo } = req.body;
+        const { category, productType, name, minPrice, productInfo, auctionStart, auctionEnd } = req.body;
 
         if (!category || !productType || !name || !minPrice || !productInfo) {
             req.flash('error', 'All fields are required.');
@@ -76,27 +75,25 @@ module.exports.addProduct = (req, res) => {
         }
 
         try {
-            // Set the correct image path
             const productImagePath = '/img/product/' + req.file.filename;
 
-            // Create new product
+            // Ensure auction fields are stored only if they are provided
             const newProduct = new Product({
                 category,
                 productType,
                 name,
                 minPrice,
                 productInfo,
-                image: productImagePath,  // Save the image path in the database
-                seller: req.session.login
+                image: productImagePath,
+                seller: req.session.login,
+                auctionStart: productType === "wholesale" ? auctionStart || null : null,
+                auctionEnd: productType === "wholesale" ? auctionEnd || null : null
             });
 
-            // Save the product to the database
             await newProduct.save();
 
-            // Log the new product
             console.log('New product saved:', newProduct);
 
-            // Flash success message and redirect
             req.flash('success', 'Product added successfully!');
             res.redirect('/farmer/index');
         } catch (error) {

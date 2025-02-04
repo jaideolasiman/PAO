@@ -3,6 +3,7 @@ const User = require('../../models/user');
 const Category = require('../../models/category');
 const Product = require('../../models/product'); // Import Product model
 const Notification = require('../../models/notification');
+const Order = require('../../models/order');
 
 module.exports.index = async (req, res) => {
     try {
@@ -58,39 +59,7 @@ module.exports.index = async (req, res) => {
     }
 };
 
-module.exports.placeOrder = async (req, res) => {
-    try {
-        const { productId, quantity } = req.body;
-        const buyerId = req.session.login;
 
-        if (!buyerId) {
-            return res.status(401).json({ success: false, message: 'Please log in first.' });
-        }
-
-        // Find the product and populate the seller
-        const product = await Product.findById(productId).populate('seller', 'firstName lastName');
-
-        if (!product) {
-            return res.status(404).json({ success: false, message: 'Product not found.' });
-        }
-
-        const totalPrice = product.minPrice * quantity;
-        const newOrder = new Order({
-            buyer: buyerId,
-            seller: product.seller,
-            product: productId,
-            quantity,
-            totalPrice,
-            status: 'Pending'
-        });
-
-        await newOrder.save();
-        res.status(200).json({ success: true, message: 'Order placed successfully!' });
-    } catch (error) {
-        console.error('Error placing order:', error);
-        res.status(500).json({ success: false, message: 'Something went wrong.' });
-    }
-};
 
 module.exports.getProducts = async (req, res) => {
     try {
@@ -105,5 +74,62 @@ module.exports.getProducts = async (req, res) => {
     } catch (error) {
         console.error('Error fetching products:', error);
         res.status(500).send('Server Error');
+    }
+};
+
+module.exports.confirmPurchase = async (req, res) => {
+    try {
+        console.log("Request received:", req.body);  // ✅ Log the request data
+
+        const { productId, quantity } = req.body;
+
+        // Validate user login
+        const buyer = await User.findById(req.session.login);
+        if (!buyer) {
+            console.error("User not logged in");
+            return res.status(401).json({ success: false, message: 'User not logged in' });
+        }
+
+        // Validate product
+        const product = await Product.findById(productId).populate('seller');
+        if (!product) {
+            console.error("Product not found:", productId);
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+
+        // Debugging logs
+        console.log("Buyer:", buyer);
+        console.log("Product:", product);
+
+        // Calculate total price
+        const totalPrice = product.minPrice * quantity;
+
+        // Create new order
+        const newOrder = new Order({
+            buyer: buyer._id,
+            seller: product.seller._id,
+            product: product._id,
+            quantity,
+            totalPrice
+        });
+
+        await newOrder.save();
+        console.log("Order saved:", newOrder);
+
+        // Create notification for the seller
+        const newNotification = new Notification({
+            user: product.seller._id,
+            message: `New order: ${buyer.firstName} purchased ${quantity}kg of ${product.name}.`,
+            status: 'unread'
+        });
+
+        await newNotification.save();
+        console.log("Notification saved:", newNotification);
+
+        res.json({ success: true, message: 'Purchase confirmed and seller notified' });
+
+    } catch (error) {
+        console.error('Error confirming purchase:', error);  // ✅ Show error details
+        res.status(500).json({ success: false, message: 'Something went wrong.' });
     }
 };

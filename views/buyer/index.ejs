@@ -157,9 +157,8 @@
                                     '<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %>',
                                     '<%= product.seller ? product.seller.firstName + ' ' + product.seller.lastName : 'Unknown Seller' %>',
                                     '<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : '/public/img/default.png' %>',
-                                    '<%= product.auctionDate %>',
-                                    '<%= product.startTime %>',
-                                    '<%= product.endTime %>'
+                                    '<%= product.auctionStart %>',
+                                    '<%= product.auctionEnd %>'
                                 )">Participate</button>
                             <% } %>
                         </div>
@@ -187,6 +186,7 @@
                                 <% } else if (product.productType === 'wholesale') { %>
                                     <p>Minimum Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
                                 <% } %>
+        
                                 <% if (product.productType === 'retail') { %>
                                     <button class="showbuyer" 
                                         onclick="openBuyNowModal(
@@ -196,13 +196,21 @@
                                             '<%= product.productInfo %>', 
                                             '<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %>', 
                                             '<%= product.seller && product.seller.firstName && product.seller.lastName ? product.seller.firstName + ' ' + product.seller.lastName : 'Unknown Seller' %>',
-                                            '<%= product.image ? '/img/product/' + product.image.split('/').pop() : '/img/default.png' %>' 
+                                            '<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : '/public/img/default.png' %>' 
                                         )">
                                     Buy Now
-                                </button>
-
+                                    </button>
                                 <% } else if (product.productType === 'wholesale') { %>
-                                    <button class="participated" onclick="participateAuction('<%= product._id %>')">Participate</button>
+                                    <button class="participated" onclick="openParticipateModal(
+                                        '<%= product._id %>',
+                                        '<%= product.name %>',
+                                        '<%= product.productType %>',
+                                        '<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %>',
+                                        '<%= product.seller ? product.seller.firstName + ' ' + product.seller.lastName : 'Unknown Seller' %>',
+                                        '<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : '/public/img/default.png' %>',
+                                        '<%= product.auctionStart %>',
+                                        '<%= product.auctionEnd %>'
+                                    )">Participate</button>
                                 <% } %>
                             </div>
                         <% }) %>  <!-- End of loop through products -->
@@ -241,12 +249,12 @@
         <p><strong>Type:</strong> <span id="auctionProductType"></span></p>
         <p><strong>Minimum Price:</strong> ₱<span id="auctionProductPrice"></span></p>
         <p><strong>Seller:</strong> <span id="auctionProductSeller"></span></p>
-        <p><strong>Auction Date:</strong> <span id="auctionDate"></span></p>
-        <p><strong>Start Time:</strong> <span id="auctionStartTime"></span></p>
-        <p><strong>End Time:</strong> <span id="auctionEndTime"></span></p>
+        <p><strong>Session Start Date & Time:</strong> <span id="auctionStartTime"></span></p>
+        <p><strong>Session End Date & Time:</strong> <span id="auctionEndTime"></span></p>
         <button onclick="confirmParticipation()">Confirm Participation</button>
     </div>
 </div>
+
 
            
     </main>
@@ -299,27 +307,6 @@ function toggleSettingsDropdown() {
     settingsDropdown.style.display = (settingsDropdown.style.display === "block" ? "none" : "block");
 }
 
-// Function to show the modal and populate it with product information
-function participateInAuction() {
-    const modal = document.getElementById("auctionModal");
-
-    // Example product data (this can be dynamic from the server)
-    const productName = "Fresh Cavendish Bananas";
-    const productImage = "https://via.placeholder.com/150";
-    const productDescription = "Freshly picked Cavendish bananas, great for smoothies and desserts!";
-    const startingBid = "$7.58";
-    const timeLeft = "10:00";
-
-    // Populate the modal with the product information
-    document.getElementById("productName").textContent = productName;
-    document.getElementById("productImage").src = productImage;
-    document.getElementById("productDescription").textContent = productDescription;
-    document.getElementById("startingBid").textContent = startingBid;
-    document.getElementById("timeLeft").textContent = timeLeft;
-
-    // Display the modal
-    modal.style.display = "block";
-}
 
 // Function to close the modal
 function closeModal() {
@@ -469,79 +456,73 @@ function closeModal() {
     document.getElementById('buyNowModal').style.display = 'none';
 }
 
-document.querySelectorAll('.buyNowBtn').forEach(button => {
-    button.addEventListener('click', function() {
-        // Get data attributes from the clicked button
-        const productId = this.getAttribute('data-id');
-        const productName = this.getAttribute('data-name');
-        const productPrice = this.getAttribute('data-price');
-        const productDescription = this.getAttribute('data-description');
-        const productImage = this.getAttribute('data-image'); // Ensure correct path
 
-        console.log("Clicked Product Image URL:", productImage);  // Debugging
 
-        // Open the modal with product details
-        openBuyNowModal(
-            productId,
-            productName,
-            "Some Type",  // Modify if you have actual product types
-            productDescription,
-            productPrice,
-            "Seller Name",  // Modify to use the actual seller name if available
-            productImage
-        );
-
-        // Show the modal using Bootstrap
-        const modal = new bootstrap.Modal(document.getElementById('buyNowModal'));
-        modal.show();
-
-        // Handle the "Buy Now" button inside the modal
-        document.getElementById('placeOrderBtn').onclick = function() {
-            const quantity = document.getElementById('productQuantity').value;
-
-            // Send order request
-            fetch('/place-order', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    productId: productId,
-                    quantity: quantity
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Order placed successfully!');
-                    modal.hide();  // Close the modal after successful order
-                } else {
-                    alert(data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error placing order:', error);
-                alert('Something went wrong.');
-            });
-        };
-    });
-});
-
-function openParticipateModal(id, name, type, price, seller, image, date, startTime, endTime) {
+function openParticipateModal(productId, name, productType, minPrice, seller, image, startTime, endTime) {
     document.getElementById("auctionProductName").textContent = name;
-    document.getElementById("auctionProductType").textContent = type;
-    document.getElementById("auctionProductPrice").textContent = price;
+    document.getElementById("auctionProductType").textContent = productType;
+    document.getElementById("auctionProductPrice").textContent = minPrice;
     document.getElementById("auctionProductSeller").textContent = seller;
     document.getElementById("modal-auction-image").src = image;
-    document.getElementById("auctionDate").textContent = date;
-    document.getElementById("auctionStartTime").textContent = startTime;
-    document.getElementById("auctionEndTime").textContent = endTime;
+
+    // Format and display start and end times with both date and time
+    document.getElementById("auctionStartTime").textContent = formatDateTime(startTime);
+    document.getElementById("auctionEndTime").textContent = formatDateTime(endTime);
+
     document.getElementById("participateModal").style.display = "block";
 }
 
+// Function to format date and time properly
+function formatDateTime(dateTime) {
+    const date = new Date(dateTime);
+    return date.toLocaleString(); // Formats as "MM/DD/YYYY, HH:MM:SS AM/PM"
+}
+
+// Close modal function
 function closeParticipateModal() {
     document.getElementById("participateModal").style.display = "none";
 }
+
+
+// Function to format date (YYYY-MM-DD to readable format)
+function formatDate(dateTime) {
+    if (!dateTime) return "N/A";
+    const date = new Date(dateTime);
+    return date.toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+// Function to format time (HH:mm format)
+function formatTime(dateTime) {
+    if (!dateTime) return "N/A";
+    const date = new Date(dateTime);
+    return date.toLocaleTimeString("en-US", { hour: '2-digit', minute: '2-digit', hour12: true });
+}
+
+// Frontend Function to Confirm Purchase
+function confirmBuyNow() {
+    const productId = document.getElementById("productName").getAttribute("data-id");
+    const quantity = document.getElementById("quantity").value;
+
+    fetch('/buyer/confirm-purchase', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId, quantity })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("Purchase confirmed!");
+            location.reload();
+        } else {
+            alert("Something went wrong: " + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert("Something went wrong. Please try again.");
+    });
+}
+
 
 </script>
 

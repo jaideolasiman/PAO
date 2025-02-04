@@ -56,7 +56,7 @@ module.exports = function (app) {
   app.post('/farmer/addProduct', farmerIndexController.addProduct);
 
   app.get('/buyer/index', buyerIndexController.index);
-  app.post('/buyer/placeOrder', orderController.placeOrder);
-   app.post('/buyer/getProducts', orderController.getProducts);
+  app.post('/buyer/confirm-purchase', buyerIndexController.index);
+  app.post('/buyer/getProducts', orderController.getProducts);
   
 };

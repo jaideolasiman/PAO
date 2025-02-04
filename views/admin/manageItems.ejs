@@ -35,6 +35,8 @@
                                   <th>Category</th>
                                   <th>Price</th>
                                   <th>Product Image</th>
+                                  <th>Auction Start Date & Time</th>
+                                  <th>Auction End Date & Time</th>
                                   <th>Action</th>
                                 </tr>
                               </thead>
@@ -51,6 +53,8 @@
                                       <img src="<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : '/public/img/default.png' %>"
                                            alt="<%= product.name %>" class="product-image" width="50">
                                     </td>
+                                     <td><%= product.auctionStart ? product.auctionStart.toLocaleString() : 'N/A' %></td>
+                                     <td><%= product.auctionEnd ? product.auctionEnd.toLocaleString() : 'N/A' %></td>
                                     <!-- This part is inside your 'Action' column where the 'Delete' button appears if the product is rejected -->
                                 <td>
                                   <% if (product.status === 'pending') { %>

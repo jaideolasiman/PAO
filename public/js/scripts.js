@@ -8,24 +8,26 @@ function closeModal() {
     document.getElementById("productModal").style.display = "none";
 }
 
-// Function to toggle auction fields based on product type (wholesale/retail)
-function toggleAuctionFields(isWholesale) {
-    const auctionFields = document.getElementById("auctionFields");
-    auctionFields.style.display = isWholesale ? "block" : "none";
-}
 
-// Ensure the correct auction field visibility on page load
-document.addEventListener("DOMContentLoaded", function () {
-    const wholesaleSelected = document.getElementById("wholesaleProduct").checked;
-    toggleAuctionFields(wholesaleSelected);
-});
 
+// Handle the form submission via AJAX
 // Handle the form submission via AJAX
 $(document).ready(function () {
     $("#productFormSubmit").on("submit", function (e) {
         e.preventDefault(); // Prevent default form submission
 
         var formData = new FormData(this); // Get form data (including file)
+        
+        // Convert auction date fields to Philippine Time (PHT)
+        if (formData.get("auctionStart")) {
+            let auctionStart = new Date(formData.get("auctionStart"));
+            formData.set("auctionStart", auctionStart.toLocaleString("en-PH", { timeZone: "Asia/Manila" }));
+        }
+        
+        if (formData.get("auctionEnd")) {
+            let auctionEnd = new Date(formData.get("auctionEnd"));
+            formData.set("auctionEnd", auctionEnd.toLocaleString("en-PH", { timeZone: "Asia/Manila" }));
+        }
         
         $.ajax({
             url: "/farmer/addProduct", // Backend route
@@ -46,12 +48,19 @@ $(document).ready(function () {
     });
 });
 
-// Close the modal if the user clicks outside of it
-window.addEventListener("click", function (event) {
-    const modal = document.getElementById("productModal");
-    if (event.target === modal) {
-        closeModal();
-    }
+
+// Function to show/hide auction fields based on product type selection
+function toggleAuctionFields(show) {
+    document.getElementById("auctionFields").style.display = show ? "block" : "none";
+}
+
+// Convert auction date and time to Philippine format (for displaying)
+document.addEventListener("DOMContentLoaded", function () {
+    let auctionStart = "<%= product && product.auctionStart ? moment(product.auctionStart).tz('Asia/Manila').format('MMMM D, YYYY h:mm A') : '' %>";
+    let auctionEnd = "<%= product && product.auctionEnd ? moment(product.auctionEnd).tz('Asia/Manila').format('MMMM D, YYYY h:mm A') : '' %>";
+
+    if (auctionStart) document.getElementById("auctionStart").value = auctionStart;
+    if (auctionEnd) document.getElementById("auctionEnd").value = auctionEnd;
 });
 
 // Toggle profile dropdown visibility

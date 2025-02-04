@@ -9,6 +9,8 @@ const productSchema = new mongoose.Schema({
     image: { type: String, required: true }, // Storing the relative image path
     seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' }, // Add this field
+    auctionStart: { type: Date, default: null }, // New field for auction start time
+    auctionEnd: { type: Date, default: null } // New field for auction end time
     
 });
 
