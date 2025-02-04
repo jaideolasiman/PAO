@@ -135,7 +135,7 @@
                             <% } else if (product.productType === 'wholesale') { %>
                                 <p>Minimum Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
                             <% } %>
-        
+            
                             <% if (product.productType === 'retail') { %>
                                 <button class="showbuyer" 
                                     onclick="openBuyNowModal(
@@ -144,14 +144,23 @@
                                         '<%= product.productType %>', 
                                         '<%= product.productInfo %>', 
                                         '<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %>', 
-                                        '<%= product.seller && product.seller.firstName && product.seller.lastName ? product.seller.firstName + ' ' + product.seller.lastName : 'Unknown Seller' %>',
-                                        '<%= product.image ? '/img/product/' + product.image.split('/').pop() : '/img/default.png' %>' 
+                                        '<%= product.seller ? product.seller.firstName + ' ' + product.seller.lastName : 'Unknown Seller' %>',
+                                        '<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : '/public/img/default.png' %>' 
                                     )">
                                 Buy Now
-                            </button>
-
+                                </button>
                             <% } else if (product.productType === 'wholesale') { %>
-                                <button class="participated" onclick="participateAuction('<%= product._id %>')">Participate</button>
+                                <button class="participated" onclick="openParticipateModal(
+                                    '<%= product._id %>',
+                                    '<%= product.name %>',
+                                    '<%= product.productType %>',
+                                    '<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %>',
+                                    '<%= product.seller ? product.seller.firstName + ' ' + product.seller.lastName : 'Unknown Seller' %>',
+                                    '<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : '/public/img/default.png' %>',
+                                    '<%= product.auctionDate %>',
+                                    '<%= product.startTime %>',
+                                    '<%= product.endTime %>'
+                                )">Participate</button>
                             <% } %>
                         </div>
                     <% }); %>
@@ -221,27 +230,24 @@
         <input type="number" id="quantity" min="1" value="1">
         <button onclick="confirmBuyNow()">Confirm Purchase</button>
     </div>
+</div>       
+<!-- Participate Modal -->
+<div id="participateModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeParticipateModal()">&times;</span>
+        <h2>Auction Details</h2>
+        <img id="modal-auction-image" src="" alt="Auction Product" style="width: 100%; max-height: 300px; object-fit: contain;">
+        <p><strong>Name:</strong> <span id="auctionProductName"></span></p>
+        <p><strong>Type:</strong> <span id="auctionProductType"></span></p>
+        <p><strong>Minimum Price:</strong> ₱<span id="auctionProductPrice"></span></p>
+        <p><strong>Seller:</strong> <span id="auctionProductSeller"></span></p>
+        <p><strong>Auction Date:</strong> <span id="auctionDate"></span></p>
+        <p><strong>Start Time:</strong> <span id="auctionStartTime"></span></p>
+        <p><strong>End Time:</strong> <span id="auctionEndTime"></span></p>
+        <button onclick="confirmParticipation()">Confirm Participation</button>
+    </div>
 </div>
 
-        
-        
-        
-            <!-- Modal Structure -->
-            <div id="auctionModal" class="modal">
-                <div class="modal-content">
-                    <h3 id="productName">Product Name</h3>
-                    <img id="productImage" src="" alt="Product Image" class="product-img">
-                    <p id="productDescription">Product Description</p>
-                    <p><strong>Starting Bid:</strong> <span id="startingBid">$0.00</span></p>
-                    <p><strong>Time Left:</strong> <span id="timeLeft">10:00</span></p>
-                    <h3>Auction Session Info:</h3>
-                    <p><strong>Start Auction Session:</strong> 2024-12-20 10:00 AM</p>
-                    <p><strong>End Auction Session:</strong> 2024-12-20 06:00 PM</p>
-                    <p><strong>Session Date:</strong> 2024-12-20</p>
-                    <button onclick="confirmParticipation()">Participate in Auction</button>
-                    <button onclick="closeModal()">Close</button>
-                </div>
-            </div>
            
     </main>
 
@@ -520,6 +526,22 @@ document.querySelectorAll('.buyNowBtn').forEach(button => {
         };
     });
 });
+
+function openParticipateModal(id, name, type, price, seller, image, date, startTime, endTime) {
+    document.getElementById("auctionProductName").textContent = name;
+    document.getElementById("auctionProductType").textContent = type;
+    document.getElementById("auctionProductPrice").textContent = price;
+    document.getElementById("auctionProductSeller").textContent = seller;
+    document.getElementById("modal-auction-image").src = image;
+    document.getElementById("auctionDate").textContent = date;
+    document.getElementById("auctionStartTime").textContent = startTime;
+    document.getElementById("auctionEndTime").textContent = endTime;
+    document.getElementById("participateModal").style.display = "block";
+}
+
+function closeParticipateModal() {
+    document.getElementById("participateModal").style.display = "none";
+}
 
 </script>
 
