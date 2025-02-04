@@ -87,9 +87,7 @@ function toggleCategories() {
 }
 
 // Function to filter products based on category
-function filterProducts(category) {
-    console.log("Filtering products by: " + category);
-}
+
 
 // Function to check if user is logged in before accessing product details or adding to cart
 let isLoggedIn = false; // Change this to true for a logged-in user simulation
@@ -120,29 +118,22 @@ function updateClock() {
 // Start clock updates
 updateClock();
 setInterval(updateClock, 1000);
-document.addEventListener("DOMContentLoaded", function () {
-        showAllProducts(); // Show all products when the page loads
+
+function filterProducts(categoryId) {
+    console.log('Filtering for category ID:', categoryId); // Check category id value
+
+    const allProducts = document.querySelectorAll('.category-section');
+    allProducts.forEach(section => {
+        const categoryIdFromSection = section.getAttribute('data-category-id');
+        console.log('Product category id:', categoryIdFromSection); // Check product category id
+
+        if (categoryId === categoryIdFromSection || categoryId === 'all') {
+            section.style.display = 'block';
+        } else {
+            section.style.display = 'none';
+        }
     });
-
-    function filterProducts(categoryId) {
-        let categorySections = document.querySelectorAll('.category-section');
-
-        categorySections.forEach(section => {
-            if (section.getAttribute('data-category-id') === categoryId) {
-                section.style.display = "block"; // Show selected category
-            } else {
-                section.style.display = "none"; // Hide others
-            }
-        });
-    }
-
-    function showAllProducts() {
-        let categorySections = document.querySelectorAll('.category-section');
-        categorySections.forEach(section => {
-            section.style.display = "block"; // Show all products
-        });
-    }
-    
+} 
 function searchProducts() {
         let input = document.getElementById('searchInput').value.toLowerCase();
         let products = document.querySelectorAll('.product');
@@ -178,3 +169,12 @@ function openProductDetails(id, name, price, image) {
     function hideProductDetails() {
         document.getElementById("productDetailsPopup").style.display = "none";
     }
+    function fetchNotifications() {
+        fetch('/farmer/notifications')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("notificationCount").innerText = data.count;
+            });
+    }
+
+    setInterval(fetchNotifications, 5000); // Refresh every 5 seconds

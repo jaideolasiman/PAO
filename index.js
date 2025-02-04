@@ -7,6 +7,7 @@ const flash = require('express-flash');
 const dbConnect = require('./database/dbConnect');
 const conn = dbConnect();
 const User = require('./models/user');
+const Product = require('./models/product');
 const app = express();
 
 
@@ -43,8 +44,6 @@ app.use((req, res, next) => {
 
 // Load web routes
 require('./routes/web')(app);
-
-
 // Get user from session
 app.use((req, res, next) => {
     if (!req.session.login) {
@@ -66,4 +65,11 @@ app.use(async (req, res, next) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on localhost:${PORT}`);
+});
+
+app.get('/farmer/notifications', async (req, res) => {
+  if (!req.session.login) return res.json({ count: 0 });
+
+  const count = await Notification.countDocuments({ user: req.session.login, status: 'unread' });
+  res.json({ count });
 });

@@ -11,6 +11,8 @@ const adminManageCategoryController = require('../controllers/admin/manageCatego
 const adminManageUserController = require('../controllers/admin/manageUsersController');
 const adminManageAuctionController = require('../controllers/admin/manageAuctionController');
 const adminManageItemController = require('../controllers/admin/manageItemsController');
+const Notification = require('../models/notification');
+
 
 
 
@@ -18,6 +20,7 @@ const farmerIndexController = require('../controllers/farmer/indexController');
 const productController = require('../controllers/farmer/productController');
 
 const buyerIndexController = require('../controllers/buyer/indexController');
+const orderController = require('../controllers/buyer/orderController');
 
 module.exports = function (app) {
   app.get('/login', authLoginController.login);
@@ -43,11 +46,17 @@ module.exports = function (app) {
   app.post('/admin/manageUsers/deactivate/:id', adminManageUserController.deactivateUser); // Added
   app.get('/admin/manageAuction', adminManageAuctionController.index);
   app.get('/admin/manageItem', adminManageItemController.index);
-  
+  app.post('/admin/manageItem/approve/:id', adminManageItemController.approveProduct);
+  app.post('/admin/manageItem/reject/:id', adminManageItemController.rejectProduct);
+  app.post('/admin/manageItem/delete/:id', adminManageItemController.deleteProduct);
 
-  // For the farmer routes
+  app.get('/farmer/notification', farmerIndexController.markNotificationAsRead);
+
   app.get('/farmer/index', farmerIndexController.index);  // Ensure this is correct
   app.post('/farmer/addProduct', farmerIndexController.addProduct);
 
   app.get('/buyer/index', buyerIndexController.index);
+  app.post('/buyer/placeOrder', orderController.placeOrder);
+   app.post('/buyer/getProducts', orderController.getProducts);
+  
 };

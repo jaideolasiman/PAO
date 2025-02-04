@@ -7,6 +7,8 @@ const productSchema = new mongoose.Schema({
     minPrice: { type: Number, required: true },
     productInfo: { type: String, required: true },
     image: { type: String, required: true }, // Storing the relative image path
+    seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' }, // Add this field
     
 });
 

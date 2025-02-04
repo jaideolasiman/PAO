@@ -1,36 +1,103 @@
-const Product = require('../../models/product');  // Import your product model
+// controllers/admin/manageItemsController.js
+const Product = require('../../models/product');
 const User = require('../../models/user');
-const SITE_TITLE = 'PAO';
+const Notification = require('../../models/notification'); // Import Notification model
 
 module.exports.index = async (req, res) => {
   try {
-    if (!req.session.login) {
-      console.log("User not logged in, redirecting to login.");
-      return res.redirect('/login');
-    }
-
     const userLogin = await User.findById(req.session.login);
-    console.log("Logged-in User:", userLogin);
-
-    if (userLogin.role.toLowerCase() !== 'admin') {
-      console.warn(`Access Denied: User ${userLogin.email} is not an Admin.`);
+    if (!userLogin || userLogin.role.toLowerCase() !== 'admin') {
       return res.status(403).send('Access Denied: Admins only');
     }
 
-    // Fetch products and populate the category field with the actual category data
-    const products = await Product.find().populate('category', 'name');  // Populate the category field with 'name'
+    const products = await Product.find()
+      .populate('category', 'name')
+      .populate('seller');
 
     res.render('admin/manageItems', {
-      site_title: SITE_TITLE,
-      title: 'Manage Item',
+      site_title: 'PAO',
+      title: 'Manage Items',
       session: req.session,
-      products,  // Pass the populated products
+      products,
       userLogin,
     });
   } catch (error) {
     console.error('Error displaying Manage Item:', error);
-    res.status(500).render('500', {
-      error: 'An error occurred while loading the Manage Item page.',
-    });
+    res.status(500).render('500', { error: 'An error occurred while loading the Manage Item page.' });
+  }
+};
+
+// Approve product
+// Approve product
+module.exports.approveProduct = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const product = await Product.findByIdAndUpdate(productId, { status: 'approved' }, { new: true });
+
+    if (product) {
+      const seller = await User.findById(product.seller);
+      if (seller) {
+        await Notification.create({
+          user: seller._id,
+          message: `Your product "${product.name}" has been approved.`,
+        });
+      }
+    }
+    res.redirect('/admin/manageItem');
+  } catch (error) {
+    console.error('Error approving product:', error);
+    res.redirect('/admin/manageItem');
+  }
+};
+
+// Reject product and delete it from the database
+// Reject Product
+module.exports.rejectProduct = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const product = await Product.findByIdAndUpdate(productId, { status: 'rejected' }, { new: true });
+
+    if (product) {
+      const seller = await User.findById(product.seller);
+      if (seller) {
+        // Save notification for the farmer
+        await Notification.create({
+          user: seller._id,
+          message: `Your product "${product.name}" has been rejected. Please check your product and upload it again.`,
+        });
+      }
+    }
+    res.redirect('/admin/manageItem');
+  } catch (error) {
+    console.error('Error rejecting product:', error);
+    res.redirect('/admin/manageItem');
+  }
+};
+
+// Delete Product (This will delete the product from the database entirely)
+// Delete Product (This will delete the product from the database entirely)
+module.exports.deleteProduct = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    
+    // Find and remove the product by its ID
+    const product = await Product.findByIdAndRemove(productId);
+
+    if (product) {
+      // Notify the seller (farmer) that the product has been deleted
+      const seller = await User.findById(product.seller);
+      if (seller) {
+        await Notification.create({
+          user: seller._id,
+          message: `Your product "${product.name}" has been deleted permanently.`,
+        });
+      }
+    }
+
+    // Redirect back to the admin page after deletion
+    res.redirect('/admin/manageItem');
+  } catch (error) {
+    console.error('Error deleting product:', error);
+    res.redirect('/admin/manageItem');
   }
 };

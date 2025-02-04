@@ -115,18 +115,19 @@
                 <input type="text" id="searchInput" placeholder="Search for a product..." onkeyup="searchProducts()">
                 <button>Search</button>
             </div>
+            
         </div>
         
         <section id="all-products-section" class="product-list">
             <h2>All Products</h2>
             <div class="product-grid">
                 <% if (products && products.length > 0) { %>
-                    <% products.forEach(product => { %>
+                    <% products.forEach(function(product) { %>
                         <div class="product">
                             <div class="product-image-container">
-                                <img src="<%= product.image ? '/public/img/product/' + (product.image.split('/').pop() || '') : '/public/img/default.png' %>" 
-                                    alt="<%= product.name %>" 
-                                    class="product-image">
+                                <img src="<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : '/public/img/default.png' %>" 
+                                     alt="<%= product.name %>" 
+                                     class="product-image">
                             </div>
                             <h4><%= product.name %></h4>
                             <% if (product.productType === 'retail') { %>
@@ -134,27 +135,42 @@
                             <% } else if (product.productType === 'wholesale') { %>
                                 <p>Minimum Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
                             <% } %>
-                            <button class="buynow" onclick="buynow()">Buy Now</button>
+        
+                            <% if (product.productType === 'retail') { %>
+                                <button class="showbuyer" 
+                                    onclick="openBuyNowModal(
+                                        '<%= product._id %>', 
+                                        '<%= product.name %>', 
+                                        '<%= product.productType %>', 
+                                        '<%= product.productInfo %>', 
+                                        '<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %>', 
+                                        '<%= product.seller && product.seller.firstName && product.seller.lastName ? product.seller.firstName + ' ' + product.seller.lastName : 'Unknown Seller' %>',
+                                        '<%= product.image ? '/img/product/' + product.image.split('/').pop() : '/img/default.png' %>' 
+                                    )">
+                                Buy Now
+                            </button>
+
+                            <% } else if (product.productType === 'wholesale') { %>
+                                <button class="participated" onclick="participateAuction('<%= product._id %>')">Participate</button>
+                            <% } %>
                         </div>
-                    <% }) %>
+                    <% }); %>
                 <% } else { %>
                     <p>No products available.</p>
                 <% } %>
             </div>
         </section>
         
-        <!-- Grouped by Category -->
         <section id="category-products-section">
-            <% groupedProducts.forEach(group => { %>
+            <% groupedProducts.forEach(group => { %>  <!-- Loop through groupedProducts -->
                 <div class="category-section" data-category-id="<%= group.category._id %>">
-                    
                     <div class="product-container">
-                        <% group.products.forEach(product => { %>
+                        <% group.products.forEach(product => { %> <!-- Loop through each product -->
                             <div class="product">
                                 <div class="product-image-container">
                                     <img src="<%= product.image ? '/public/img/product/' + (product.image.split('/').pop() || '') : '/public/img/default.png' %>" 
-                                        alt="<%= product.name %>" 
-                                        class="product-image">
+                                         alt="<%= product.name %>" 
+                                         class="product-image">
                                 </div>
                                 <h4><%= product.name %></h4>
                                 <% if (product.productType === 'retail') { %>
@@ -162,13 +178,52 @@
                                 <% } else if (product.productType === 'wholesale') { %>
                                     <p>Minimum Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
                                 <% } %>
-                                <button class="buynow" onclick="buynow()">Buy Now</button>
+                                <% if (product.productType === 'retail') { %>
+                                    <button class="showbuyer" 
+                                        onclick="openBuyNowModal(
+                                            '<%= product._id %>', 
+                                            '<%= product.name %>', 
+                                            '<%= product.productType %>', 
+                                            '<%= product.productInfo %>', 
+                                            '<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %>', 
+                                            '<%= product.seller && product.seller.firstName && product.seller.lastName ? product.seller.firstName + ' ' + product.seller.lastName : 'Unknown Seller' %>',
+                                            '<%= product.image ? '/img/product/' + product.image.split('/').pop() : '/img/default.png' %>' 
+                                        )">
+                                    Buy Now
+                                </button>
+
+                                <% } else if (product.productType === 'wholesale') { %>
+                                    <button class="participated" onclick="participateAuction('<%= product._id %>')">Participate</button>
+                                <% } %>
                             </div>
-                        <% }) %>
+                        <% }) %>  <!-- End of loop through products -->
                     </div>
                 </div>
-            <% }) %>
+            <% }) %>  <!-- End of loop through groupedProducts -->
         </section>
+        
+        
+
+
+<!-- Buy Now Modal -->
+<div id="buyNowModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Product Details</h2>
+         <!-- Product Image -->
+        <img id="modal-product-image" src="/img/default.png" alt="Product Image" style="width: 100%; max-height: 300px; object-fit: contain;">
+        <p><strong>Name:</strong> <span id="productName"></span></p>
+        <p><strong>Type:</strong> <span id="productType"></span></p>
+        <p><strong>Description:</strong> <span id="productDescription"></span></p>
+        <p><strong>Price (per kilo):</strong> <span id="productPrice"></span></p>
+        <p><strong>Seller:</strong> <span id="productSeller"></span></p>
+        <label for="quantity">Quantity (kg):</label>
+        <input type="number" id="quantity" min="1" value="1">
+        <button onclick="confirmBuyNow()">Confirm Purchase</button>
+    </div>
+</div>
+
+        
         
         
             <!-- Modal Structure -->
@@ -194,7 +249,7 @@
         <div class="footer-left">
             <button id="notificationButton" class="notification-button">
                 <img src="/public/img/bell.png" alt="Notification Icon" class="notification-icon">
-                <span class="notification-count" id="notificationCount">0</span>
+                <span class="notification-count" id="notificationCount"><%= notifications.length %></span>
             </button>
             <div id="notificationContainer" class="notification-container">
                 <div class="notification-message">You have a new message!</div>
@@ -284,15 +339,6 @@ window.onclick = function(event) {
     }
 }
 
-// Notification toggle
-document.getElementById('notificationButton').addEventListener('click', function() {
-    const notificationContainer = document.getElementById('notificationContainer');
-    notificationContainer.style.display = notificationContainer.style.display === 'block' ? 'none' : 'block';
-    
-    // If there are unread messages, you can update the notification count and display the messages here
-    const notificationCount = document.getElementById('notificationCount');
-    notificationCount.innerText = '1'; // Example: Update the count dynamically based on unread messages
-});
 
 // Function to display current time and update every second
 function updateClock() {
@@ -326,16 +372,6 @@ setInterval(updateClock, 1000);
       // Simulate user authentication state
       let isLoggedIn = false; // Change this to `true` to simulate a logged-in user
 
-// Function to handle product detail access
-function accessProductDetails(event) {
-    if (!isLoggedIn) {
-        event.preventDefault();
-        alert("You need to register and log in to access product details.");
-    } else {
-        window.open("product-details.html", "_blank");
-    }
-}
-
 
 document.getElementById('closeModal').addEventListener('click', closeModal);
 
@@ -348,7 +384,6 @@ window.onclick = function (event) {
 document.addEventListener("DOMContentLoaded", function() {
         showAllProducts();
     });
-
     function showAllProducts() {
         document.getElementById("all-products-section").style.display = "block";
         document.getElementById("category-products-section").style.display = "none";
@@ -391,7 +426,103 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     }
+     function fetchNotifications() {
+        fetch('/farmer/notifications')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("notificationCount").innerText = data.count;
+            });
+    }
+
+    setInterval(fetchNotifications, 5000); // Refresh every 5 seconds
+
+    function openBuyNowModal(productId, name, productType, productInfo, price, seller, imageUrl) {
+    console.log("Image URL:", imageUrl);  // Debugging: Check if the URL is correct
+
+    // Set modal values
+    document.getElementById('productName').innerText = name;
+    document.getElementById('productType').innerText = productType;
+    document.getElementById('productDescription').innerText = productInfo;
+    document.getElementById('productPrice').innerText = `₱${price}`;
+    document.getElementById('productSeller').innerText = seller;
+
+    // Set the image source correctly
+    const modalImage = document.getElementById('modal-product-image');
+    modalImage.src = imageUrl;
+    
+    // Fallback if the image fails to load
+    modalImage.onerror = function () {
+        this.src = '/img/default.png'; // Default image
+    };
+
+    // Show modal
+    document.getElementById('buyNowModal').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('buyNowModal').style.display = 'none';
+}
+
+document.querySelectorAll('.buyNowBtn').forEach(button => {
+    button.addEventListener('click', function() {
+        // Get data attributes from the clicked button
+        const productId = this.getAttribute('data-id');
+        const productName = this.getAttribute('data-name');
+        const productPrice = this.getAttribute('data-price');
+        const productDescription = this.getAttribute('data-description');
+        const productImage = this.getAttribute('data-image'); // Ensure correct path
+
+        console.log("Clicked Product Image URL:", productImage);  // Debugging
+
+        // Open the modal with product details
+        openBuyNowModal(
+            productId,
+            productName,
+            "Some Type",  // Modify if you have actual product types
+            productDescription,
+            productPrice,
+            "Seller Name",  // Modify to use the actual seller name if available
+            productImage
+        );
+
+        // Show the modal using Bootstrap
+        const modal = new bootstrap.Modal(document.getElementById('buyNowModal'));
+        modal.show();
+
+        // Handle the "Buy Now" button inside the modal
+        document.getElementById('placeOrderBtn').onclick = function() {
+            const quantity = document.getElementById('productQuantity').value;
+
+            // Send order request
+            fetch('/place-order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    productId: productId,
+                    quantity: quantity
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Order placed successfully!');
+                    modal.hide();  // Close the modal after successful order
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error placing order:', error);
+                alert('Something went wrong.');
+            });
+        };
+    });
+});
+
 </script>
+
     <script src="/public/js/scriptss.js"></script>
  
 </body>
