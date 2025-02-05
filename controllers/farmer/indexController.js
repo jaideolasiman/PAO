@@ -122,3 +122,39 @@ module.exports.markNotificationAsRead = async (req, res) => {
         res.redirect('/farmer/index');
     }
 };
+
+module.exports.processOrder = async (req, res) => {
+    try {
+        const { orderId, action } = req.body;
+        const order = await Order.findById(orderId);
+
+        if (!order) {
+            req.flash('error', 'Order not found.');
+            return res.redirect('/farmer/index');
+        }
+
+        if (action === 'approve') {
+            order.status = 'approved';
+            await Notification.create({
+                user: order.buyer,
+                message: `Your order for ${order.productName} has been approved.`,
+                status: 'unread'
+            });
+        } else if (action === 'reject') {
+            order.status = 'rejected';
+            await Notification.create({
+                user: order.buyer,
+                message: `Your order for ${order.productName} has been rejected.`,
+                status: 'unread'
+            });
+        }
+
+        await order.save();
+        req.flash('success', `Order ${action} successfully.`);
+        res.redirect('/farmer/index');
+    } catch (error) {
+        console.error('Error processing order:', error);
+        req.flash('error', 'Failed to process order.');
+        res.redirect('/farmer/index');
+    }
+};

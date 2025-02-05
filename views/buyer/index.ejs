@@ -227,18 +227,20 @@
     <div class="modal-content">
         <span class="close" onclick="closeModal()">&times;</span>
         <h2>Product Details</h2>
-         <!-- Product Image -->
+        <!-- Product Image -->
         <img id="modal-product-image" src="/img/default.png" alt="Product Image" style="width: 100%; max-height: 300px; object-fit: contain;">
         <p><strong>Name:</strong> <span id="productName"></span></p>
         <p><strong>Type:</strong> <span id="productType"></span></p>
         <p><strong>Description:</strong> <span id="productDescription"></span></p>
         <p><strong>Price (per kilo):</strong> <span id="productPrice"></span></p>
-        <p><strong>Seller:</strong> <span id="productSeller"></span></p>
+        <p><strong>Seller:</strong> <span id="productSeller"></span></p> <!-- Display Seller Name -->
         <label for="quantity">Quantity (kg):</label>
-        <input type="number" id="quantity" min="1" value="1">
+        <input type="number" id="quantity" min="1" value="1" oninput="updateTotalPrice()"> 
+        <p><strong>Total Price:</strong> ₱<span id="totalPrice">0.00</span></p> <!-- Display Total Price -->
         <button onclick="confirmBuyNow()">Confirm Purchase</button>
     </div>
-</div>       
+</div>
+      
 <!-- Participate Modal -->
 <div id="participateModal" class="modal">
     <div class="modal-content">
@@ -281,59 +283,38 @@
 // Toggle profile dropdown visibility
 function toggleProfileDropdown() {
     const dropdown = document.getElementById("profileDropdown");
-    // Toggle the display of the dropdown
     dropdown.style.display = (dropdown.style.display === "block" ? "none" : "block");
 }
-
-// Close the profile dropdown when the "Close" button is clicked
 function closeProfileDropdown() {
     const dropdown = document.getElementById("profileDropdown");
     // Simply hide the profile dropdown without logout functionality
     dropdown.style.display = "none";
 }
-
-// Optional: Automatically hide the dropdown when clicking outside of the dropdown or profile button
 window.onclick = function(event) {
     if (!event.target.matches('.profile-btn') && !event.target.matches('#profileDropdown') && !event.target.matches('.profile-info')) {
         // Hide the dropdown if clicking outside
         document.getElementById("profileDropdown").style.display = "none";
     }
 }
-
 // Toggle settings dropdown visibility
 function toggleSettingsDropdown() {
     const settingsDropdown = document.getElementById("settingsDropdown");
     // Toggle the display of the settings dropdown
     settingsDropdown.style.display = (settingsDropdown.style.display === "block" ? "none" : "block");
 }
-
-
-// Function to close the modal
 function closeModal() {
     const modal = document.getElementById("auctionModal");
     modal.style.display = "none";
 }
 function searchProducts() {
-    // Add logic for handling search functionality here
     console.log("Search button clicked");
 }
-
-// Function to confirm participation in the auction
-function confirmParticipation() {
-    alert("You have successfully participated in the auction!");
-    closeModal();
-}
-
-// Close the modal if the user clicks anywhere outside of it
 window.onclick = function(event) {
     const modal = document.getElementById("auctionModal");
     if (event.target === modal) {
         closeModal();
     }
 }
-
-
-// Function to display current time and update every second
 function updateClock() {
     const currentTime = document.getElementById('currentTime');
     const now = new Date();
@@ -342,28 +323,23 @@ function updateClock() {
     const seconds = now.getSeconds().toString().padStart(2, '0');
     currentTime.textContent = `${hours}:${minutes}:${seconds}`;
 }
-
-// Call updateClock immediately and then every second
 updateClock();
 setInterval(updateClock, 1000);
-
-  // Function to toggle the settings dropdown visibility
-    function toggleSettingsDropdown() {
-        const dropdown = document.getElementById('settingsDropdown');
-        dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
-    }
-
-    // Optional: Close the dropdown when clicking anywhere else on the page
-    window.onclick = function(event) {
-        const dropdown = document.getElementById('settingsDropdown');
-        if (!event.target.matches('.settings-button') && !event.target.matches('.settings-icon')) {
-            if (dropdown.style.display === 'block') {
-                dropdown.style.display = 'none';
-            }
+function toggleSettingsDropdown() {
+    const dropdown = document.getElementById('settingsDropdown');
+    dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
+}
+// Optional: Close the dropdown when clicking anywhere else on the page
+window.onclick = function(event) {
+    const dropdown = document.getElementById('settingsDropdown');
+    if (!event.target.matches('.settings-button') && !event.target.matches('.settings-icon')) {
+        if (dropdown.style.display === 'block') {
+            dropdown.style.display = 'none';
         }
-    };
-      // Simulate user authentication state
-      let isLoggedIn = false; // Change this to `true` to simulate a logged-in user
+    }
+};
+// Simulate user authentication state
+let isLoggedIn = false; // Change this to `true` to simulate a logged-in user
 
 
 document.getElementById('closeModal').addEventListener('click', closeModal);
@@ -377,27 +353,25 @@ window.onclick = function (event) {
 document.addEventListener("DOMContentLoaded", function() {
         showAllProducts();
     });
-    function showAllProducts() {
-        document.getElementById("all-products-section").style.display = "block";
-        document.getElementById("category-products-section").style.display = "none";
-    }
+function showAllProducts() {
+    document.getElementById("all-products-section").style.display = "block";
+    document.getElementById("category-products-section").style.display = "none";
+}
 
-    function filterProducts(categoryId) {
-        document.getElementById("all-products-section").style.display = "none";
-        document.getElementById("category-products-section").style.display = "block";
-        
-        document.querySelectorAll(".category-section").forEach(section => {
-            if (section.getAttribute("data-category-id") === categoryId) {
-                section.style.display = "block";
-            } else {
-                section.style.display = "none";
-            }
-        });
-    }
-    function searchProducts() {
-        let input = document.getElementById("searchInput").value.toLowerCase();
-        let products = document.querySelectorAll(".product");
-
+function filterProducts(categoryId) {
+    document.getElementById("all-products-section").style.display = "none";
+    document.getElementById("category-products-section").style.display = "block";
+    document.querySelectorAll(".category-section").forEach(section => {
+        if (section.getAttribute("data-category-id") === categoryId) {
+            section.style.display = "block";
+        } else {
+            section.style.display = "none";
+        }
+    });
+}
+function searchProducts() {
+    let input = document.getElementById("searchInput").value.toLowerCase();
+    let products = document.querySelectorAll(".product");
         products.forEach(product => {
             let productName = product.querySelector("h4").textContent.toLowerCase();
             
@@ -405,8 +379,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 product.style.display = "block"; // Show if it matches
             } else {
                 product.style.display = "none"; // Hide if it doesn't match
-            }
-        });
+    }
+});
 
         // Hide empty category sections
         document.querySelectorAll(".category-section").forEach(section => {
@@ -429,31 +403,71 @@ document.addEventListener("DOMContentLoaded", function() {
 
     setInterval(fetchNotifications, 5000); // Refresh every 5 seconds
 
-    function openBuyNowModal(productId, name, productType, productInfo, price, seller, imageUrl) {
-    console.log("Image URL:", imageUrl);  // Debugging: Check if the URL is correct
-
-    // Set modal values
-    document.getElementById('productName').innerText = name;
-    document.getElementById('productType').innerText = productType;
-    document.getElementById('productDescription').innerText = productInfo;
-    document.getElementById('productPrice').innerText = `₱${price}`;
-    document.getElementById('productSeller').innerText = seller;
-
-    // Set the image source correctly
-    const modalImage = document.getElementById('modal-product-image');
-    modalImage.src = imageUrl;
+ // Function to open the Buy Now modal with product details
+function openBuyNowModal(id, name, type, description, price, seller, image) {
+    document.getElementById('productName').textContent = name;
+    document.getElementById('productName').setAttribute('data-product-id', id);
+    document.getElementById('productType').textContent = type;
+    document.getElementById('productDescription').textContent = description;
+    document.getElementById('productPrice').textContent = price;
+    document.getElementById('productSeller').textContent = seller;
+    document.getElementById('modal-product-image').src = image;
     
-    // Fallback if the image fails to load
-    modalImage.onerror = function () {
-        this.src = '/img/default.png'; // Default image
-    };
-
-    // Show modal
-    document.getElementById('buyNowModal').style.display = 'block';
+    // Set default quantity to 1 and update total price accordingly
+    document.getElementById('quantity').value = 1;
+    updateTotalPrice();
+    
+    document.getElementById('buyNowModal').style.display = "block";
 }
 
+// Function to close the modal
 function closeModal() {
     document.getElementById('buyNowModal').style.display = 'none';
+}
+
+// Function to update total price based on quantity input
+function updateTotalPrice() {
+    const pricePerKilo = parseFloat(document.getElementById('productPrice').innerText) || 0;
+    const quantity = parseInt(document.getElementById('quantity').value) || 1;
+    
+    const totalPrice = pricePerKilo * quantity;
+    document.getElementById('totalPrice').innerText = totalPrice.toFixed(2);
+}
+
+// Ensure total price updates when quantity changes
+document.getElementById('quantity').addEventListener('input', updateTotalPrice);
+
+// Function to confirm purchase
+function confirmBuyNow() {
+    const productId = document.getElementById('productName').getAttribute('data-product-id'); 
+    const quantity = Number(document.getElementById('quantity').value);
+    const pricePerKilo = Number(document.getElementById('productPrice').innerText); 
+
+    if (!productId || quantity < 1 || isNaN(pricePerKilo) || pricePerKilo <= 0) {
+        alert("Invalid quantity, product, or price.");
+        return;
+    }
+
+    const totalPrice = quantity * pricePerKilo;
+
+    fetch('/buyer/confirm-purchase', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId, quantity, totalPrice })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("Purchase successful!");
+            window.location.reload();
+        } else {
+            alert("Error: " + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert("Failed to confirm purchase.");
+    });
 }
 
 
@@ -498,30 +512,6 @@ function formatTime(dateTime) {
     return date.toLocaleTimeString("en-US", { hour: '2-digit', minute: '2-digit', hour12: true });
 }
 
-// Frontend Function to Confirm Purchase
-function confirmBuyNow() {
-    const productId = document.getElementById("productName").getAttribute("data-id");
-    const quantity = document.getElementById("quantity").value;
-
-    fetch('/buyer/confirm-purchase', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productId, quantity })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert("Purchase confirmed!");
-            location.reload();
-        } else {
-            alert("Something went wrong: " + data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert("Something went wrong. Please try again.");
-    });
-}
 
 
 </script>
