@@ -1,3 +1,5 @@
+
+
 const authLoginController = require('../controllers/auth/loginController');
 const authRegisterController = require('../controllers/auth/registerController');
 const authVerifyController = require('../controllers/auth/verifyController');
@@ -54,9 +56,13 @@ module.exports = function (app) {
 
   app.get('/farmer/index', farmerIndexController.index);  // Ensure this is correct
   app.post('/farmer/addProduct', farmerIndexController.addProduct);
+  app.get('/farmer/getBuyers', farmerIndexController.getBuyers);
 
   app.get('/buyer/index', buyerIndexController.index);
   app.post('/buyer/confirm-purchase', buyerIndexController.confirmPurchase);
   app.post('/buyer/getProducts', orderController.getProducts);
+  app.post('/buyer/confirm-participation', buyerIndexController.confirmParticipation);
+
+  app.get('/buyer/notification', buyerIndexController.markNotificationAsRead);
   
 };

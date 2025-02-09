@@ -13,6 +13,7 @@
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
     <link rel="stylesheet" href="/public/css/styles.css">
+    
 <body>
     <header>
         <nav class="navbar">
@@ -35,15 +36,37 @@
                 <!-- Enter Full Screen Icon -->
                 <!-- <li><button class="fullscreen-btn" onclick="toggleFullscreen()">
                     <img src="/public/img/monitor.png" alt="Full Screen Icon" class="fullscreen-icon">
-                    <span class="icon-label">Retail Products</span> <!-- Label for Full Screen Icon 
+                    <span class="icon-label">Retail Products</span> Label for Full Screen Ic
                 </button></li>-->
     
-                <!-- Currently Bids Icon -->
-                <li><button class="bids-btn" onclick="viewCurrentBids()">
-                    <img src="/public/img/clock_user.png" alt="Currently Bids Icon" class="bids-icon">
-                    <span class="icon-label">Currently in Bid</span> <!-- Label for Bids Icon -->
-                </button></li>
-            </ul>
+                <!-- Currently Bids Button -->
+                <li>
+                    <button class="bids-btn" onclick="viewCurrentBids()">
+                        <img src="/public/img/clock_user.png" alt="Currently Bids Icon" class="bids-icon">
+                        <span class="icon-label">Currently in Bid</span> 
+                    </button>
+                </li>
+
+                <!-- The Modal -->
+                <div id="bidModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeModal()">&times;</span>
+                        <h2>Currently in Bid</h2>
+                        <div id="bidList">
+                            <% participations.forEach(participation => { %>
+                                <div class="bid-item">
+                                    <img src="<%= participation.product.image %>" alt="<%= participation.product.name %>" width="100">
+                                    <strong><%= participation.product.name %></strong><br>
+                                    Auction Start: <%= participation.product.auctionStart %><br>
+                                    Auction End: <%= participation.product.auctionEnd %><br>
+                                    Minimum Price: ₱<%= participation.product.minPrice %><br>
+                                    <button class="join-btn" onclick="joinBid(<%= participation.product._id %>)">Join Bid</button>
+                                </div>
+                            <% }) %>
+                        </div>
+                    </div>
+                </div>
+
             <!-- Dropdown Profile Container -->
             <div id="profileDropdown" class="profile-dropdown" style="display: none;">
                 <div class="profile-info">
@@ -119,7 +142,6 @@
         </div>
         
         <section id="all-products-section" class="product-list">
-            <h2>All Products</h2>
             <div class="product-grid">
                 <% if (products && products.length > 0) { %>
                     <% products.forEach(function(product) { %>
@@ -135,7 +157,7 @@
                             <% } else if (product.productType === 'wholesale') { %>
                                 <p>Minimum Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
                             <% } %>
-            
+        
                             <% if (product.productType === 'retail') { %>
                                 <button class="showbuyer" 
                                     onclick="openBuyNowModal(
@@ -150,16 +172,20 @@
                                 Buy Now
                                 </button>
                             <% } else if (product.productType === 'wholesale') { %>
-                                <button class="participated" onclick="openParticipateModal(
-                                    '<%= product._id %>',
-                                    '<%= product.name %>',
-                                    '<%= product.productType %>',
-                                    '<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %>',
-                                    '<%= product.seller ? product.seller.firstName + ' ' + product.seller.lastName : 'Unknown Seller' %>',
-                                    '<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : '/public/img/default.png' %>',
-                                    '<%= product.auctionStart %>',
-                                    '<%= product.auctionEnd %>'
-                                )">Participate</button>
+                                <button class="participate-btn" 
+                                    data-product-id="<%= product._id %>"
+                                    onclick="openParticipateModal(
+                                        '<%= product._id %>',
+                                        '<%= product.name %>',
+                                        '<%= product.productType %>',
+                                        '<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %>',
+                                        '<%= product.seller ? product.seller.firstName + ' ' + product.seller.lastName : 'Unknown Seller' %>',
+                                        '<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : '/public/img/default.png' %>',
+                                        '<%= product.auctionStart %>',
+                                        '<%= product.auctionEnd %>'
+                                    )">
+                                Participate
+                                </button>
                             <% } %>
                         </div>
                     <% }); %>
@@ -169,11 +195,12 @@
             </div>
         </section>
         
+        <!-- Category Products Section -->
         <section id="category-products-section">
-            <% groupedProducts.forEach(group => { %>  <!-- Loop through groupedProducts -->
+            <% groupedProducts.forEach(group => { %>
                 <div class="category-section" data-category-id="<%= group.category._id %>">
                     <div class="product-container">
-                        <% group.products.forEach(product => { %> <!-- Loop through each product -->
+                        <% group.products.forEach(product => { %>
                             <div class="product">
                                 <div class="product-image-container">
                                     <img src="<%= product.image ? '/public/img/product/' + (product.image.split('/').pop() || '') : '/public/img/default.png' %>" 
@@ -201,22 +228,25 @@
                                     Buy Now
                                     </button>
                                 <% } else if (product.productType === 'wholesale') { %>
-                                    <button class="participated" onclick="openParticipateModal(
-                                        '<%= product._id %>',
-                                        '<%= product.name %>',
-                                        '<%= product.productType %>',
-                                        '<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %>',
-                                        '<%= product.seller ? product.seller.firstName + ' ' + product.seller.lastName : 'Unknown Seller' %>',
-                                        '<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : '/public/img/default.png' %>',
-                                        '<%= product.auctionStart %>',
-                                        '<%= product.auctionEnd %>'
-                                    )">Participate</button>
+                                    <button class="participate-btn" 
+                                        onclick="openParticipateModal(
+                                            '<%= product._id %>',
+                                            '<%= product.name %>',
+                                            '<%= product.productType %>',
+                                            '<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %>',
+                                            '<%= product.seller ? product.seller.firstName + ' ' + product.seller.lastName : 'Unknown Seller' %>',
+                                            '<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : '/public/img/default.png' %>',
+                                            '<%= product.auctionStart %>',
+                                            '<%= product.auctionEnd %>'
+                                        )">
+                                    Participate
+                                    </button>
                                 <% } %>
                             </div>
-                        <% }) %>  <!-- End of loop through products -->
+                        <% }) %>
                     </div>
                 </div>
-            <% }) %>  <!-- End of loop through groupedProducts -->
+            <% }) %>
         </section>
         
         
@@ -230,9 +260,9 @@
         <!-- Product Image -->
         <img id="modal-product-image" src="/img/default.png" alt="Product Image" style="width: 100%; max-height: 300px; object-fit: contain;">
         <p><strong>Name:</strong> <span id="productName"></span></p>
-        <p><strong>Type:</strong> <span id="productType"></span></p>
+        <p><strong>Product Type:</strong> <span id="productType"></span></p>
         <p><strong>Description:</strong> <span id="productDescription"></span></p>
-        <p><strong>Price (per kilo):</strong> <span id="productPrice"></span></p>
+        <p><strong>Price (per kilo):</strong> ₱<span id="productPrice"></span></p>
         <p><strong>Seller:</strong> <span id="productSeller"></span></p> <!-- Display Seller Name -->
         <label for="quantity">Quantity (kg):</label>
         <input type="number" id="quantity" min="1" value="1" oninput="updateTotalPrice()"> 
@@ -246,17 +276,24 @@
     <div class="modal-content">
         <span class="close" onclick="closeParticipateModal()">&times;</span>
         <h2>Auction Details</h2>
+        
         <img id="modal-auction-image" src="" alt="Auction Product" style="width: 100%; max-height: 300px; object-fit: contain;">
         <p><strong>Name:</strong> <span id="auctionProductName"></span></p>
-        <p><strong>Type:</strong> <span id="auctionProductType"></span></p>
+        <p><strong>Product Type:</strong> <span id="auctionProductType"></span></p>
         <p><strong>Minimum Price:</strong> ₱<span id="auctionProductPrice"></span></p>
         <p><strong>Seller:</strong> <span id="auctionProductSeller"></span></p>
         <p><strong>Session Start Date & Time:</strong> <span id="auctionStartTime"></span></p>
         <p><strong>Session End Date & Time:</strong> <span id="auctionEndTime"></span></p>
-        <button onclick="confirmParticipation()">Confirm Participation</button>
+
+        <!-- Hidden input to store productId -->
+        <input type="hidden" id="auctionProductId">
+
+        <button id="confirmParticipateButton" class="confirm-participate">Confirm Participate</button>
+
+
+        <p id="participationMessage" style="display:none;"></p>
     </div>
 </div>
-
 
            
     </main>
@@ -265,10 +302,32 @@
         <div class="footer-left">
             <button id="notificationButton" class="notification-button">
                 <img src="/public/img/bell.png" alt="Notification Icon" class="notification-icon">
-                <span class="notification-count" id="notificationCount"><%= notifications.length %></span>
+                <span class="notification-count" id="notificationCount">
+                    <%= notifications.filter(notification => notification.status === 'unread').length %> <!-- Count unread notifications -->
+                </span>
             </button>
-            <div id="notificationContainer" class="notification-container">
-                <div class="notification-message">You have a new message!</div>
+        </div>
+        
+        <!-- Modal for notifications -->
+        <div id="notificationModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeModalButton">&times;</span>
+                <center><h3>Notifications</h3></center>
+                <ul id="notificationList">
+                    <% notifications.forEach(notification => { %>
+                        <li id="notification-<%= notification._id %>" class="notification <%= notification.status === 'unread' ? 'unread' : 'read' %>">
+                            <p><%= notification.message %></p>
+                            <% if (notification.status === 'unread') { %>
+                                <a href="/farmer/notification?notification_id=<%= notification._id %>" class="btn btn-primary mark-as-read">
+                                    Seen
+                                </a>
+                            <% } %>
+                            <span class="close-notification" onclick="closeNotification('<%= notification._id %>')">&times;</span>
+                        </li>
+                    <% }); %>
+                </ul>
+                
+                
             </div>
         </div>
         
@@ -470,7 +529,10 @@ function confirmBuyNow() {
     });
 }
 
-
+// Function to close the modal
+function closeModal() {
+    document.getElementById('buyNowModal').style.display = 'none';
+}
 
 function openParticipateModal(productId, name, productType, minPrice, seller, image, startTime, endTime) {
     document.getElementById("auctionProductName").textContent = name;
@@ -478,12 +540,19 @@ function openParticipateModal(productId, name, productType, minPrice, seller, im
     document.getElementById("auctionProductPrice").textContent = minPrice;
     document.getElementById("auctionProductSeller").textContent = seller;
     document.getElementById("modal-auction-image").src = image;
-
-    // Format and display start and end times with both date and time
     document.getElementById("auctionStartTime").textContent = formatDateTime(startTime);
     document.getElementById("auctionEndTime").textContent = formatDateTime(endTime);
 
+    // Store the product ID in a hidden field
+    document.getElementById("auctionProductId").value = productId;
+
+    // Show the modal
     document.getElementById("participateModal").style.display = "block";
+}
+
+// Close Participate Modal
+function closeParticipateModal() {
+    document.getElementById("participateModal").style.display = "none";
 }
 
 // Function to format date and time properly
@@ -491,12 +560,6 @@ function formatDateTime(dateTime) {
     const date = new Date(dateTime);
     return date.toLocaleString(); // Formats as "MM/DD/YYYY, HH:MM:SS AM/PM"
 }
-
-// Close modal function
-function closeParticipateModal() {
-    document.getElementById("participateModal").style.display = "none";
-}
-
 
 // Function to format date (YYYY-MM-DD to readable format)
 function formatDate(dateTime) {
@@ -512,7 +575,151 @@ function formatTime(dateTime) {
     return date.toLocaleTimeString("en-US", { hour: '2-digit', minute: '2-digit', hour12: true });
 }
 
+// Wait for the document to load before adding event listener
+document.addEventListener("DOMContentLoaded", function() {
+    const confirmButton = document.getElementById("confirmParticipateButton");
+    if (confirmButton) {
+        confirmButton.addEventListener("click", confirmParticipation);
+    }
+});
 
+function confirmParticipation() {
+    const productId = document.getElementById("auctionProductId").value;
+    const participationAmount = document.getElementById("participationAmount").value; // Fetch amount input
+
+    if (!productId || !participationAmount) {
+        alert("Please enter a valid participation amount.");
+        return;
+    }
+
+    fetch('/buyer/confirm-participation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId, participationAmount })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Server Response:", data);
+        if (data.success) {
+            alert("Participation successful!");
+            window.location.reload();
+        } else {
+            alert("Error: " + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Fetch Error:', error);
+        alert("Failed to confirm participation.");
+    });
+}
+
+
+
+
+// Ensure the DOM is fully loaded before running scripts
+ document.addEventListener('DOMContentLoaded', function() {
+        // Get the modal and notification button
+        const modal = document.getElementById("notificationModal");
+        const notificationButton = document.getElementById("notificationButton");
+        const closeModalButton = document.getElementById("closeModalButton");
+
+        // Open the modal when the notification button is clicked
+        notificationButton.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        // Close the modal when the close button is clicked
+        closeModalButton.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // Close the modal if the user clicks outside of the modal
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Attach event listeners for each "close" button in the notification list
+        const closeButtons = document.querySelectorAll('.close-notification');
+        closeButtons.forEach(button => {
+            button.addEventListener('click', function(event) {
+                const notificationId = event.target.getAttribute('data-notification-id');
+                closeNotification(notificationId);
+            });
+        });
+    });
+
+    // Function to close individual notification
+    // Close notification and hide it temporarily using localStorage
+function closeNotification(notificationId) {
+    // Save the closed notification ID to localStorage
+    let closedNotifications = JSON.parse(localStorage.getItem('closedNotifications')) || [];
+    closedNotifications.push(notificationId);
+    localStorage.setItem('closedNotifications', JSON.stringify(closedNotifications));
+
+    // Hide the notification element on the page
+    const notificationElement = document.getElementById(`notification-${notificationId}`);
+    notificationElement.style.display = 'none';
+}
+// Check localStorage for closed notifications and hide them on page load
+window.onload = function() {
+    const closedNotifications = JSON.parse(localStorage.getItem('closedNotifications')) || [];
+
+    // Hide all closed notifications
+    closedNotifications.forEach(notificationId => {
+        const notificationElement = document.getElementById(`notification-${notificationId}`);
+        if (notificationElement) {
+            notificationElement.style.display = 'none';
+        }
+    });
+};
+// Dummy data - Replace this with actual data from your database
+const bids = [
+    { id: 1, product: "Fresh Mangoes", date: "2025-02-06", time: "10:00 AM" },
+    { id: 2, product: "Organic Rice", date: "2025-02-07", time: "2:00 PM" }
+];
+
+// Open the modal and display bids
+function viewCurrentBids() {
+    let modal = document.getElementById("bidModal");
+    let bidList = document.getElementById("bidList");
+
+    // Clear any existing items
+    bidList.innerHTML = "";
+
+    // Fetch participating bids from the server
+    fetch('/buyer/participations')  // Assuming you've added a route to get participation data
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                data.participations.forEach(bid => {
+                    let bidItem = document.createElement("div");
+                    bidItem.className = "bid-item";
+                    bidItem.innerHTML = `
+                        <img src="${bid.product.image}" alt="${bid.product.name}" width="100">
+                        <strong>${bid.product.name}</strong><br>
+                        Auction Start: ${bid.product.auctionStart}<br>
+                        Auction End: ${bid.product.auctionEnd}<br>
+                        Minimum Price: ₱${bid.product.minPrice}<br>
+                        <button class="join-btn" onclick="joinBid(${bid.product._id})">Join Bid</button>
+                    `;
+                    bidList.appendChild(bidItem);
+                });
+            }
+        });
+
+    modal.style.display = "block";
+}
+// Close the modal
+function closeModal() {
+    document.getElementById("bidModal").style.display = "none";
+}
+
+// Simulate joining a bid
+function joinBid(bidId) {
+    alert(`You have joined the bid for product ID: ${bidId}`);
+}
 
 </script>
 

@@ -11,7 +11,8 @@
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
-    
+
+        
 
 <body>
     <header>
@@ -186,54 +187,75 @@
         </div>
 
 
-        <section class="product-list">
-            <% if (groupedProducts && groupedProducts.length > 0) { %>
-                <% let hasProducts = false; %>
-        
-                <% groupedProducts.forEach(group => { %>
-                    <% if (group.products.length > 0) { hasProducts = true; } %>
-        
-                    <div class="category-section" data-category-id="<%= group.category._id %>">
-                        <!-- Category Toggle Button -->
-                        <button class="category-button" onclick="toggleCategory('<%= group.category._id %>')">
-                        </button>
-        
-                        <div class="product-container">
-                            <% group.products.forEach((product, index) => { %>
-                                <div class="product" data-name="<%= product.name.toLowerCase() %>">
-                                    <div class="product-image-container">
-                                        <img src="<%= product.image ? '/public/img/product/' + (product.image.split('/').pop() || '') : '/public/img/default.png' %>" 
-                                             alt="<%= product.name %>" 
-                                             class="product-image">
-                                    </div>
-        
-                                    <h4><%= product.name %></h4>
-        
-                                    <% if (product.productType === 'retail') { %>
-                                        <p>Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
-                                    <% } else if (product.productType === 'wholesale') { %>
-                                        <p>Minimum Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
-                                    <% } %>
-        
-                                    <% if (product.productType === 'retail') { %>
-                                        <button class="showbuyer" onclick="showbuyer">Show Buyers</button>
-                                    <% } else if (product.productType === 'wholesale') { %>
-                                        <button class="participated" onclick="participateAuction('<%= product._id %>')">Show Participated</button>
-                                    <% } %>
-        
+        <!-- Product Section -->
+<section class="product-list">
+    <% if (groupedProducts && groupedProducts.length > 0) { %>
+        <% let hasProducts = false; %>
+
+        <% groupedProducts.forEach(group => { %>
+            <% if (group.products.length > 0) { hasProducts = true; } %>
+
+            <div class="category-section" data-category-id="<%= group.category._id %>">
+                <div class="product-slider">
+                    <div class="product-container">
+                        <% group.products.forEach((product) => { %>
+                            <div class="product" data-name="<%= product.name.toLowerCase() %>">
+                                <div class="product-image-container">
+                                    <img src="<%= product.image ? '/public/img/product/' + (product.image.split('/').pop() || '') : '/public/img/default.png' %>" 
+                                        alt="<%= product.name %>" 
+                                        class="product-image">
                                 </div>
-                            <% }) %>
-                        </div>
+                                <h4><%= product.name %></h4>
+                                
+                                <% if (product.productType === 'retail') { %>
+                                    <p>Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
+                                    <button class="showbuyer" onclick="showBuyers('<%= product._id %>', '<%= product.name %>')">Show Buyers</button>
+                                <% } else if (product.productType === 'wholesale') { %>
+                                    <p>Minimum Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
+                                    <button class="participated" onclick="participateAuction('<%= product._id %>')">Show Participated</button>
+                                <% } %>
+                            </div>
+                        <% }) %>
                     </div>
-                <% }) %>
+                </div>
+            </div>
+        <% }) %>
+
+        <% if (!hasProducts) { %>
+            <p>No products available.</p>
+        <% } %>
+    <% } else { %>
+        <p>No products available.</p>
+    <% } %>
+</section>
+
+<!-- Modal Structure for Buyers -->
+<div id="buyersModal" class="modal">
+    <div class="modal-content">
+        <h4>Buyers for <span id="productTitle"></span></h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>Buyer Name</th>
+                    <th>Quantity</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="buyersList">
+                <!-- Buyers will be dynamically loaded here -->
+            </tbody>
+        </table>
+    </div>
+    <div class="modal-footer">
+        <button onclick="closeModal()">Close</button>
+    </div>
+</div>
+
         
-                <% if (!hasProducts) { %>
-                    <p>No products available.</p>
-                <% } %>
-            <% } else { %>
-                <p>No products available.</p>
-            <% } %>
-        </section>
+        
+        
+        
         
 
          <!-- Modal Structure -->
@@ -262,32 +284,32 @@
                     <%= notifications.filter(notification => notification.status === 'unread').length %> <!-- Count unread notifications -->
                 </span>
             </button>
-            <div id="notificationContainer" class="notification-container">
-                <% if (notifications.some(notification => notification.status === 'unread')) { %> <!-- Show message only if there are unread notifications -->
-                    <div class="notification-message">You have a new message!</div>
-                <% } %>
+        </div>
+        
+        <!-- Modal for notifications -->
+        <div id="notificationModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeModalButton">&times;</span>
+                <center><h3>Notifications</h3></center>
+                <ul id="notificationList">
+                    <% notifications.forEach(notification => { %>
+                        <li id="notification-<%= notification._id %>" class="notification <%= notification.status === 'unread' ? 'unread' : 'read' %>">
+                            <p><%= notification.message %></p>
+                            <% if (notification.status === 'unread') { %>
+                                <a href="/farmer/notification?notification_id=<%= notification._id %>" class="btn btn-primary mark-as-read">
+                                    Seen
+                                </a>
+                            <% } %>
+                            <span class="close-notification" onclick="closeNotification('<%= notification._id %>')">&times;</span>
+                        </li>
+                    <% }); %>
+                </ul>
+                
+                
             </div>
         </div>
-        <div class="notifications">
-            <h3>Notifications</h3>
-            <ul>
-                <% notifications.forEach(notification => { %>
-                    <% if (notification.status === 'unread') { %> <!-- Show unread notifications -->
-                        <div class="notification unread">
-                            <p><%= notification.message %></p>
-                            <a href="/farmer/notification?notification_id=<%= notification._id %>" class="btn btn-primary">
-                                Mark as Read
-                            </a>
-                        </div>
-                    <% } else { %> <!-- Hide read notifications if needed or render differently -->
-                        <div class="notification read">
-                            <p><%= notification.message %></p>
-                        </div>
-                    <% } %>
-                <% }); %>
-            </ul>
-        </div>
-
+        
+    
         <div class="footer-right">
             <img src="/public/img/clock.png" alt="Clock Icon" class="clock-icon">
             <span id="currentTime" class="current-time"></span>
@@ -295,6 +317,104 @@
         
         <p>&copy; 2024 PAO Market. All rights reserved.</p>
     </footer>
+    
+    <script>
+ // Ensure the DOM is fully loaded before running scripts
+ document.addEventListener('DOMContentLoaded', function() {
+        // Get the modal and notification button
+        const modal = document.getElementById("notificationModal");
+        const notificationButton = document.getElementById("notificationButton");
+        const closeModalButton = document.getElementById("closeModalButton");
 
+        // Open the modal when the notification button is clicked
+        notificationButton.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        // Close the modal when the close button is clicked
+        closeModalButton.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // Close the modal if the user clicks outside of the modal
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Attach event listeners for each "close" button in the notification list
+        const closeButtons = document.querySelectorAll('.close-notification');
+        closeButtons.forEach(button => {
+            button.addEventListener('click', function(event) {
+                const notificationId = event.target.getAttribute('data-notification-id');
+                closeNotification(notificationId);
+            });
+        });
+    });
+
+    // Function to close individual notification
+    // Close notification and hide it temporarily using localStorage
+function closeNotification(notificationId) {
+    // Save the closed notification ID to localStorage
+    let closedNotifications = JSON.parse(localStorage.getItem('closedNotifications')) || [];
+    closedNotifications.push(notificationId);
+    localStorage.setItem('closedNotifications', JSON.stringify(closedNotifications));
+
+    // Hide the notification element on the page
+    const notificationElement = document.getElementById(`notification-${notificationId}`);
+    notificationElement.style.display = 'none';
+}
+// Check localStorage for closed notifications and hide them on page load
+window.onload = function() {
+    const closedNotifications = JSON.parse(localStorage.getItem('closedNotifications')) || [];
+
+    // Hide all closed notifications
+    closedNotifications.forEach(notificationId => {
+        const notificationElement = document.getElementById(`notification-${notificationId}`);
+        if (notificationElement) {
+            notificationElement.style.display = 'none';
+        }
+    });
+};
+
+function showBuyers(productId, productName) {
+    document.getElementById("productTitle").innerText = productName;
+
+    fetch(`/farmer/getBuyers?productId=${productId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.length === 0) {
+                document.getElementById("buyersList").innerHTML = "<tr><td colspan='4'>No buyers found.</td></tr>";
+            } else {
+                const buyersList = data.map(buyer => {
+                    return `
+                        <tr>
+                            <td>${buyer.buyerName}</td>
+                            <td>${buyer.quantity}</td>
+                            <td>${buyer.status}</td>
+                            <td>
+                                <button onclick="processOrder('${buyer._id}', 'approve')">Approve</button>
+                                <button onclick="processOrder('${buyer._id}', 'reject')">Reject</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+                
+                document.getElementById("buyersList").innerHTML = buyersList;
+            }
+
+            const modal = document.getElementById('buyersModal');
+            modal.style.display = 'block';
+        })
+        .catch(error => {
+            console.error('Error fetching buyers:', error);
+            alert('Error fetching buyers');
+        });
+}
+
+
+        
+</script>
     <script src="/public/js/scriptss.js"></script>
      <script src="/public/js/scripts.js"></script>

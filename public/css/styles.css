@@ -1,90 +1,135 @@
+/* Style for the product list section */
 .product-list {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
     padding: 20px;
-    max-width: 2200px;
-    margin: 0 auto;
 }
 
+/* Style for each category section */
 .category-section {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
-.category-button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    margin-bottom: 10px;
-    font-size: 16px;
-    width: 100%;
+.category-title {
+    font-size: 1.5em;
+    margin-bottom: 15px;
 }
 
-.category-button:hover {
-    background-color: #45a049;
+/* Style for the product slider container */
+.product-slider {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 10px 0;
+    display: flex;
+    gap: 20px;
+    scroll-behavior: smooth;
 }
 
+/* Style for the product container inside the slider */
 .product-container {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    gap: 10px; /* Reduced gap between products */
+    gap: 20px;
 }
 
+/* Style for each product */
 .product {
-    flex: 1 1 18%; /* Ensures 5 products in a row */
-    box-sizing: border-box;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: inline-block;
+    width: 200px; /* Set a base width */
+    margin-right: 10px;
     text-align: center;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    max-width: 200px;
+    background: #f4f4f4;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
 }
 
-.product-image-container {
-    width: 100%;
-    height: 180px; /* Adjusted height for consistency */
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.product:hover {
+    transform: translateY(-10px);
 }
 
 .product-image {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
+    border-radius: 5px;
 }
 
-.product h4 {
-    font-size: 16px;
-    margin-top: 10px;
-    color: #333;
+/* Make sure to hide overflow when products are sliding */
+.product-slider::-webkit-scrollbar {
+    height: 6px;
 }
 
-.product p {
-    font-size: 14px;
-    color: #666;
+.product-slider::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
 }
 
-.buy-now-button, .auction-button {
+.product-slider::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Style the buttons */
+button {
     background-color: #4CAF50;
     color: white;
+    padding: 8px 16px;
     border: none;
-    padding: 8px 12px;
-    margin-top: 10px;
+    border-radius: 5px;
     cursor: pointer;
+    margin-top: 10px;
 }
 
-.buy-now-button:hover, .auction-button:hover {
+button:hover {
     background-color: #45a049;
+}
+
+/* Media Queries for Responsiveness */
+
+/* When the screen is smaller than 600px (mobile) */
+@media (max-width: 600px) {
+    .category-title {
+        font-size: 1.2em; /* Smaller category title font */
+    }
+
+    .product {
+        width: 150px; /* Adjust product size for mobile */
+    }
+
+    .product-container {
+        flex-wrap: nowrap;
+    }
+
+    .product-slider {
+        gap: 10px; /* Reduce space between products */
+    }
+}
+
+/* When the screen is between 601px and 992px (tablet) */
+@media (min-width: 601px) and (max-width: 992px) {
+    .category-title {
+        font-size: 1.3em; /* Medium category title font */
+    }
+
+    .product {
+        width: 180px; /* Adjust product size for tablets */
+    }
+
+    .product-slider {
+        gap: 15px; /* Moderate space between products */
+    }
+}
+
+/* When the screen is larger than 992px (desktop) */
+@media (min-width: 993px) {
+    .category-title {
+        font-size: 1.5em; /* Larger category title font */
+    }
+
+    .product {
+        width: 200px; /* Default product size for desktop */
+    }
+
+    .product-slider {
+        gap: 20px; /* Default space between products */
+    }
 }
 
 /* General Styles */
@@ -222,6 +267,7 @@ header {
 .categories li:hover {
     color: #000;
 }
+
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
 
 .banner h1 {
@@ -273,61 +319,172 @@ header {
     font-weight: bold;
 }
 
+/* Responsive Styles */
+
+/* Mobile (max-width: 600px) */
+@media (max-width: 600px) {
+    header {
+        padding: 10px;
+    }
+
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .logo {
+        font-size: 18px;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .nav-links a {
+        font-size: 14px;
+    }
+
+    .search-container {
+        flex-direction: column;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .search-container input {
+        max-width: 100%;
+    }
+
+    .search-container button {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .category-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .category-button {
+        width: 100%;
+    }
+
+    .categories {
+        flex-direction: column;
+    }
+
+    .banner {
+        padding: 200px 20px;
+        height: 300px;
+    }
+
+    .banner h1 {
+        font-size: 3rem;
+    }
+
+    .banner p {
+        font-size: 1.2rem;
+    }
+
+    .banner span {
+        font-size: 1rem;
+    }
+}
+
+/* Tablet (601px to 992px) */
+@media (min-width: 601px) and (max-width: 992px) {
+    .navbar {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .nav-links {
+        flex-direction: row;
+    }
+
+    .nav-links a {
+        font-size: 14px;
+    }
+
+    .search-container {
+        width: 70%;
+        margin-top: 10px;
+    }
+
+    .search-container input {
+        max-width: 100%;
+    }
+
+    .category-bar {
+        gap: 15px;
+    }
+
+    .category-button {
+        font-size: 14px;
+    }
+
+    .banner {
+        padding: 300px 50px;
+        height: 400px;
+    }
+
+    .banner h1 {
+        font-size: 4rem;
+    }
+
+    .banner p {
+        font-size: 1.3rem;
+    }
+
+    .banner span {
+        font-size: 1.1rem;
+    }
+}
+
+/* Desktop (min-width: 993px) */
+@media (min-width: 993px) {
+    .navbar {
+        flex-direction: row;
+    }
+
+    .nav-links {
+        flex-direction: row;
+    }
+
+    .search-container {
+        margin-top: 20px;
+    }
+
+    .category-bar {
+        gap: 20px;
+    }
+
+    .category-button {
+        font-size: 16px;
+    }
+
+    .banner {
+        padding: 500px 70px;
+        height: 500px;
+    }
+
+    .banner h1 {
+        font-size: 6rem;
+    }
+
+    .banner p {
+        font-size: 1.5rem;
+    }
+
+    .banner span {
+        font-size: 1.2rem;
+    }
+}
+
 /* Product List */
-.product-list {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-    padding: 20px;
-}
 
-.product {
-    text-align: center;
-    background-color: #fff;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    width: 200px;
-    transition: transform 0.3s;
-}
-
-.product:hover {
-    transform: scale(1.05);
-}
-
-.product img {
-    max-width: 100%;
-    border-radius: 4px;
-}
-
-.product h3 {
-    font-size: 18px;
-    color: #333;
-    margin: 10px 0;
-}
-
-.price {
-    font-size: 16px;
-    color: #007bff;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-
-.product button {
-    padding: 8px 15px;
-    border: none;
-    background-color: #007bff;
-    color: #fff;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s;
-}
-
-.product button:hover {
-    background-color: #0056b3;
-}
 
 /* Footer */
 footer {
@@ -1070,13 +1227,7 @@ button {
         width: 100%;
         height: auto;
     }
-    .product-container {
-    display: grid; /* Use grid layout */
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjusts columns automatically */
-    gap: 20px; /* Space between products */
-    justify-content: center; /* Center content */
-    padding: 20px;
-}
+    
 
 .product {
     background: #fff;
@@ -1117,5 +1268,92 @@ button {
 
     .product-image-container {
         height: 150px; /* Adjust for smaller screens */
+    }
+}
+/* Modal Style */
+.notification-modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0); /* Black w/ opacity */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.notification-modal-content {
+    background-color: #fff;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more specific */
+}
+
+/* Close Button */
+.close-modal {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-modal:hover,
+.close-modal:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Notification Styles */
+.notification {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.notification.unread {
+    background-color: #f9f9f9;
+    font-weight: bold;
+}
+
+.notification.read {
+    background-color: #e9e9e9;
+}
+
+.notification-count {
+    background-color: red;
+    color: white;
+    padding: 5px;
+    border-radius: 50%;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+/* Modal Button */
+.btn {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+.notification .close-notification {
+    color: #888;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.notification .close-notification:hover {
+    color: red;
+}
+
+/* Responsive Modal */
+@media (max-width: 768px) {
+    .modal {
+        width: 80%; /* Modal takes up more width on smaller screens */
     }
 }

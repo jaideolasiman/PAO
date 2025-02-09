@@ -8,9 +8,6 @@ function closeModal() {
     document.getElementById("productModal").style.display = "none";
 }
 
-
-
-// Handle the form submission via AJAX
 // Handle the form submission via AJAX
 $(document).ready(function () {
     $("#productFormSubmit").on("submit", function (e) {
@@ -178,12 +175,12 @@ function openProductDetails(id, name, price, image) {
     function hideProductDetails() {
         document.getElementById("productDetailsPopup").style.display = "none";
     }
-    function fetchNotifications() {
-        fetch('/farmer/notifications')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById("notificationCount").innerText = data.count;
-            });
-    }
+    //function fetchNotifications() {
+     //   fetch('/farmer/notifications')
+      //      .then(response => response.json())
+      //      .then(data => {
+       //         document.getElementById("notificationCount").innerText = data.count;
+       //     });
+   // }
 
-    setInterval(fetchNotifications, 5000); // Refresh every 5 seconds
+   // setInterval(fetchNotifications, 5000); // Refresh every 5 seconds

@@ -11,6 +11,7 @@ const Product = require('./models/product');
 const app = express();
 
 
+
 app.use(session({
     secret: 'sessionsecret777',
     //cookie: { maxAge: 1000 * 60 * 60 * 24 * 7 }, // 7 days
@@ -61,6 +62,7 @@ app.use(async (req, res, next) => {
     });
 });
 
+
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
@@ -73,3 +75,4 @@ app.get('/farmer/notifications', async (req, res) => {
   const count = await Notification.countDocuments({ user: req.session.login, status: 'unread' });
   res.json({ count });
 });
+

@@ -6,7 +6,7 @@ const orderSchema = new mongoose.Schema({
     buyer: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     quantity: { type: Number, required: true, min: 1 },
     totalPrice: { type: Number, required: true, min: 0 },
-    status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
+    status: { type: String, default: "Pending" },
     createdAt: { type: Date, default: Date.now }
 });
 

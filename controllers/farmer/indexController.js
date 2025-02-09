@@ -123,38 +123,28 @@ module.exports.markNotificationAsRead = async (req, res) => {
     }
 };
 
-module.exports.processOrder = async (req, res) => {
+module.exports.getBuyers = async (req, res) => {
     try {
-        const { orderId, action } = req.body;
-        const order = await Order.findById(orderId);
+        const { productId } = req.query;
+        
+        if (!productId) return res.status(400).json({ error: 'Product ID is required' });
 
-        if (!order) {
-            req.flash('error', 'Order not found.');
-            return res.redirect('/farmer/index');
+        const orders = await Order.find({ product: productId }).populate('buyer', 'name');
+        
+        if (orders.length === 0) {
+            return res.json([]);
         }
 
-        if (action === 'approve') {
-            order.status = 'approved';
-            await Notification.create({
-                user: order.buyer,
-                message: `Your order for ${order.productName} has been approved.`,
-                status: 'unread'
-            });
-        } else if (action === 'reject') {
-            order.status = 'rejected';
-            await Notification.create({
-                user: order.buyer,
-                message: `Your order for ${order.productName} has been rejected.`,
-                status: 'unread'
-            });
-        }
+        const formattedOrders = orders.map(order => ({
+            _id: order._id,
+            buyerName: order.buyer.name,
+            quantity: order.quantity,
+            status: order.status
+        }));
 
-        await order.save();
-        req.flash('success', `Order ${action} successfully.`);
-        res.redirect('/farmer/index');
+        res.json(formattedOrders);
     } catch (error) {
-        console.error('Error processing order:', error);
-        req.flash('error', 'Failed to process order.');
-        res.redirect('/farmer/index');
+        console.error('Error fetching buyers:', error);
+        res.status(500).json({ error: 'Failed to fetch buyers' });
     }
 };
