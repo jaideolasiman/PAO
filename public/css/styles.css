@@ -958,7 +958,7 @@ strong {
     font-size: 25px; /* Larger font size for more impact */
     font-weight: bold;
     background: linear-gradient(45deg, #013835, #FFD700, #32CD32, #00BFFF); /* Colorful gradient */
-    -webkit-background-clip: text; /* Clips the background to the text */
+    --webkit-background-clip: text; /* Clips the background to the text */
     color: transparent; /* Makes the text color transparent so the gradient is visible */
     letter-spacing: 2px; /* Slight letter spacing for a clean look */
 }
