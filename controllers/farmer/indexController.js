@@ -7,6 +7,7 @@ const Category = require('../../models/category');
 const Product = require('../../models/product');
 const upload = require('../../middlewares/uploads');
 const Notification = require('../../models/notification');
+const Order = require('../../models/order');
 
 const SITE_TITLE = 'PAO';
 
@@ -75,10 +76,10 @@ module.exports.addProduct = (req, res) => {
             return res.redirect('/farmer/index');
         }
 
-        const { category, productType, name, minPrice, productInfo, auctionStart, auctionEnd } = req.body;
+        const { category, productType, name, minPrice, productInfo, auctionStart, auctionEnd, pickupAddress } = req.body;
 
-        if (!category || !productType || !name || !minPrice || !productInfo) {
-            req.flash('error', 'All fields are required.');
+        if (!category || !productType || !name || !minPrice || !productInfo || !pickupAddress) {
+            req.flash('error', 'All fields, including pickup address, are required.');
             return res.redirect('/farmer/index');
         }
 
@@ -94,6 +95,7 @@ module.exports.addProduct = (req, res) => {
                 productInfo,
                 image: productImagePath,
                 seller: req.session.login,
+                pickupAddress, // ✅ Added Pickup Address
                 auctionStart: productType === "wholesale" ? auctionStart || null : null,
                 auctionEnd: productType === "wholesale" ? auctionEnd || null : null
             });
@@ -110,6 +112,33 @@ module.exports.addProduct = (req, res) => {
             res.redirect('/farmer/index');
         }
     });
+};
+
+
+module.exports.getBuyers = async (req, res) => {
+    try {
+        // Find orders where the product belongs to the farmer
+        const orders = await Order.find({})
+            .populate('buyer', 'name')
+            .populate('product', 'name'); 
+
+        if (!orders || orders.length === 0) {
+            return res.json([]);
+        }
+
+        const buyerData = orders.map(order => ({
+            _id: order._id,
+            buyerName: order.buyer.name,
+            productName: order.product.name, // Ensure this is the correct field in your Product schema
+            quantity: order.quantity,
+            status: order.status
+        }));
+
+        res.json(buyerData);
+    } catch (error) {
+        console.error('Error fetching buyers:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
 };
 
 module.exports.markNotificationAsRead = async (req, res) => {
@@ -131,38 +160,139 @@ module.exports.markNotificationAsRead = async (req, res) => {
     }
 };
 
-module.exports.processOrder = async (req, res) => {
+module.exports.getFarmerOrders = async (req, res) => {
     try {
-        const { orderId, action } = req.body;
-        const order = await Order.findById(orderId);
+        const farmerId = req.session.login; // Farmer's ID
+
+        if (!farmerId) {
+            return res.status(401).json({ error: "Unauthorized access." });
+        }
+
+        // Fetch orders where the product belongs to the farmer
+        const orders = await Order.find({})
+            .populate({
+                path: 'product',
+                match: { seller: farmerId },
+                select: 'name seller' // Ensure seller is included
+            })
+            .populate('buyer', 'firstName lastName email'); // Fetch buyer details
+
+        // Debugging output
+        console.log("Orders with populated buyer:", JSON.stringify(orders, null, 2));
+
+        // Filter out orders where product.seller does not match farmerId
+        const farmerOrders = orders.filter(order => 
+            order.product && order.product.seller.toString() === farmerId.toString()
+        );
+
+        // Map filtered orders to a clean format
+        const ordersData = farmerOrders.map(order => ({
+            _id: order._id,
+            buyerName: order.buyer 
+                ? `${order.buyer.firstName} ${order.buyer.lastName}` 
+                : "Unknown Buyer", // Fix missing name issue
+            productName: order.product ? order.product.name : "Unknown Product",
+            quantity: order.quantity,
+            totalPrice: order.totalPrice // ✅ Added total price
+        }));
+
+        res.json(ordersData);
+    } catch (error) {
+        console.error("Error fetching farmer orders:", error);
+        res.status(500).json({ error: "Server error." });
+    }
+};
+
+
+module.exports.processOrder = async (req, res) => {
+    const { orderId, action } = req.body;
+
+    try {
+        const updatedStatus = action === "approve" ? "Approved" : "Rejected";
+
+        // ✅ Find and update the order
+        const order = await Order.findByIdAndUpdate(
+            orderId,
+            { status: updatedStatus },
+            { new: true }
+        ).populate("product"); // Ensure we get the product details
 
         if (!order) {
-            req.flash('error', 'Order not found.');
-            return res.redirect('/farmer/index');
+            return res.status(404).json({ message: "Order not found" });
         }
 
-        if (action === 'approve') {
-            order.status = 'approved';
-            await Notification.create({
-                user: order.buyer,
-                message: `Your order for ${order.productName} has been approved.`,
-                status: 'unread'
-            });
-        } else if (action === 'reject') {
-            order.status = 'rejected';
-            await Notification.create({
-                user: order.buyer,
-                message: `Your order for ${order.productName} has been rejected.`,
-                status: 'unread'
-            });
+        // ✅ Ensure the order has a product before sending the notification
+        if (!order.product) {
+            return res.status(400).json({ message: "Order does not have a valid product." });
         }
 
-        await order.save();
-        req.flash('success', `Order ${action} successfully.`);
-        res.redirect('/farmer/index');
+        // ✅ Create notification for the buyer if the order is approved
+        if (updatedStatus === "Approved") {
+            const notification = new Notification({
+                user: order.buyer, // Buyer ID
+                message: `Your order for '${order.product.name}' has been approved by the seller. Your order is ready to pick up.`,
+                status: "unread",
+            });
+
+            await notification.save();
+        }
+
+        res.json({ message: `Order ${updatedStatus.toLowerCase()} successfully!` });
     } catch (error) {
-        console.error('Error processing order:', error);
-        req.flash('error', 'Failed to process order.');
-        res.redirect('/farmer/index');
+        console.error("❌ Error processing order:", error);
+        res.status(500).json({ message: "Server error", error });
+    }
+};
+
+module.exports.deleteOrder = async (req, res) => {
+    try {
+        const order = await Order.findByIdAndDelete(req.params.id);
+        if (!order) return res.status(404).json({ message: 'Order not found' });
+
+        res.json({ message: 'Order deleted successfully!' });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+};
+
+module.exports.showBuyer = async (req, res) => {
+    try {
+        const productId = req.query.productId; // Get the product ID from the request
+
+        if (!productId) {
+            return res.redirect('/farmer/index'); // Redirect without data if no product ID
+        }
+
+        // Find all orders where the product matches the given productId
+        const orders = await Order.find({ product: productId })
+            .populate('buyer', 'firstName lastName'); // Get only first & last name of buyers
+
+        // Extract buyer details
+        const buyers = orders.map(order => ({
+            firstName: order.buyer ? order.buyer.firstName : "Unknown",
+            lastName: order.buyer ? order.buyer.lastName : "Buyer"
+        }));
+
+        // Redirect to farmer/index and send buyers data
+       res.render('farmer/index', { buyers: [], productId: null }); 
+    } catch (error) {
+        console.error('Error fetching buyers:', error);
+        res.status(500).send('Server error');
+    }
+};
+module.exports.showParticipated = async (req, res) => {
+    try {
+        const orders = await Order.find({ buyer: req.session.login })
+            .populate('product', 'name seller')
+            .populate('seller', 'name email');
+
+        if (!orders.length) {
+            return res.status(404).json({ message: 'No participated orders found.' });
+        }
+
+        res.json(orders);
+    } catch (error) {
+        console.error('Error fetching participated orders:', error);
+        res.status(500).json({ error: 'Server error' });
     }
 };

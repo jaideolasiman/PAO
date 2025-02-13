@@ -34,10 +34,23 @@
 
     
                 <!-- Currently Bids Icon -->
-                <li><button class="bids-btn" onclick="viewCurrentBids()">
+            <li>
+                <button class="bids-btn" onclick="viewCurrentBids()">
                     <img src="/public/img/clock_user.png" alt="Currently Bids Icon" class="bids-icon">
-                    <span class="icon-label">Currently in Bid</span> <!-- Label for Bids Icon -->
-                </button></li>
+                    <span class="icon-label">Currently in Bid</span>
+                </button>
+            </li>
+
+            <!-- Modal for Displaying Current Bids -->
+            <div id="currentBidsModal" class="modal">
+                <div class="modal-content">
+                    <span class="close-btn" onclick="closeModal()">&times;</span>
+                    <h2>Current Auction Bids</h2>
+                    <div id="bidList">
+                        <!-- Auction items will be loaded here dynamically -->
+                    </div>
+                </div>
+            </div>
             </ul>
             <!-- Dropdown Profile Container -->
             <div id="profileDropdown" class="profile-dropdown" style="display: none;">
@@ -58,12 +71,9 @@
                 </div>
             </div>
             <div class="search-container">
-                <input type="text" placeholder="Search for products...">
-                <button>Search</button>
-                <button class="cart-button">
-                    <img src="/public/img/ct.webp" alt="Cart Icon" class="cart-icon">
-                    <span class="cart-count">0</span>
-                </button>
+                
+                
+     
                 <div class="settings-container">
                     <button class="settings-button" onclick="toggleSettingsDropdown()">
                         <img src="/public/img/settings.png" alt="Settings Icon" class="settings-icon">
@@ -113,11 +123,11 @@
         <section class="product-list">
             <!-- All Products Section -->
             <div id="all-products-section">
-                <h3>All Products</h3>
+
         
                 <!-- Retail Products -->
                 <% if (retailProducts.length > 0) { %>
-                    <h4>Retail Products</h4>
+                    <h2>Retail Products</h2>
                     <div class="product-container">
                         <% retailProducts.forEach(product => { %> 
                             <div class="product">
@@ -127,6 +137,7 @@
                                 </div>
                                 <h4><%= product.name %></h4>
                                 <p>Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
+                                 <p>Pickup Address:<%= product.pickupAddress || 'Not Available' %></p> <!-- Display Pickup Address -->
                                 <button class="showbuyer" 
                                     onclick="openBuyNowModal(
                                         '<%= product._id %>', 
@@ -146,7 +157,7 @@
                     
                 <!-- Wholesale Products -->
                 <% if (wholesaleProducts.length > 0) { %>
-                    <h4>Wholesale Products</h4>
+                    <h2>Wholesale Products</h2>
                     <div class="product-container">
                         <% wholesaleProducts.forEach(product => { %>
                             <div class="product">
@@ -156,6 +167,7 @@
                                 </div>
                                 <h4><%= product.name %></h4>
                                 <p>Minimum Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
+                                <p>Pickup Address: <%= product.pickupAddress || 'Not Available' %></p> <!-- Display Pickup Address -->
                                 <button class="participated" 
                                     onclick="openParticipateModal(
                                         '<%= product._id %>',
@@ -179,10 +191,10 @@
             <div id="category-products-section" style="display: none;">
                 <% groupedProducts.forEach(group => { %>
                     <div class="category-section" data-category-id="<%= group.category._id %>">
-                        <h3><%= group.category.name %></h3>
+
             
                         <% if (group.retailProducts.length > 0) { %>
-                            <h4>Retail Products</h4>
+                            <h2>Retail Products</h2>
                             <div class="product-container">
                                 <% group.retailProducts.forEach(product => { %>  
                                     <div class="product">
@@ -192,6 +204,7 @@
                                         </div>
                                         <h4><%= product.name %></h4>
                                         <p>Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
+                                        <p>Pickup Address: <%= product.pickupAddress || 'Not Available' %></p> <!-- Display Pickup Address -->
                                         <button class="showbuyer" 
                                             onclick="openBuyNowModal(
                                                 '<%= product._id %>', 
@@ -220,6 +233,7 @@
                                         </div>
                                         <h4><%= product.name %></h4>
                                         <p>Minimum Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
+                                         <p>Pickup Address: <%= product.pickupAddress || 'Not Available' %></p> <!-- Display Pickup Address -->
                                         <button class="participated" 
                                             onclick="openParticipateModal(
                                                 '<%= product._id %>',
@@ -290,7 +304,6 @@
 
            
     </main>
-
     <footer>
         <div class="footer-left">
             <button id="notificationButton" class="notification-button">
@@ -328,10 +341,100 @@
             <img src="/public/img/clock.png" alt="Clock Icon" class="clock-icon">
             <span id="currentTime" class="current-time"></span>
         </div>
-        
         <p>&copy; 2024 PAO Market. All rights reserved.</p>
     </footer>
+
 <script>
+
+document.addEventListener('DOMContentLoaded', function() {
+               // Get the modal and notification button
+               const modal = document.getElementById("notificationModal");
+               const notificationButton = document.getElementById("notificationButton");
+               const closeModalButton = document.getElementById("closeModalButton");
+       
+               // Open the modal when the notification button is clicked
+               notificationButton.onclick = function() {
+                   modal.style.display = "block";
+               }
+       
+               // Close the modal when the close button is clicked
+               closeModalButton.onclick = function() {
+                   modal.style.display = "none";
+               }
+       
+               // Close the modal if the user clicks outside of the modal
+               window.onclick = function(event) {
+                   if (event.target == modal) {
+                       modal.style.display = "none";
+                   }
+               }
+       
+               // Attach event listeners for each "close" button in the notification list
+               const closeButtons = document.querySelectorAll('.close-notification');
+               closeButtons.forEach(button => {
+                   button.addEventListener('click', function(event) {
+                       const notificationId = event.target.getAttribute('data-notification-id');
+                       closeNotification(notificationId);
+                   });
+               });
+           });
+       
+           // Function to close individual notification
+           // Close notification and hide it temporarily using localStorage
+       function closeNotification(notificationId) {
+           // Save the closed notification ID to localStorage
+           let closedNotifications = JSON.parse(localStorage.getItem('closedNotifications')) || [];
+           closedNotifications.push(notificationId);
+           localStorage.setItem('closedNotifications', JSON.stringify(closedNotifications));
+       
+           // Hide the notification element on the page
+           const notificationElement = document.getElementById(`notification-${notificationId}`);
+           notificationElement.style.display = 'none';
+       }
+       // Check localStorage for closed notifications and hide them on page load
+       window.onload = function() {
+           const closedNotifications = JSON.parse(localStorage.getItem('closedNotifications')) || [];
+       
+           // Hide all closed notifications
+           closedNotifications.forEach(notificationId => {
+               const notificationElement = document.getElementById(`notification-${notificationId}`);
+               if (notificationElement) {
+                   notificationElement.style.display = 'none';
+               }
+           });
+       };
+
+    // Farmer approves order and sets pickup address
+    document.querySelectorAll(".approve-order").forEach(button => {
+        button.addEventListener("click", function () {
+            const orderId = this.getAttribute("data-order-id");
+            const pickupAddress = document.getElementById(`pickup-address-${orderId}`).value;
+
+            if (!pickupAddress) {
+                alert("Please enter a pickup address.");
+                return;
+            }
+
+            fetch(`/farmer/approve-order/${orderId}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ pickupAddress })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Order approved! Buyer has been notified.");
+                } else {
+                    alert("Error approving order.");
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    });
+
+
+
+// ✅ Function to send reply
 // Toggle profile dropdown visibility
 function toggleProfileDropdown() {
     const dropdown = document.getElementById("profileDropdown");
@@ -601,11 +704,106 @@ function formatTime(dateTime) {
     return date.toLocaleTimeString("en-US", { hour: '2-digit', minute: '2-digit', hour12: true });
 }
 
+function viewCurrentBids() {
+    fetch('/buyer/current-bids')
+        .then(response => response.json())
+        .then(data => {
+            const bidList = document.getElementById('bidList');
+            bidList.innerHTML = '';
+
+            if (data.success && data.bids.length > 0) {
+                data.bids.forEach(bid => {
+                    console.log('bid', bid.auctionEnd)
+                    const auctionStartTime = bid.auctionStart ?? null;
+                    const auctionEndTime = bid.auctionEnd ?? null;
+                    const now = new Date();
+
+                    let auctionStatus = '';
+                    let auctionButton = '';
+
+                    // if (!auctionStartTime || !auctionEndTime) {
+                    //     auctionStatus = `<p class="error">Auction schedule not available.</p>`;
+                    //     auctionButton = `<button disabled class="disabled-btn">No Auction Data</button>`;
+                    // } else if (now < auctionStartTime) {
+                    //     auctionStatus = `<p class="upcoming">Auction starts on: ${auctionStartTime.toLocaleString()}</p>`;
+                    //     auctionButton = `<button disabled class="disabled-btn">Auction Not Started</button>`;
+                    // } else if (now >= auctionStartTime && now <= auctionEndTime) {
+                    //     auctionStatus = `<p class="ongoing">Auction is Live!</p>`;
+                    //     auctionButton = `<button onclick="joinAuction('${bid.auctionId}')">Join Auction</button>`;
+                    // } else {
+                    //     auctionStatus = `<p class="ended">Auction Ended</p>`;
+                    //     auctionButton = `<button disabled class="disabled-btn">Auction Ended</button>`;
+                    // }
+
+                    const bidItem = `
+                        <div class="bid-item">
+                            <img src="/public${bid.productImage}" alt="Product Image" class="bid-product-img">
+                            <h3>${bid.productName}</h3>
+                            <p>Description: ${bid.productDescription}</p>
+                            <p>Minimum Price: ₱${bid.minimumPrice}</p>
+                            <p>Seller: ${bid.sellerName}</p>
+                        
+                            <p class="ongoing">Auction is Live!</p>
+                       <a href="auction/room/${bid.pId}" style="background-color: green; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;">
+                        Join Auction
+                        </a>
+
+                        </div>
+                    `;
+                    bidList.innerHTML += bidItem;
+                });
+            } else {
+                bidList.innerHTML = '<p>No active bids found.</p>';
+            }
+
+            document.getElementById('currentBidsModal').style.display = 'block';
+        })
+        .catch(error => {
+            console.error('Error fetching bids:', error);
+            alert('Failed to load auction bids. Please try again.');
+        });
+}
+
+function closeModal() {
+    document.getElementById('currentBidsModal').style.display = 'none';
+}
+
+function joinAuction(auctionId) {
+    if (!auctionId) {
+        alert('Invalid auction session.');
+        return;
+    }
+    window.location.href = `/buyer/auction/session/${auctionId}`;
+}
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById("notificationModal");
+    const notificationButton = document.getElementById("notificationButton");
+    const closeModalButton = document.getElementById("closeModalButton");
+
+    // Open modal when notification button is clicked
+    notificationButton.addEventListener("click", function () {
+        modal.style.display = "block";
+    });
+
+    // Close modal when close button is clicked
+    closeModalButton.addEventListener("click", function () {
+        modal.style.display = "none";
+    });
+
+    // Close modal when clicking outside of modal content
+    window.addEventListener("click", function (event) {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    });
+});
 
 
 </script>
 
-    <script src="/public/js/scripts.js"></script>
+  
  
 </body>
 </html>

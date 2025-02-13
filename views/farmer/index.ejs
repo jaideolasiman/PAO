@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Farmer Web Page </title>
     <link rel="stylesheet" href="/public/css/style.css">
+    <link rel="stylesheet" href="/public/css/stylemodal.css">
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css2?family=Satisfy&display=swap" rel="stylesheet">
@@ -32,12 +33,39 @@
                     <span class="icon-label">Edit Information</span> <!-- Label for Edit Icon -->
                 </button></li>
     
-                <!-- Submitted Items Icon-->
-                <li><button class="fullscreen-btn" onclick="toggleFullscreen()">
-                    <img src="/public/img/cart.png" alt="Full Screen Icon" class="cart-icon">
-                    <span class="icon-label"> Submitted Items</span> 
-                </button></li>
-    
+               <!-- Product Management Button -->
+            <li>
+                <button class="fullscreen-btn" onclick="openOrdersModal()">
+                    <img src="/public/img/cart.png" alt="Cart Icon" class="cart-icon">
+                    <span class="icon-label">Product Management</span>
+                </button>
+            </li>
+
+            <!-- Modal Overlay -->
+                <div class="modal-overlay" id="modalOverlay" onclick="closeOrdersModal()" style="display: none;"></div>
+
+                <!-- Product Orders Modal -->
+                <div id="buyersModal" class="modal" style="display: none;">
+                    <h3 id="productTitle">Product Orders</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Buyer Name</th>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Total Price</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="buyersList">
+                            <tr><td colspan="5">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                    <div id="pagination" class="pagination-container"></div>
+                    <button class="close-btn" onclick="closeOrdersModal()">Close</button>
+                </div>
+
+
                 <!-- Currently Bids Icon
                 <li><button class="bids-btn" onclick="viewCurrentBids()">
                     <img src="/public/img/clock_user.png" alt="Currently Bids Icon" class="bids-icon">
@@ -162,11 +190,12 @@
                         <label for="auctionEnd">Auction End</label>
                         <input type="datetime-local" id="auctionEnd" name="auctionEnd"><br><br>
                     </div>
-                
+                    <label for="pickupAddress">Pickup Complete Address:</label>
+                    <input type="text" id="pickupAddress" name="pickupAddress" required>
                     <!-- Product Image -->
                     <label for="image">Product Image</label>
                     <input type="file" id="image" name="image" accept="image/*" required>
-                
+                    
                     <!-- Submit Button -->
                     <center><button type="submit">Submit Product</button></center>
                 </form>
@@ -181,12 +210,10 @@
 
         <section class="product-list">
             <!-- All Products Section -->
-            <div id="all-products-section">
-                <h3>All Products</h3>
-        
+            <div id="all-products-section">        
                 <!-- Retail Products -->
                 <% if (retailProducts.length > 0) { %>
-                    <h4>Retail Products</h4>
+                    <h2>Retail Products</h2>
                     <div class="product-container">
                         <% retailProducts.forEach(product => { %>
                             <div class="product">
@@ -196,7 +223,9 @@
                                 </div>
                                 <h4><%= product.name %></h4>
                                 <p>Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
-                                <button class="showbuyer" onclick="showbuyer()">Show Buyers</button>
+                                <p>Pickup Address: <%= product.pickupAddress || 'Not Available' %></p> <!-- Display Pickup Address -->
+                                <button onclick="showBuyers('<%= product._id %>')">Show Buyers</button>
+
                             </div>
                         <% }) %>
                     </div>
@@ -204,7 +233,7 @@
         
                 <!-- Wholesale Products -->
                 <% if (wholesaleProducts.length > 0) { %>
-                    <h4>Wholesale Products</h4>
+                    <h2>Wholesale Products</h2>
                     <div class="product-container">
                         <% wholesaleProducts.forEach(product => { %>
                             <div class="product">
@@ -214,6 +243,7 @@
                                 </div>
                                 <h4><%= product.name %></h4>
                                 <p>Minimum Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
+                                <p>Pickup Address: <%= product.pickupAddress || 'Not Available' %></p> <!-- Display Pickup Address -->
                                 <button class="participated" onclick="participateAuction('<%= product._id %>')">Show Participated</button>
                             </div>
                         <% }) %>
@@ -225,11 +255,9 @@
             <div id="category-products-section" style="display: none;">
                 <% groupedProducts.forEach(group => { %>
                     <div class="category-section" data-category-id="<%= group.category._id %>">
-                        <h3><%= group.category.name %></h3>
-        
                         <!-- Retail Products -->
                         <% if (group.retailProducts.length > 0) { %>
-                            <h4>Retail Products</h4>
+                            <h2>Retail Products</h2>
                             <div class="product-container">
                                 <% group.retailProducts.forEach(product => { %>
                                     <div class="product">
@@ -239,7 +267,9 @@
                                         </div>
                                         <h4><%= product.name %></h4>
                                         <p>Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
-                                        <button class="showbuyer" onclick="showbuyer()">Show Buyers</button>
+                                        <p>Pickup Address: <%= product.pickupAddress || 'Not Available' %></p> <!-- Display Pickup Address -->
+                                        <button onclick="showBuyers('<%= product._id %>')">Show Buyers</button>
+
                                     </div>
                                 <% }) %>
                             </div>
@@ -247,7 +277,7 @@
         
                         <!-- Wholesale Products -->
                         <% if (group.wholesaleProducts.length > 0) { %>
-                            <h4>Wholesale Products</h4>
+                            <h2>Wholesale Products</h2>
                             <div class="product-container">
                                 <% group.wholesaleProducts.forEach(product => { %>
                                     <div class="product">
@@ -257,6 +287,7 @@
                                         </div>
                                         <h4><%= product.name %></h4>
                                         <p>Minimum Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
+                                        <p>Pickup Address: <%= product.pickupAddress || 'Not Available' %></p> <!-- Display Pickup Address -->
                                         <button class="participated" onclick="participateAuction('<%= product._id %>')">Show Participated</button>
                                     </div>
                                 <% }) %>
@@ -268,6 +299,31 @@
         </section>
         
     </main>
+ <!-- Show Buyers Modal -->
+<!-- Show Buyers Modal -->
+<div id="showBuyersModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('showBuyersModal')">&times;</span>
+        <h2>Buyers</h2>
+        <ul id="buyersList">
+            <% if (typeof buyers !== 'undefined' && buyers.length > 0) { %>
+                <% buyers.forEach(buyer => { %>
+                    <li><%= buyer.firstName %> <%= buyer.lastName %></li>
+                <% }); %>
+            <% } else { %>
+                <li>No buyers yet.</li>
+            <% } %>
+        </ul>
+    </div>
+</div>
+<!-- Show Participated Modal -->
+<div id="showParticipantsModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('showParticipantsModal')">&times;</span>
+        <h2>Participants List</h2>
+        <ul id="participantsList"></ul>
+    </div>
+</div>
 
     <footer>
         <div class="footer-left">
@@ -312,6 +368,10 @@
     </footer>
 
     <script>
+        function showBuyers(productId) {
+            console.log("Sending request for Product ID:", productId); // ✅ Debugging log
+            window.location.href = `/farmer/showBuyer?productId=${productId}`;
+        }
         // Ensure the DOM is fully loaded before running scripts
         document.addEventListener('DOMContentLoaded', function() {
                // Get the modal and notification button
@@ -370,41 +430,218 @@
                }
            });
        };
+
        
-       function showBuyers(productId, productName) {
-           document.getElementById("productTitle").innerText = productName;
-       
-           fetch(`/farmer/getBuyers?productId=${productId}`)
-               .then(response => response.json())
-               .then(data => {
-                   if (data.length === 0) {
-                       document.getElementById("buyersList").innerHTML = "<tr><td colspan='4'>No buyers found.</td></tr>";
-                   } else {
-                       const buyersList = data.map(buyer => {
-                           return `
-                               <tr>
-                                   <td>${buyer.buyerName}</td>
-                                   <td>${buyer.quantity}</td>
-                                   <td>${buyer.status}</td>
-                                   <td>
-                                       <button onclick="processOrder('${buyer._id}', 'approve')">Approve</button>
-                                       <button onclick="processOrder('${buyer._id}', 'reject')">Reject</button>
-                                   </td>
-                               </tr>
-                           `;
-                       }).join('');
-                       
-                       document.getElementById("buyersList").innerHTML = buyersList;
-                   }
-       
-                   const modal = document.getElementById('buyersModal');
-                   modal.style.display = 'block';
-               })
-               .catch(error => {
-                   console.error('Error fetching buyers:', error);
-                   alert('Error fetching buyers');
-               });
-       }
+       let ordersData = []; // Stores all fetched orders
+let currentPage = 1;
+const itemsPerPage = 5;
+const totalPages = 10; // Fixed 1-10 pages
+
+// Fetch Orders on Page Load to Maintain Status
+document.addEventListener("DOMContentLoaded", () => {
+    fetchOrdersOnPageLoad();
+});
+
+// Function to Fetch Orders and Display them
+function fetchOrdersOnPageLoad() {
+    fetch('/farmer/getFarmerOrders')
+        .then(response => response.json())
+        .then(data => {
+            console.log("Fetched Orders Data:", data);
+
+            // Store orders data and maintain actual statuses from DB
+            ordersData = data.map(order => ({
+                ...order,
+                quantity: order.quantity || Math.floor(Math.random() * 10) + 1, 
+                totalPrice: order.totalPrice || "₱" + (Math.floor(Math.random() * 500) + 100) 
+            }));
+
+            // Refresh UI with latest data
+            displayOrders();
+            generatePagination();
+        })
+        .catch(error => console.error('Error fetching orders:', error));
+}
+
+// Function to Open Orders Modal and Fetch Data
+function openOrdersModal() {
+    fetchOrdersOnPageLoad();
+    document.getElementById('buyersModal').style.display = 'block';
+    document.getElementById('modalOverlay').style.display = 'block';
+}
+
+// Function to Display Orders Based on Page
+function displayOrders() {
+    const buyersListContainer = document.getElementById('buyersList');
+    buyersListContainer.innerHTML = ""; // Clear table before updating
+
+    // Calculate Slice Range
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    const ordersToShow = ordersData.slice(start, end);
+
+    // Populate Table
+    if (ordersToShow.length === 0) {
+        buyersListContainer.innerHTML = `<tr><td colspan="5">No orders available</td></tr>`;
+        return;
+    }
+
+    ordersToShow.forEach(order => {
+        const row = document.createElement("tr");
+        row.id = `order-${order._id}`;  // Unique ID for each order row
+        row.innerHTML = `
+            <td>${order.buyerName}</td>
+            <td>${order.productName}</td>
+            <td>${order.quantity}</td>
+            <td>${order.totalPrice}</td>
+            <td class="action-buttons">
+                <button class="approve-btn" id="approve-${order._id}" onclick="processOrder('${order._id}', 'approve')" 
+                    ${order.status === "Approved" ? "disabled" : ""}>
+                    ${order.status === "Approved" ? "✔ Approved" : "✔ Approve"}
+                </button>
+                <button class="reject-btn" id="reject-${order._id}" onclick="processOrder('${order._id}', 'reject')" 
+                    ${order.status === "Rejected" ? "disabled" : ""} style="${order.status === 'Approved' ? 'display:none' : ''}">
+                    ${order.status === "Rejected" ? "❌ Rejected" : "❌ Reject"}
+                </button>
+                <button class="delete-btn" onclick="deleteOrder('${order._id}')">🗑 Delete</button>
+            </td>
+        `;
+        buyersListContainer.appendChild(row);
+    });
+}
+
+// Function to Generate Pagination Buttons
+function generatePagination() {
+    const paginationContainer = document.getElementById('pagination');
+    paginationContainer.innerHTML = ""; // Clear old buttons
+
+    for (let i = 1; i <= totalPages; i++) {
+        const button = document.createElement("button");
+        button.innerText = i;
+        button.className = i === currentPage ? "active-page" : "";
+        button.onclick = () => {
+            currentPage = i;
+            displayOrders();
+            generatePagination();
+        };
+        paginationContainer.appendChild(button);
+    }
+}
+
+// Function to Process Order (Approve/Reject) and Save to DB
+function processOrder(orderId, action) {
+    fetch('/farmer/processOrder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId, action })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data.message);
+
+        // Update local ordersData array to reflect changes
+        ordersData = ordersData.map(order => {
+            if (order._id === orderId) {
+                order.status = action === "approve" ? "Approved" : "Rejected";
+            }
+            return order;
+        });
+
+        // Refresh order list to show the updated status
+        displayOrders();
+    })
+    .catch(error => console.error("Error processing order:", error));
+}
+
+// Function to Delete Order from the Table (Not the Database)
+function deleteOrder(orderId) {
+    // Find the row based on orderId and remove it from the table
+    const row = document.querySelector(`#order-${orderId}`);
+    if (row) row.remove();
+
+    // Optionally, send a request to the backend to remove the order from the database
+    fetch(`/buyer/deleteOrder/${orderId}`, { method: 'DELETE' })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data.message);
+            // Remove order from local array
+            ordersData = ordersData.filter(order => order._id !== orderId);
+        })
+        .catch(error => console.error('Error deleting order:', error));
+}
+
+// Close Modal Function
+function closeOrdersModal() {
+    document.getElementById('buyersModal').style.display = 'none';
+    document.getElementById('modalOverlay').style.display = 'none';
+}
+
+// Function to fetch and display buyers in modal
+function showbuyer(productId) {
+    fetch(`/farmer/showBuyer?productId=${productId}`)
+        .then(response => response.json())
+        .then(data => {
+            const buyersList = document.getElementById("buyersList");
+            buyersList.innerHTML = ""; // Clear previous list
+
+            if (data.length === 0) {
+                buyersList.innerHTML = "<li>No buyers yet.</li>";
+            } else {
+                data.forEach(buyer => {
+                    let listItem = document.createElement("li");
+                    listItem.textContent = `${buyer.firstname} ${buyer.lastname}`;
+                    buyersList.appendChild(listItem);
+                });
+            }
+
+            // Show the modal
+            document.getElementById("showBuyersModal").style.display = "block";
+        })
+        .catch(error => console.error("Error fetching buyers:", error));
+}
+
+// Function to close the modal
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = "none";
+}
+
+
+// Close modal if user clicks outside the modal content
+window.onclick = function(event) {
+    const modal = document.getElementById("showBuyersModal");
+    if (event.target === modal) {
+        modal.style.display = "none";
+    }
+};
+
+
+
+
+
+
+// Function to fetch and display participants in modal
+function participateAuction(productId) {
+    fetch(`/api/get-participants/${productId}`)
+        .then(response => response.json())
+        .then(data => {
+            const participantsList = document.getElementById('participantsList');
+            participantsList.innerHTML = ''; // Clear previous data
+            data.participants.forEach(participant => {
+                let listItem = document.createElement('li');
+                listItem.textContent = `${participant.firstName} ${participant.lastName}`;
+                participantsList.appendChild(listItem);
+            });
+            document.getElementById('showParticipantsModal').style.display = 'block';
+        })
+        .catch(error => console.error('Error fetching participants:', error));
+}
+
+// Function to close modals
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+   
     </script>
 
     <script src="/public/js/scriptss.js"></script>

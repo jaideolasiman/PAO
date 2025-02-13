@@ -469,9 +469,6 @@ footer {
         text-align: center;
     }
 
-    .settings-dropdown li a:hover {
-        background-color: #3f944a;
-    }
     /* Modal Background */
 /* Add this link to include the font in the head of your HTML document */
 
@@ -773,7 +770,6 @@ strong {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     font-size: 25px; /* Larger font size for more impact */
     font-weight: bold;
-    background: linear-gradient(45deg, #013835, #FFD700, #32CD32, #00BFFF); /* Colorful gradient */
     --webkit-background-clip: text; /* Clips the background to the text */
     color: transparent; /* Makes the text color transparent so the gradient is visible */
     letter-spacing: 2px; /* Slight letter spacing for a clean look */

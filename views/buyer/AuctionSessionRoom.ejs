@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auction Session Room</title>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Basic CSS -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .session-container {
+            margin: 20px auto;
+            width: 90%;
+            background-color: #fff;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            position: relative;
+        }
+
+        .header h2 {
+            margin: 0;
+        }
+
+        .leave-button-header {
+            background-color: #3599dc;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .leave-button-header:hover {
+            background-color: #2fece3;
+        }
+
+        .timer {
+            text-align: center;
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
+
+        .leaderboard,
+        .other-bidders {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+        }
+
+        .card {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            flex: 1;
+            margin: 5px;
+            border-radius: 5px;
+            box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .card.active {
+            border: 2px solid #4caf50;
+        }
+
+        .input-section {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .btn {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        .other-bidders .bidder {
+            flex: 1;
+            border: 1px solid #ddd;
+            padding: 5px;
+            margin: 5px;
+            text-align: center;
+            font-size: 0.9rem;
+            background-color: #f9f9f9;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="session-container">
+        <!-- Header -->
+        <div class="header">
+            <h2>Auction Session Room</h2>
+            <!-- Leave Bid Button in Header -->
+            <button class="leave-button-header" onclick="leaveBid()">Leave Bid</button>
+        </div>
+
+        <!-- Timer -->
+        <div class="timer">
+            <p>Session Time Left: <strong id="timer">00 : 57 : 10</strong></p>
+        </div>
+
+        <!-- Leaderboard Section -->
+        <div class="leaderboard">
+            <!-- Player 1 -->
+            <% topBids.forEach((bid, index) => { %>
+    <div class="card">
+        <p><strong><%= index + 1 %></strong></p> <!-- Ranking Number -->
+        <p>Name: <strong><%= bid.buyer.firstName ?? '' %> <%= bid.buyer.lastName ?? '' %></strong></p> <!-- Bidder Name -->
+        <p>Phone: <%= bid.buyer.phoneNumber || 'N/A' %></p> <!-- Phone Number -->
+        <!-- <p>State: <span style="color:red;"><%= bid.state || 'Pending' %></span></p> -->
+        <p>Currently Submit: <strong>&#128176; ₱<%= bid.bid %></strong></p> <!-- Submitted Bid -->
+    </div>
+<% }) %>
+<!-- <div class="card active">
+                <p><strong>1</strong></p>
+                <p>Name: <strong>Cristy Julian</strong></p>
+                <p>Phone: 01112980611</p>
+                <p>State: <span style="color:green;">Online</span></p>
+                <p>Currently Submit: <strong>&#128176; 10500.0 </strong></p>
+            </div>
+
+            <div class="card">
+                <p><strong>2</strong></p>
+                <p>Name: <strong>Jaide Olasiman</strong></p>
+                <p>Phone: 01097706982</p>
+                <p>State: <span style="color:green;">Online</span></p>
+                <p>Currently Submit: <strong>&#128176; 0.0 </strong></p>
+            </div>
+
+            <div class="card">
+                <p><strong>3</strong></p>
+                <p>Name: <strong></strong></p>
+                <p>Phone: </p>
+                <p>State: <span style="color:red;"></span></p>
+                <p>Currently Submit: <strong>&#128176; </strong></p>
+            </div> -->
+        </div>
+
+        <!-- Other Bidders Section -->
+        <div class="other-bidders">
+            <div class="bidder">
+                <p>Name: <strong>Bidder 3</strong></p>
+                <p>Submitted Price: <strong> </strong></p>
+            </div>
+            <div class="bidder">
+                <p>Name: <strong>Bidder 4</strong></p>
+                <p>Submitted Price: <strong> </strong></p>
+            </div>
+            <div class="bidder">
+                <p>Name: <strong>Bidder 5</strong></p>
+                <p>Submitted Price: <strong> </strong></p>
+            </div>
+            <div class="bidder">
+                <p>Name: <strong>Bidder 6</strong></p>
+                <p>Submitted Price: <strong> </strong></p>
+            </div>
+        </div>
+
+        <!-- Submit Price Section -->
+        <div class="card">
+            <form action="" method="post">
+                <a href="#" onclick="accessProductDetails(event)">
+                    <img src="https://via.placeholder.com/150" alt="Fresh Cavendish Bananas">
+                </a>
+                <p>Product Name: <%= product.name %></p>
+                <p>Product Seller: <%= product.seller.firstName %> <%= product.seller.lastName %> <strong></strong></p>
+                <p>Minimum Price: ₱<%= product.minPrice %> <strong></strong></p>
+                <h3>Submit Your Price</h3>
+                <input type="hidden" name="sellerId" value='<%= product.seller._id %>' style="display: none;">
+                <input type="hidden" name="productId" value='<%= product._id %>' style="display: none;">
+                <input type="number" id="submitPrice" name="submitPrice" placeholder="Enter Your Price"
+                    style="padding: 5px; width: 200px;">
+                <button class="btn" onclick="submitPrice()">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // function submitPrice() {
+        //     const price = document.getElementById('submitPrice').value;
+        //     if (price) {
+        //         alert('Price Submitted: ' + price + ' $');
+        //     } else {
+        //         alert('Please enter a valid price.');
+        //     }
+        // }
+
+        function leaveBid() {
+            alert("You have left the auction.");
+            window.location.href = "homepage.html"; // Redirect to homepage or other page
+        }
+
+        // Timer Countdown
+        function startTimer(duration, display) {
+            let timer = duration, minutes, seconds;
+            setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = minutes + " : " + seconds;
+
+                if (--timer < 0) {
+                    timer = 0;
+                }
+            }, 1000);
+        }
+        window.onload = function () {
+            const sessionTime = 57 * 60; // 57 minutes
+            const display = document.querySelector('#timer');
+            startTimer(sessionTime, display);
+        };
+    </script>
+</body>
+
+</html>

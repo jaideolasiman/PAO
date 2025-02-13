@@ -19,6 +19,8 @@ const farmerIndexController = require('../controllers/farmer/indexController');
 const buyerIndexController = require('../controllers/buyer/indexController');
 const orderController = require('../controllers/buyer/orderController');
 
+const currentbidController = require('../controllers/buyer/currentbidController');
+
 module.exports = function (app) {
   app.get('/login', authLoginController.login);
   app.post('/doLogin', authLoginController.doLogin);
@@ -47,14 +49,28 @@ module.exports = function (app) {
   app.post('/admin/manageItem/reject/:id', adminManageItemController.rejectProduct);
   app.post('/admin/manageItem/delete/:id', adminManageItemController.deleteProduct);
 
-  app.get('/farmer/notification', farmerIndexController.markNotificationAsRead);
+  
   app.get('/farmer/index', farmerIndexController.index);  // Ensure this is correct
   app.post('/farmer/addProduct', farmerIndexController.addProduct);
+  app.get('farmer/getBuyers', farmerIndexController.getBuyers);
+  app.get('/farmer/notification', farmerIndexController.markNotificationAsRead);
+  app.get('/farmer/getFarmerOrders', farmerIndexController.getFarmerOrders);
+  app.post('/farmer/processOrder', farmerIndexController.processOrder);
+  app.get('/farmer/deleteOrder/:id', farmerIndexController.deleteOrder);
+  app.get('/farmer/showBuyer', farmerIndexController.showBuyer);
+  app.get('/farmer/showParticipated', farmerIndexController.showParticipated);
 
+
+  
+  app.get('/buyer/markNotificationAsRead', buyerIndexController.markNotificationAsRead);
   app.get('/buyer/index', buyerIndexController.index);
+  app.get('/buyer/getNotifications', buyerIndexController.getNotifications);
   app.post('/buyer/confirm-purchase', buyerIndexController.confirmPurchase);
   app.post('/buyer/getProducts', orderController.getProducts);
   app.post('/buyer/confirm-participation', buyerIndexController.confirmParticipation);
-  app.get('/buyer/notification', buyerIndexController.markNotificationAsRead);
-  
+  app.get('/buyer/current-bids', buyerIndexController.getCurrentBids);
+
+
+  app.get('/buyer/auction/room/:productId', currentbidController.index);
+  app.post('/buyer/auction/room/:productId', currentbidController.doBid);
 };
