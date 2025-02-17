@@ -131,13 +131,15 @@
         <div class="leaderboard">
             <!-- Player 1 -->
             <% topBids.forEach((bid, index) => { %>
-    <div class="card">
-        <p><strong><%= index + 1 %></strong></p> <!-- Ranking Number -->
-        <p>Name: <strong><%= bid.buyer.firstName ?? '' %> <%= bid.buyer.lastName ?? '' %></strong></p> <!-- Bidder Name -->
-        <p>Phone: <%= bid.buyer.phoneNumber || 'N/A' %></p> <!-- Phone Number -->
-        <!-- <p>State: <span style="color:red;"><%= bid.state || 'Pending' %></span></p> -->
-        <p>Currently Submit: <strong>&#128176; ₱<%= bid.bid %></strong></p> <!-- Submitted Bid -->
-    </div>
+                <%if(index < 3){%>
+        <div class="card">
+            <p><strong><%= index + 1 %></strong></p> <!-- Ranking Number -->
+            <p>Name: <strong><%= bid.buyer.firstName ?? '' %> <%= bid.buyer.lastName ?? '' %></strong></p> <!-- Bidder Name -->
+            <p>Phone: <%= bid.buyer.phoneNumber || 'N/A' %></p> <!-- Phone Number -->
+            <!-- <p>State: <span style="color:red;"><%= bid.state || 'Pending' %></span></p> -->
+            <p>Currently Submit: <strong>&#128176; ₱<%= bid.bid %></strong></p> <!-- Submitted Bid -->
+        </div>
+        <% }%>
 <% }) %>
 <!-- <div class="card active">
                 <p><strong>1</strong></p>
@@ -166,29 +168,23 @@
 
         <!-- Other Bidders Section -->
         <div class="other-bidders">
-            <div class="bidder">
-                <p>Name: <strong>Bidder 3</strong></p>
-                <p>Submitted Price: <strong> </strong></p>
-            </div>
-            <div class="bidder">
-                <p>Name: <strong>Bidder 4</strong></p>
-                <p>Submitted Price: <strong> </strong></p>
-            </div>
-            <div class="bidder">
-                <p>Name: <strong>Bidder 5</strong></p>
-                <p>Submitted Price: <strong> </strong></p>
-            </div>
-            <div class="bidder">
-                <p>Name: <strong>Bidder 6</strong></p>
-                <p>Submitted Price: <strong> </strong></p>
-            </div>
+            <% topBids.forEach((bid, index) => { %>
+                <%if(index > 2){%>
+                    <div class="bidder">
+                        <p>Name: <strong><%= bid.buyer.firstName ?? '' %> <%= bid.buyer.lastName ?? '' %></strong></p>
+                        <p>Submitted Price: <strong> ₱<%= bid.bid %></strong></p>
+                    </div>
+        <% }%>
+<% }) %>
+           
+            
         </div>
 
         <!-- Submit Price Section -->
         <div class="card">
             <form action="" method="post">
                 <a href="#" onclick="accessProductDetails(event)">
-                    <img src="https://via.placeholder.com/150" alt="Fresh Cavendish Bananas">
+                    <img src='/public<%= product.image %>' alt="Fresh Cavendish Bananas">
                 </a>
                 <p>Product Name: <%= product.name %></p>
                 <p>Product Seller: <%= product.seller.firstName %> <%= product.seller.lastName %> <strong></strong></p>

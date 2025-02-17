@@ -15,6 +15,33 @@
     
 
 <body>
+    <script>function showBuyers(productId) {
+        // Function to fetch and display buyers in modal
+    fetch(`/farmer/showBuyer?productId=${productId}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log("Fetched Buyers Data:", data); // Debugging
+    
+            const buyersList = document.getElementById("buyersList");
+            if (!buyersList) {
+                console.error("❌ buyersList element not found!");
+                return;
+            }
+    
+            if (data.buyers.length === 0) {
+                buyersList.innerHTML = "<li>No buyers yet.</li>";
+            } else {
+                buyersList.innerHTML = data.buyers
+                    .map(buyer => `<li>${buyer.firstName} ${buyer.lastName}</li>`)
+                    .join(""); // Convert array to a string
+            }
+    
+            // Ensure modal is visible
+            document.getElementById("showBuyersModal").style.display = "block";
+        })
+        .catch(error => console.error("❌ Error fetching buyers:", error));
+    }
+    </script>
     <header>
         <nav class="navbar">
             <div class="logo">PAO Market
@@ -216,17 +243,18 @@
                     <h2>Retail Products</h2>
                     <div class="product-container">
                         <% retailProducts.forEach(product => { %>
-                            <div class="product">
-                                <div class="product-image-container">
-                                    <img src="<%= product.image ? '/public/img/product/' + (product.image.split('/').pop() || '') : '/public/img/default.png' %>" 
-                                         alt="<%= product.name %>" class="product-image">
+                            <% if (product.status === 'approved') { %>  <!-- ✅ Display only approved products -->
+                                <div class="product">
+                                    <div class="product-image-container">
+                                        <img src="<%= product.image ? '/public/img/product/' + (product.image.split('/').pop() || '') : '/public/img/default.png' %>" 
+                                             alt="<%= product.name %>" class="product-image">
+                                    </div>
+                                    <h4><%= product.name %></h4>
+                                    <p>Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
+                                    <p>Pickup Address: <%= product.pickupAddress || 'Not Available' %></p>
+                                    <button onclick="showBuyers('<%= product._id %>')">Show Buyers</button>
                                 </div>
-                                <h4><%= product.name %></h4>
-                                <p>Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
-                                <p>Pickup Address: <%= product.pickupAddress || 'Not Available' %></p> <!-- Display Pickup Address -->
-                                <button onclick="showBuyers('<%= product._id %>')">Show Buyers</button>
-
-                            </div>
+                            <% } %>
                         <% }) %>
                     </div>
                 <% } %>
@@ -236,16 +264,18 @@
                     <h2>Wholesale Products</h2>
                     <div class="product-container">
                         <% wholesaleProducts.forEach(product => { %>
-                            <div class="product">
-                                <div class="product-image-container">
-                                    <img src="<%= product.image ? '/public/img/product/' + (product.image.split('/').pop() || '') : '/public/img/default.png' %>" 
-                                         alt="<%= product.name %>" class="product-image">
+                            <% if (product.status === 'approved') { %>  <!-- ✅ Display only approved products -->
+                                <div class="product">
+                                    <div class="product-image-container">
+                                        <img src="<%= product.image ? '/public/img/product/' + (product.image.split('/').pop() || '') : '/public/img/default.png' %>" 
+                                             alt="<%= product.name %>" class="product-image">
+                                    </div>
+                                    <h4><%= product.name %></h4>
+                                    <p>Minimum Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
+                                    <p>Pickup Address: <%= product.pickupAddress || 'Not Available' %></p>
+                                    <button class="participated" onclick="participateAuction('<%= product._id %>')">Show Participated</button>
                                 </div>
-                                <h4><%= product.name %></h4>
-                                <p>Minimum Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
-                                <p>Pickup Address: <%= product.pickupAddress || 'Not Available' %></p> <!-- Display Pickup Address -->
-                                <button class="participated" onclick="participateAuction('<%= product._id %>')">Show Participated</button>
-                            </div>
+                            <% } %>
                         <% }) %>
                     </div>
                 <% } %>
@@ -260,17 +290,18 @@
                             <h2>Retail Products</h2>
                             <div class="product-container">
                                 <% group.retailProducts.forEach(product => { %>
-                                    <div class="product">
-                                        <div class="product-image-container">
-                                            <img src="<%= product.image ? '/public/img/product/' + (product.image.split('/').pop() || '') : '/public/img/default.png' %>" 
-                                                 alt="<%= product.name %>" class="product-image">
+                                    <% if (product.status === 'approved') { %>  <!-- ✅ Display only approved products -->
+                                        <div class="product">
+                                            <div class="product-image-container">
+                                                <img src="<%= product.image ? '/public/img/product/' + (product.image.split('/').pop() || '') : '/public/img/default.png' %>" 
+                                                     alt="<%= product.name %>" class="product-image">
+                                            </div>
+                                            <h4><%= product.name %></h4>
+                                            <p>Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
+                                            <p>Pickup Address: <%= product.pickupAddress || 'Not Available' %></p>
+                                            <button onclick="showBuyers('<%= product._id %>')">Show Buyers</button>
                                         </div>
-                                        <h4><%= product.name %></h4>
-                                        <p>Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
-                                        <p>Pickup Address: <%= product.pickupAddress || 'Not Available' %></p> <!-- Display Pickup Address -->
-                                        <button onclick="showBuyers('<%= product._id %>')">Show Buyers</button>
-
-                                    </div>
+                                    <% } %>
                                 <% }) %>
                             </div>
                         <% } %>
@@ -280,16 +311,18 @@
                             <h2>Wholesale Products</h2>
                             <div class="product-container">
                                 <% group.wholesaleProducts.forEach(product => { %>
-                                    <div class="product">
-                                        <div class="product-image-container">
-                                            <img src="<%= product.image ? '/public/img/product/' + (product.image.split('/').pop() || '') : '/public/img/default.png' %>" 
-                                                 alt="<%= product.name %>" class="product-image">
+                                    <% if (product.status === 'approved') { %>  <!-- ✅ Display only approved products -->
+                                        <div class="product">
+                                            <div class="product-image-container">
+                                                <img src="<%= product.image ? '/public/img/product/' + (product.image.split('/').pop() || '') : '/public/img/default.png' %>" 
+                                                     alt="<%= product.name %>" class="product-image">
+                                            </div>
+                                            <h4><%= product.name %></h4>
+                                            <p>Minimum Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
+                                            <p>Pickup Address: <%= product.pickupAddress || 'Not Available' %></p>
+                                            <button class="participated" onclick="participateAuction('<%= product._id %>')">Show Participated</button>
                                         </div>
-                                        <h4><%= product.name %></h4>
-                                        <p>Minimum Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
-                                        <p>Pickup Address: <%= product.pickupAddress || 'Not Available' %></p> <!-- Display Pickup Address -->
-                                        <button class="participated" onclick="participateAuction('<%= product._id %>')">Show Participated</button>
-                                    </div>
+                                    <% } %>
                                 <% }) %>
                             </div>
                         <% } %>
@@ -298,24 +331,19 @@
             </div>
         </section>
         
+        
     </main>
- <!-- Show Buyers Modal -->
-<!-- Show Buyers Modal -->
-<div id="showBuyersModal" class="modal" style="display: none;">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal('showBuyersModal')">&times;</span>
-        <h2>Buyers</h2>
-        <ul id="buyersList">
-            <% if (typeof buyers !== 'undefined' && buyers.length > 0) { %>
-                <% buyers.forEach(buyer => { %>
-                    <li><%= buyer.firstName %> <%= buyer.lastName %></li>
-                <% }); %>
-            <% } else { %>
+
+    <div id="showBuyersModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('showBuyersModal')">&times;</span>
+            <h2>Buyers for this Product</h2>
+            <ul id="buyersList">
                 <li>No buyers yet.</li>
-            <% } %>
-        </ul>
+            </ul>
+        </div>
     </div>
-</div>
+    
 <!-- Show Participated Modal -->
 <div id="showParticipantsModal" class="modal">
     <div class="modal-content">
@@ -366,12 +394,12 @@
         
         <p>&copy; 2024 PAO Market. All rights reserved.</p>
     </footer>
-
+</body>
     <script>
-        function showBuyers(productId) {
-            console.log("Sending request for Product ID:", productId); // ✅ Debugging log
-            window.location.href = `/farmer/showBuyer?productId=${productId}`;
-        }
+        //function showBuyers(productId) {
+           //console.log("Sending request for Product ID:", productId); // ✅ Debugging log
+            //window.location.href = `/farmer/showBuyer?productId=${productId}`;
+        //}
         // Ensure the DOM is fully loaded before running scripts
         document.addEventListener('DOMContentLoaded', function() {
                // Get the modal and notification button
@@ -494,10 +522,11 @@ function displayOrders() {
             <td>${order.productName}</td>
             <td>${order.quantity}</td>
             <td>${order.totalPrice}</td>
+            <td>${order.status}</td>
             <td class="action-buttons">
                 <button class="approve-btn" id="approve-${order._id}" onclick="processOrder('${order._id}', 'approve')" 
-                    ${order.status === "Approved" ? "disabled" : ""}>
-                    ${order.status === "Approved" ? "✔ Approved" : "✔ Approve"}
+                    ${order.status.toLowerCase() === "approved" ? "disabled" : ""}>
+                    ${order.status.toLowerCase() === "approved" ? "✔ Approved" : "✔ Approve"}
                 </button>
                 <button class="reject-btn" id="reject-${order._id}" onclick="processOrder('${order._id}', 'reject')" 
                     ${order.status === "Rejected" ? "disabled" : ""} style="${order.status === 'Approved' ? 'display:none' : ''}">
@@ -577,28 +606,6 @@ function closeOrdersModal() {
 }
 
 // Function to fetch and display buyers in modal
-function showbuyer(productId) {
-    fetch(`/farmer/showBuyer?productId=${productId}`)
-        .then(response => response.json())
-        .then(data => {
-            const buyersList = document.getElementById("buyersList");
-            buyersList.innerHTML = ""; // Clear previous list
-
-            if (data.length === 0) {
-                buyersList.innerHTML = "<li>No buyers yet.</li>";
-            } else {
-                data.forEach(buyer => {
-                    let listItem = document.createElement("li");
-                    listItem.textContent = `${buyer.firstname} ${buyer.lastname}`;
-                    buyersList.appendChild(listItem);
-                });
-            }
-
-            // Show the modal
-            document.getElementById("showBuyersModal").style.display = "block";
-        })
-        .catch(error => console.error("Error fetching buyers:", error));
-}
 
 // Function to close the modal
 function closeModal(modalId) {
@@ -641,8 +648,8 @@ function closeModal(modalId) {
     document.getElementById(modalId).style.display = 'none';
 }
 
-   
     </script>
 
     <script src="/public/js/scriptss.js"></script>
      <script src="/public/js/scripts.js"></script>
+    </script>

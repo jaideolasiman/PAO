@@ -6,6 +6,7 @@ const Notification = require("../../models/notification");
 const Order = require("../../models/order");
 const AuctionParticipation = require("../../models/participateAuction.js");
 const AuctionSession = require("../../models/auctionSession");
+const mongoose = require('mongoose')
 
 module.exports.index = async (req, res) => {
   try {
@@ -30,7 +31,7 @@ module.exports.index = async (req, res) => {
 //     }
 
     const participation = await AuctionParticipation.findById(req.params.productId).populate('product').populate('buyer').populate('seller').lean();
-    // console.log("Participation:", participation);
+    console.log("Participation:", participation);
     const auctionSessioned = await AuctionSession.find({
         product: participation.product._id,
         seller: participation.seller._id
@@ -40,7 +41,13 @@ module.exports.index = async (req, res) => {
       const allBids = auctionSessioned.flatMap(session => session || []);
       
       // Sort bids by bid amount in descending order (highest first)
-      const topBids = allBids.sort((a, b) => b.amount - a.amount).slice(0, 5); // Get top 5
+      const topBids = allBids
+      .map(bid => ({ ...bid, bid: Number(bid.bid) })) // Convert bid to a number
+      .sort((a, b) => b.bid - a.bid) // Sort from highest to lowest
+    
+
+console.log("🏆 Top Bids:", topBids);
+ // Get top 5
       
       console.log("Top 3 Highest Bids:", topBids);
       
@@ -80,6 +87,7 @@ module.exports.doBid = async (req, res) => {
   try {
     console.log("Session Data:", req.session);
     console.log("req", req.body);
+    console.log("req", req.params.productId);
     // // Check if user is logged in
     const userLogin = await User.findById(req.session.login);
     if (!userLogin) {
@@ -89,7 +97,7 @@ module.exports.doBid = async (req, res) => {
 
     // // Fetch auction product details
     const product = await Product.findOne({
-      _id: req.params.productId,
+      _id: new mongoose.Types.ObjectId(req.body.productId),
       status: "approved",
     }).populate("seller", "firstName lastName");
 
@@ -113,7 +121,7 @@ module.exports.doBid = async (req, res) => {
     await a.save()
     // // Fetch the buyer's participation data
     // const participation = await Participation.findOne({ buyer: req.session.login, product: req.params.productId });
-    return
+    res.redirect(`/buyer/auction/room/${req.params.productId}`)
     // // Fetch unread notifications
     // const notifications = await Notification.find({ user: userLogin._id, status: "unread" });
   } catch (error) {

@@ -21,17 +21,24 @@ module.exports.index = async (req, res) => {
     // Fetch all categories
     const categories = await Category.find();
 
-    // Fetch all products excluding those that are rejected and populate seller details
-    const products = await Product.find({ status: { $ne: "rejected" } })
+    // Fetch only approved products and populate seller details
+    const products = await Product.find({ status: "approved" })
       .populate("category", "name") // Populate category name
-      .populate("seller", "firstName lastName"); // Populate seller's first and last name
+      .populate("seller", "firstName lastName"); // Populate seller details
+
+    // Log retrieved products for debugging
+    if (!products.length) {
+      console.log("No approved products found.");
+    } else {
+      console.log("Fetched Products:");
+    }
 
     // Separate products by type
     const retailProducts = products.filter(
-      (product) => product.productType === "retail"
+      (product) => product.productType.toLowerCase() === "retail"
     );
     const wholesaleProducts = products.filter(
-      (product) => product.productType === "wholesale"
+      (product) => product.productType.toLowerCase() === "wholesale"
     );
 
     // Group products by category
@@ -39,13 +46,11 @@ module.exports.index = async (req, res) => {
       category,
       retailProducts: retailProducts.filter(
         (product) =>
-          product.category &&
-          product.category._id.toString() === category._id.toString()
+          product.category && product.category._id.toString() === category._id.toString()
       ),
       wholesaleProducts: wholesaleProducts.filter(
         (product) =>
-          product.category &&
-          product.category._id.toString() === category._id.toString()
+          product.category && product.category._id.toString() === category._id.toString()
       ),
     }));
 
@@ -61,20 +66,22 @@ module.exports.index = async (req, res) => {
       title: "Home",
       req: req,
       messages: req.flash(),
-      userLogin: userLogin,
+      userLogin,
       currentUrl: req.originalUrl,
-      categories: categories,
-      groupedProducts: groupedProducts,
-      retailProducts: retailProducts,
-      wholesaleProducts: wholesaleProducts,
+      categories,
+      groupedProducts,
+      retailProducts,
+      wholesaleProducts,
       notifications,
     });
+
   } catch (error) {
     console.error("Error loading buyer dashboard:", error);
     req.flash("error", "Something went wrong.");
     res.redirect("/login");
   }
 };
+
 
 module.exports.getProducts = async (req, res) => {
   try {
@@ -91,6 +98,7 @@ module.exports.getProducts = async (req, res) => {
     res.status(500).send("Server Error");
   }
 };
+
 
 module.exports.confirmPurchase = async (req, res) => {
   try {
@@ -192,6 +200,13 @@ module.exports.confirmParticipation = async (req, res) => {
       req.flash("error", "Buyer not found.");
       return res.redirect("/buyer/index");
     }
+    const checkParticipation = await AuctionParticipation.findOne({
+      product: productId,
+    });
+    if (checkParticipation) {
+      req.flash("success", "You already participated to this Product .");
+      return res.redirect("/buyer/index");
+    }
 
     // Save participation in the database
     const participation = new AuctionParticipation({
@@ -231,7 +246,7 @@ module.exports.getCurrentBids = async (req, res) => {
     }
 
     const now = new Date();
-    console.log("now", now);
+    //console.log("now", now);
     const participatedBids = await AuctionParticipation.find({
       buyer: userLogin._id,
     })
@@ -246,56 +261,56 @@ module.exports.getCurrentBids = async (req, res) => {
     // });
 
     // const filteredBids = participatedBids.filter(bid => bid.product !== null);
-    const formattedBids = participatedBids.map((bid) => {
-    //   console.log("BID.PRODUCT:", bid?.product); // Check if product exists
-      if (!bid?.product) return false; // Skip if product is missing
+    const formattedBids = participatedBids
+      .map((bid) => {
+        //   console.log("BID.PRODUCT:", bid?.product); // Check if product exists
+        if (!bid?.product) return false; // Skip if product is missing
+        // Get current PH date
+        const now = new Date();
+        const phTime = new Date(
+          now.toLocaleString("en-US", { timeZone: "Asia/Manila" })
+        );
 
-      // Get current PH date
-      const now = new Date();
-      const phTime = new Date(
-        now.toLocaleString("en-US", { timeZone: "Asia/Manila" })
-      );
+        // Convert dates to YYYYMMDD format (for correct numeric comparison)
+        const formatDateToNumber = (date) => {
+          const month = String(date.getMonth() + 1).padStart(2, "0");
+          const day = String(date.getDate()).padStart(2, "0");
+          const year = String(date.getFullYear());
+          return parseInt(`${year}${month}${day}`); // Convert to number
+        };
 
-      // Convert dates to YYYYMMDD format (for correct numeric comparison)
-      const formatDateToNumber = (date) => {
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const day = String(date.getDate()).padStart(2, "0");
-        const year = String(date.getFullYear());
-        return parseInt(`${year}${month}${day}`); // Convert to number
-      };
+        const nowNumber = formatDateToNumber(phTime);
+        const auctionStartNumber = formatDateToNumber(bid.product.auctionStart);
+        const auctionEndNumber = formatDateToNumber(bid.product.auctionEnd);
 
-      const nowNumber = formatDateToNumber(phTime);
-      const auctionStartNumber = formatDateToNumber(bid.product.auctionStart);
-      const auctionEndNumber = formatDateToNumber(bid.product.auctionEnd);
-
-      
-      // Compare dates numerically (YYYYMMDD format)
-      if (auctionEndNumber > nowNumber) {
+        console.log(
+          `Now: ${nowNumber}, Start: ${auctionStartNumber}, End: ${auctionEndNumber}`
+        );
+        // Compare dates numerically (YYYYMMDD format)
+        if (auctionEndNumber >= nowNumber) {
           if (auctionStartNumber <= nowNumber) {
-            //   console.log(
-            //     `Now: ${nowNumber}, Start: ${auctionStartNumber}, End: ${auctionEndNumber}`
-            //   );
             //   console.log('bid', bid.product.image)
-          return {
-            // kulang id
-            pId: bid._id ?? '',
-            productId: bid.product._id ?? '',
-            productName: bid.product.name || "N/A",
-            productDescription: bid.product.productInfo || "N/A",
-            productImage: bid.product.image || "",
-            minimumPrice: bid.product.minPrice || 0,
-            auctionStart: auctionStartNumber,
-            auctionEnd: auctionEndNumber,
-            sellerName: `${bid.seller?.firstName || ""} ${
-              bid.seller?.lastName || ""
-            }`.trim(),
-          };
+            return {
+              // kulang id
+              pId: bid._id ?? "",
+              productId: bid.product._id ?? "",
+              productName: bid.product.name || "N/A",
+              productDescription: bid.product.productInfo || "N/A",
+              productImage: bid.product.image || "",
+              minimumPrice: bid.product.minPrice || 0,
+              auctionStart: auctionStartNumber,
+              auctionEnd: auctionEndNumber,
+              sellerName: `${bid.seller?.firstName || ""} ${
+                bid.seller?.lastName || ""
+              }`.trim(),
+            };
+          }
         }
-      }
 
-      return false; // Exclude if auction is not active
-    }).filter(Boolean);
-
+        return false; // Exclude if auction is not active
+      })
+      .filter(Boolean);
+    console.log("a", formattedBids);
     res.json({ success: true, bids: formattedBids });
   } catch (error) {
     console.error("Error fetching current bids:", error);

@@ -123,131 +123,137 @@
         <section class="product-list">
             <!-- All Products Section -->
             <div id="all-products-section">
-
-        
+                
                 <!-- Retail Products -->
-                <% if (retailProducts.length > 0) { %>
-                    <h2>Retail Products</h2>
+                <% if (retailProducts && retailProducts.length > 0) { %>
+                    <h4>Retail Products</h4>
                     <div class="product-container">
-                        <% retailProducts.forEach(product => { %> 
-                            <div class="product">
-                                <div class="product-image-container">
-                                    <img src="<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : '/public/img/default.png' %>" 
-                                        alt="<%= product.name %>" class="product-image">
+                        <% retailProducts.forEach(product => { %>
+                            <% if (product.status === 'approved') { %> <!-- Only show approved products -->
+                                <div class="product">
+                                    <div class="product-image-container">
+                                        <img src="<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : '/public/img/default.png' %>" 
+                                            alt="<%= product.name %>" class="product-image">
+                                    </div>
+                                    <h4><%= product.name %></h4>
+                                    <p>Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
+                                    <p>Pickup Address: <%= product.pickupAddress || 'Not Available' %></p>
+                                    <button class="showbuyer" 
+                                        onclick="openBuyNowModal(
+                                            '<%= product._id %>', 
+                                            '<%= product.name %>', 
+                                            '<%= product.productType %>', 
+                                            '<%= product.productInfo %>', 
+                                            '<%= product.minPrice ? product.minPrice.toFixed(2) : `Not Available` %>', 
+                                            '<%= product.seller ? product.seller.firstName + `` + product.seller.lastName : `Unknown Seller` %>',
+                                            '<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : `/public/img/default.png`%>'
+                                        )">
+                                        Buy Now
+                                    </button>
                                 </div>
-                                <h4><%= product.name %></h4>
-                                <p>Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
-                                 <p>Pickup Address:<%= product.pickupAddress || 'Not Available' %></p> <!-- Display Pickup Address -->
-                                <button class="showbuyer" 
-                                    onclick="openBuyNowModal(
-                                        '<%= product._id %>', 
-                                        '<%= product.name %>', 
-                                        '<%= product.productType %>', 
-                                        '<%= product.productInfo %>', 
-                                        '<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %>', 
-                                        '<%= product.seller ? product.seller.firstName + ' ' + product.seller.lastName : 'Unknown Seller' %>',
-                                        '<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : '/public/img/default.png' %>'
-                                    )">
-                                    Buy Now
-                                </button>
-                            </div>
+                            <% } %>
                         <% }) %>
                     </div>
                 <% } %>
-                    
+        
                 <!-- Wholesale Products -->
-                <% if (wholesaleProducts.length > 0) { %>
-                    <h2>Wholesale Products</h2>
+                <% if (wholesaleProducts && wholesaleProducts.length > 0) { %>
+                    <h4>Wholesale Products</h4>
                     <div class="product-container">
                         <% wholesaleProducts.forEach(product => { %>
-                            <div class="product">
-                                <div class="product-image-container">
-                                    <img src="<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : '/public/img/default.png' %>" 
-                                        alt="<%= product.name %>" class="product-image">
+                            <% if (product.status === 'approved') { %> <!-- Only show approved products -->
+                                <div class="product">
+                                    <div class="product-image-container">
+                                        <img src="<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : '/public/img/default.png' %>" 
+                                            alt="<%= product.name %>" class="product-image">
+                                    </div>
+                                    <h4><%= product.name %></h4>
+                                    <p>Minimum Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
+                                    <p>Pickup Address: <%= product.pickupAddress || 'Not Available' %></p>
+                                    <button class="participated" 
+                                        onclick="openParticipateModal(
+                                            '<%= product._id %>',
+                                            '<%= product.name %>',
+                                            '<%= product.productType %>',
+                                            '<%= product.minPrice ? product.minPrice.toFixed(2) : `Not Available` %>',
+                                            '<%= product.seller ? product.seller.firstName + `` + product.seller.lastName : `Unknown Seller` %>',
+                                            '<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : `/public/img/default.png` %>',
+                                            '<%= product.auctionStart %>',
+                                            '<%= product.auctionEnd %>'
+                                        )">
+                                        Participate
+                                    </button>
                                 </div>
-                                <h4><%= product.name %></h4>
-                                <p>Minimum Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
-                                <p>Pickup Address: <%= product.pickupAddress || 'Not Available' %></p> <!-- Display Pickup Address -->
-                                <button class="participated" 
-                                    onclick="openParticipateModal(
-                                        '<%= product._id %>',
-                                        '<%= product.name %>',
-                                        '<%= product.productType %>',
-                                        '<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %>',
-                                        '<%= product.seller ? product.seller.firstName + ' ' + product.seller.lastName : 'Unknown Seller' %>',
-                                        '<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : '/public/img/default.png' %>',
-                                        '<%= product.auctionStart %>',
-                                        '<%= product.auctionEnd %>'
-                                    )">
-                                    Participate
-                                </button>
-                            </div>
+                            <% } %>
                         <% }) %>
                     </div>
                 <% } %>
-            </div>        
-        
+            </div>
+            
             <!-- Category-Based Products Section -->
             <div id="category-products-section" style="display: none;">
-                <% groupedProducts.forEach(group => { %>
+                <% groupedProducts && groupedProducts.forEach(group => { %>
                     <div class="category-section" data-category-id="<%= group.category._id %>">
-
-            
-                        <% if (group.retailProducts.length > 0) { %>
-                            <h2>Retail Products</h2>
+                        
+                        <% if (group.retailProducts && group.retailProducts.length > 0) { %>
+                            <h4>Retail Products</h4>
                             <div class="product-container">
-                                <% group.retailProducts.forEach(product => { %>  
-                                    <div class="product">
-                                        <div class="product-image-container">
-                                            <img src="<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : '/public/img/default.png' %>" 
-                                                alt="<%= product.name %>" class="product-image">
+                                <% group.retailProducts.forEach(product => { %>
+                                    <% if (product.status === 'approved') { %> <!-- Only show approved products -->
+                                        <div class="product">
+                                            <div class="product-image-container">
+                                                <img src="<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : '/public/img/default.png' %>" 
+                                                    alt="<%= product.name %>" class="product-image">
+                                            </div>
+                                            <h4><%= product.name %></h4>
+                                            <p>Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
+                                            <p>Pickup Address: <%= product.pickupAddress || 'Not Available' %></p>
+                                            <button class="showbuyer" 
+                                                onclick="openBuyNowModal(
+                                                    '<%= product._id %>', 
+                                                    '<%= product.name %>', 
+                                                    '<%= product.productType %>', 
+                                                    '<%= product.productInfo %>', 
+                                                    '<%= product.minPrice ? product.minPrice.toFixed(2) : `Not Available` %>', 
+                                                    '<%= product.seller ? product.seller.firstName + `` + product.seller.lastName : `Unknown Seller` %>',
+                                                    '<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : `/public/img/default.png` %>'
+                                                )">
+                                                Buy Now
+                                            </button>
                                         </div>
-                                        <h4><%= product.name %></h4>
-                                        <p>Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
-                                        <p>Pickup Address: <%= product.pickupAddress || 'Not Available' %></p> <!-- Display Pickup Address -->
-                                        <button class="showbuyer" 
-                                            onclick="openBuyNowModal(
-                                                '<%= product._id %>', 
-                                                '<%= product.name %>', 
-                                                '<%= product.productType %>', 
-                                                '<%= product.productInfo %>', 
-                                                '<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %>', 
-                                                '<%= product.seller ? product.seller.firstName + ' ' + product.seller.lastName : 'Unknown Seller' %>',
-                                                '<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : '/public/img/default.png' %>'
-                                            )">
-                                            Buy Now
-                                        </button>
-                                    </div>
+                                    <% } %>
                                 <% }) %>
                             </div>
                         <% } %>
-            
-                        <% if (group.wholesaleProducts.length > 0) { %>
+        
+                        <% if (group.wholesaleProducts && group.wholesaleProducts.length > 0) { %>
                             <h4>Wholesale Products</h4>
                             <div class="product-container">
-                                <% group.wholesaleProducts.forEach(product => { %>  
-                                    <div class="product">
-                                        <div class="product-image-container">
-                                            <img src="<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : '/public/img/default.png' %>" 
-                                                alt="<%= product.name %>" class="product-image">
+                                <% group.wholesaleProducts.forEach(product => { %>
+                                    <% if (product.status === 'approved') { %> <!-- Only show approved products -->
+                                        <div class="product">
+                                            <div class="product-image-container">
+                                                <img src="<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : '/public/img/default.png' %>" 
+                                                    alt="<%= product.name %>" class="product-image">
+                                            </div>
+                                            <h4><%= product.name %></h4>
+                                            <p>Minimum Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
+                                            <p>Pickup Address: <%= product.pickupAddress || 'Not Available' %></p>
+                                            <button class="participated" 
+                                                onclick="openParticipateModal(
+                                                    '<%= product._id %>',
+                                                    '<%= product.name %>',
+                                                    '<%= product.productType %>',
+                                                    '<%= product.minPrice ? product.minPrice.toFixed(2) : `Not Available` %>',
+                                                    '<%= product.seller ? product.seller.firstName + `` + product.seller.lastName : `Unknown Seller` %>',
+                                                    '<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : `/public/img/default.png` %>',
+                                                    '<%= product.auctionStart %>',
+                                                    '<%= product.auctionEnd %>'
+                                                )">
+                                                Participate
+                                            </button>
                                         </div>
-                                        <h4><%= product.name %></h4>
-                                        <p>Minimum Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
-                                         <p>Pickup Address: <%= product.pickupAddress || 'Not Available' %></p> <!-- Display Pickup Address -->
-                                        <button class="participated" 
-                                            onclick="openParticipateModal(
-                                                '<%= product._id %>',
-                                                '<%= product.name %>',
-                                                '<%= product.productType %>',
-                                                '<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %>',
-                                                '<%= product.seller ? product.seller.firstName + ' ' + product.seller.lastName : 'Unknown Seller' %>',
-                                                '<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : '/public/img/default.png' %>',
-                                                '<%= product.auctionStart %>',
-                                                '<%= product.auctionEnd %>'
-                                            )">
-                                            Participate
-                                        </button>
-                                    </div>
+                                    <% } %>
                                 <% }) %>
                             </div>
                         <% } %>
@@ -255,6 +261,7 @@
                 <% }) %>
             </div>
         </section>
+        
                 
 
 
