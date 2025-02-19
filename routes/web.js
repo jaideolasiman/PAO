@@ -18,6 +18,7 @@ const farmerIndexController = require('../controllers/farmer/indexController');
 
 const buyerIndexController = require('../controllers/buyer/indexController');
 const orderController = require('../controllers/buyer/orderController');
+const auctionResultController = require('../controllers/buyer/auctionResultController');
 
 const currentbidController = require('../controllers/buyer/currentbidController');
 
@@ -44,6 +45,7 @@ module.exports = function (app) {
   app.post('/admin/manageUsers/approve/:id', adminManageUserController.approveUser); // Added
   app.post('/admin/manageUsers/deactivate/:id', adminManageUserController.deactivateUser); // Added
   app.get('/admin/manageAuction', adminManageAuctionController.index);
+  app.post('/admin/manageAuction/delete/:id', adminManageAuctionController.deleteOrder);
   app.get('/admin/manageItem', adminManageItemController.index);
   app.post('/admin/manageItem/approve/:id', adminManageItemController.approveProduct);
   app.post('/admin/manageItem/reject/:id', adminManageItemController.rejectProduct);
@@ -62,15 +64,15 @@ module.exports = function (app) {
 
 
   
-  app.get('/buyer/markNotificationAsRead', buyerIndexController.markNotificationAsRead);
+  app.get('/buyer/notification', buyerIndexController.markNotificationAsRead);
   app.get('/buyer/index', buyerIndexController.index);
   app.get('/buyer/getNotifications', buyerIndexController.getNotifications);
   app.post('/buyer/confirm-purchase', buyerIndexController.confirmPurchase);
   app.post('/buyer/getProducts', orderController.getProducts);
   app.post('/buyer/confirm-participation', buyerIndexController.confirmParticipation);
   app.get('/buyer/current-bids', buyerIndexController.getCurrentBids);
-
-
   app.get('/buyer/auction/room/:productId', currentbidController.index);
   app.post('/buyer/auction/room/:productId', currentbidController.doBid);
+  app.get('/buyer/auction/:productId/results', auctionResultController.showAuctionResults);
+
 };

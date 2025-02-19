@@ -12,7 +12,7 @@ const auctionSessionSchema = new mongoose.Schema({
     seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     buyer: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     bid: { type: String, ref: 'User', required: true },
-    // highestBid: { type: highestBidSchema, default: () => ({ amount: 0, bidder: null }) }
+    highestBid: { type: highestBidSchema, default: () => ({ amount: 0, bidder: null }) }
 }, { timestamps: true });  // Automatically adds createdAt and updatedAt fields
 
 // Create the AuctionSession model

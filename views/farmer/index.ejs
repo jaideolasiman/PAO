@@ -81,6 +81,7 @@
                                 <th>Product</th>
                                 <th>Quantity</th>
                                 <th>Total Price</th>
+                                <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -273,7 +274,12 @@
                                     <h4><%= product.name %></h4>
                                     <p>Minimum Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
                                     <p>Pickup Address: <%= product.pickupAddress || 'Not Available' %></p>
-                                    <button class="participated" onclick="participateAuction('<%= product._id %>')">Show Participated</button>
+                                    <button id="auction-button-<%= product._id %>" 
+                                        class="participated"
+                                        data-auction-start="<%= product.auctionStart %>" 
+                                        data-auction-end="<%= product.auctionEnd %>">
+                                        Loading...
+                                    </button>
                                 </div>
                             <% } %>
                         <% }) %>
@@ -320,7 +326,12 @@
                                             <h4><%= product.name %></h4>
                                             <p>Minimum Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
                                             <p>Pickup Address: <%= product.pickupAddress || 'Not Available' %></p>
-                                            <button class="participated" onclick="participateAuction('<%= product._id %>')">Show Participated</button>
+                                            <button id="auction-button-<%= product._id %>" 
+                                                class="participated"
+                                                data-auction-start="<%= product.auctionStart %>" 
+                                                data-auction-end="<%= product.auctionEnd %>">
+                                                Loading...
+                                            </button>
                                         </div>
                                     <% } %>
                                 <% }) %>
@@ -395,12 +406,47 @@
         <p>&copy; 2024 PAO Market. All rights reserved.</p>
     </footer>
 </body>
+
     <script>
         //function showBuyers(productId) {
            //console.log("Sending request for Product ID:", productId); // ✅ Debugging log
             //window.location.href = `/farmer/showBuyer?productId=${productId}`;
         //}
         // Ensure the DOM is fully loaded before running scripts
+
+        function handleAuctionButton(productId, auctionStart, auctionEnd) {
+        const button = document.getElementById(`auction-button-${productId}`);
+        const now = new Date().getTime();
+        const start = new Date(auctionStart).getTime();
+        const end = new Date(auctionEnd).getTime();
+
+        if (now < start) {
+            // Auction has not started
+            button.innerText = "Auction Not Started";
+            button.disabled = true;
+        } else if (now >= start && now < end) {
+            // Auction is ongoing
+            button.innerText = "Show Participated";
+            button.disabled = false;
+            button.onclick = () => participateAuction(productId);
+        } else {
+            // Auction has ended
+            button.innerText = "Show Winner";
+            button.disabled = false;
+            button.onclick = () => window.location.href = "/buyer/result?productId=" + productId;
+        }
+    }
+
+    // Run for all auction buttons on page load
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll("button[id^='auction-button-']").forEach(button => {
+            const productId = button.id.replace('auction-button-', '');
+            const auctionStart = button.getAttribute("data-auction-start");
+            const auctionEnd = button.getAttribute("data-auction-end");
+            handleAuctionButton(productId, auctionStart, auctionEnd);
+        });
+    });
+    
         document.addEventListener('DOMContentLoaded', function() {
                // Get the modal and notification button
                const modal = document.getElementById("notificationModal");

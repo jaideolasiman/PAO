@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auction Result Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .container {
+            width: 90%;
+            margin: 20px auto;
+            background: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .banner {
+            background: #1992f5;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            font-size: 24px;
+        }
+        .content {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+        .product-info, .winner-info, .bid-ranking {
+            width: 30%;
+            background: #f1f1f1;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .product-info img, .winner-info img {
+            width: 80%;
+            border-radius: 8px;
+        }
+        h2 {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #0e5ec5;
+            color: white;
+        }
+        .footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            background: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="banner">🏆 Bid Result 🏆</div>
+        <div class="content">
+            <div class="product-info">
+                <h2>Product Information</h2>
+                <% if (auctionSession) { %>
+                    <img src="<%= auctionSession.product.imageUrl || '/default.jpg' %>" alt="<%= auctionSession.product.name %>">
+                    <p><strong>Name:</strong> <%= auctionSession.product.name %></p>
+                    <p><strong>Description:</strong> <%= auctionSession.product.productInfo || 'N/A' %></p>
+                    <p><strong>Starting Price:</strong> ₱<%= auctionSession.product.minPrice %></p>
+                <% } else { %>
+                    <p>No product data available</p>
+                <% } %>
+            </div>
+
+            <div class="winner-info">
+                <h2>Winner</h2>
+                <% if (winner) { %>
+                    <img src="<%= winner.profilePicture || '/default.jpg' %>" alt="Winner Profile Picture">
+                    <p><strong>Name:</strong> <%= winner.name %></p>
+                    <p><strong>Phone:</strong> <%= winner.phone %></p>
+                    <p><strong>Winning Bid:</strong> ₱<%= winner.bidAmount %></p>
+                <% } else { %>
+                    <p>No winner yet</p>
+                <% } %>
+            </div>
+
+            <div class="bid-ranking">
+                <h2>Bid Ranking</h2>
+                <table>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>Bid Price</th>
+                    </tr>
+                    <% bids.forEach((bid, index) => { %>
+                        <tr>
+                            <td><%= bid.rank %></td>
+                            <td><%= bid.name %></td>
+                            <td>₱<%= bid.bidAmount %></td>
+                        </tr>
+                    <% }); %>
+                </table>
+            </div>
+        </div>
+        <div class="footer">
+            <p>Congratulations to the winner! Thank you for participating in the auction.</p>
+        </div>
+    </div>
+</body>
+</html>

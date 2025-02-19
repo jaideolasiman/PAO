@@ -2,139 +2,89 @@
 <body id="page-top">
     <!-- Page Wrapper -->
     <div id="wrapper">
-<%- include('./partials/navbar.ejs'); %>
+        <%- include('./partials/navbar.ejs'); %>
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
             <!-- Main Content -->
             <div id="content">
-<%- include('./partials/topbar.ejs'); %>
+                <%- include('./partials/topbar.ejs'); %>
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                   
-
-                        
-                            <div class="card shadow mb-4">
-                                <!-- Card Header -->
-                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h4 class="m-0 font-weight-bold text-primary">Auction Sessions</h4>
-                                    <!-- Search Bar -->
-                                      <div class="input-group w-50">
-                                        <input type="text" class="form-control" id="searchCategory" placeholder="Search Category...">
-                                        <button class="btn btn-primary" type="button" onclick="filterCategory()">
-                                            <i class="fas fa-search"></i>
-                                        </button>
-                                    </div>
-                                      <div class="d-flex justify-content-between mt-3">
-                                    <!-- New Session Button -->
-                                    <button class="btn btn-warning" onclick="openSessionModal()">
-                                        <i class="fas fa-calendar-plus"></i> Add New Session
+                    <div class="card shadow mb-4">
+                        <!-- Card Header -->
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h4 class="m-0 font-weight-bold text-primary">Orders Management</h4>
+                            <!-- Search Bar -->
+                            <div class="input-group w-50">
+                                <form action="/admin/manageAuction" method="GET" class="d-flex w-100">
+                                    <input type="text" class="form-control" id="searchCategory" name="searchCategory" placeholder="Search Category..." value="<%= searchCategory || '' %>">
+                                    <button class="btn btn-primary" type="submit">
+                                        <i class="fas fa-search"></i>
                                     </button>
-                                </div>
-                                </div>
-                                <!-- Card Body -->
-                                <div class="card-body">
-                                    <!-- Table -->
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered" id="categoryTable" width="100%" cellspacing="0">
-                                            <thead>
-                                                <tr>
-                                                    <th>Session Date</th>
-                                                    <th>Start Time</th>
-                                                    <th>End Time</th>
-                                                    <th>Reserved</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                
-                                                
-                                                <tr>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        
-                        <!-- Action Buttons -->
-                       
-
-                        <!-- Modal for New Session -->
-                        <div id="sessionModal" class="modal" style="display: none;">
-                            <div class="modal-content">
-                                <span class="close-btn" onclick="closeSessionModal()">&times;</span>
-                                
-                                <h2>Add New Session</h2>
-                                
-                                <div class="form-group">
-                                    <label for="sessionDate"><i class="fas fa-calendar-day"></i> Choose a Session Date:</label>
-                                    <input type="date" id="sessionDate" class="form-control">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="sessionTime"><i class="fas fa-clock"></i> Choose a Session Time:</label>
-                                    <input type="time" id="sessionTime" class="form-control">
-                                </div>
-                                
-                                <!-- Confirm Button -->
-                                <button class="btn btn-success mt-2" onclick="confirmSession()">
-                                    <i class="fas fa-check-circle"></i> Confirm Session
-                                </button>
+                                </form>
                             </div>
                         </div>
-
-<!-- Content Row -->
-
-                        </div>
-
-                        <div class="col-lg-6 mb-4">
-
-                            
-
-                            
-
+                        <!-- Card Body -->
+                        <div class="card-body">
+                            <!-- Table -->
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="categoryTable" width="100%" cellspacing="0">
+                                    <table class="table table-bordered" id="productTable" width="100%" cellspacing="0">
+                                        <thead class="thead-dark">
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Product Image</th>
+                                            <th>Seller</th>
+                                            <th>Buyer</th>
+                                            <th>Quantity</th>
+                                            <th>Total Price</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% orders.forEach(order => { %>
+                                            <tr>
+                                              <td><%= order.product ? order.product.name : 'No Product' %></td>
+                                              <td>
+                                                <% if (order.product && order.product.image) { %>
+                                                  <img src="<%= order.product.image ? '/public/img/product/' + order.product.image.split('/').pop() : '/public/img/default.png' %>" alt="<%= order.product.name %>" width="50">
+                                                <% } else { %>
+                                                  <span>No Image</span>
+                                                <% } %>
+                                              </td>
+                                              <td><%= order.seller ? order.seller.firstName + ' ' + order.seller.lastName : 'No Seller' %></td>
+                                              <td><%= order.buyer ? order.buyer.firstName + ' ' + order.buyer.lastName : 'No Buyer' %></td>
+                                              <td><%= order.quantity %></td>
+                                              <td>₱<%= order.totalPrice %></td>
+                                              <td>
+                                                <!-- Display Status -->
+                                                <% if (order.status === 'Approved') { %>
+                                                  <span class="badge badge-success">Approved</span>
+                                                <% } else if (order.status === 'Rejected') { %>
+                                                  <span class="badge badge-danger">Rejected</span>
+                                                <% } else { %>
+                                                  <span class="badge badge-warning">Pending</span>
+                                                <% } %>
+                                              </td>
+                                              <td>
+                                                <form action="/admin/manageAuction/deleteOrder" method="POST" style="display:inline;">
+                                                    <input type="hidden" name="orderId" value="<%= order._id %>">
+                                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                                  </form>
+                                              </td>
+                                            </tr>
+                                        <% }); %>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
 
                 </div>
-                <!-- /.container-fluid -->
-
             </div>
-            <!-- End of Main Content -->
-<%- include('./partials/footer.ejs'); %>
-<script>
-// Function to open the session modal
-function openSessionModal() {
-    const modal = document.getElementById("sessionModal");
-    modal.style.display = "block";
-}
-
-// Function to close the session modal
-function closeSessionModal() {
-    const modal = document.getElementById("sessionModal");
-    modal.style.display = "none";
-}
-
-// Function to confirm session creation
-function confirmSession() {
-    const sessionDate = document.getElementById("sessionDate").value;
-    const sessionTime = document.getElementById("sessionTime").value;
-
-    if (!sessionDate || !sessionTime) {
-        alert("Please select both session date and time.");
-        return;
-    }
-
-    // Proceed with session creation (this is where you can add your logic to save the session)
-    console.log(`New session created on ${sessionDate} at ${sessionTime}`);
-
-    // Close the modal after confirming
-    closeSessionModal();
-}
-</script>
+        </div>
+    </div>
+    <%- include('./partials/footer.ejs'); %>
+</body>

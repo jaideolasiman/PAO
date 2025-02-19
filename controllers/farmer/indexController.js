@@ -283,12 +283,25 @@ module.exports.processOrder = async (req, res) => {
 
 module.exports.deleteOrder = async (req, res) => {
   try {
-    const order = await Order.findByIdAndDelete(req.params.id);
-    if (!order) return res.status(404).json({ message: "Order not found" });
+    const orderId = req.body.orderId;  // Get the order ID from the form submission
 
-    res.json({ message: "Order deleted successfully!" });
+    // Find the order by ID and delete it
+    const order = await Order.findByIdAndDelete(orderId);
+    
+    if (!order) {
+      return res.status(404).send('Order not found');
+    }
+
+    // Optionally delete the associated product if needed
+    // const product = await Product.findByIdAndDelete(order.product);
+    
+    console.log(`Order with ID: ${orderId} has been deleted.`); // Log for debugging
+
+    // Redirect back to the manage orders page after deletion
+    res.redirect('/admin/manageAuctions');  // Update with the correct route if needed
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    console.error('Error deleting order:', error);
+    res.status(500).send('Internal Server Error');
   }
 };
 

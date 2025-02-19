@@ -75,7 +75,6 @@ module.exports.rejectProduct = async (req, res) => {
 };
 
 // Delete Product (This will delete the product from the database entirely)
-// Delete Product (This will delete the product from the database entirely)
 module.exports.deleteProduct = async (req, res) => {
   try {
     const productId = req.params.id;

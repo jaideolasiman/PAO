@@ -331,7 +331,7 @@
                         <li id="notification-<%= notification._id %>" class="notification <%= notification.status === 'unread' ? 'unread' : 'read' %>">
                             <p><%= notification.message %></p>
                             <% if (notification.status === 'unread') { %>
-                                <a href="/farmer/notification?notification_id=<%= notification._id %>" class="btn btn-primary mark-as-read">
+                                <a href="/buyer/notification?notification_id=<%= notification._id %>" class="btn btn-primary mark-as-read">
                                     Seen
                                 </a>
                             <% } %>
