@@ -744,7 +744,7 @@ function viewCurrentBids() {
 
                     const bidItem = `
                         <div class="bid-item">
-                            <img src="/public${bid.productImage}" alt="Product Image" class="bid-product-img">
+                            <img src="/public${bid.productImage}" alt="Product Image" class="bid-product-img" style="width: 100%; height: auto; max-height: 300px; object-fit: contain; display: block; margin: auto;"> 
                             <h3>${bid.productName}</h3>
                             <p>Description: ${bid.productDescription}</p>
                             <p>Minimum Price: ₱${bid.minimumPrice}</p>

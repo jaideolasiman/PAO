@@ -1,266 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Auction Session Room</title>
     <!-- Font Awesome for Icons -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <!-- Basic CSS -->
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f4f4f4;
-      }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
 
-      .session-container {
-        margin: 20px auto;
-        width: 90%;
-        background-color: #fff;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-        padding: 20px;
-        display: flex;
-        justify-content: space-between;
-        flex-wrap: wrap;
-      }
+        .session-container {
+            margin: 20px auto;
+            width: 90%;
+            background-color: #fff;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
 
-      .main-content {
-        flex: 2;
-        margin-right: 20px;
-        max-width: 70%;
-      }
+        .main-content {
+            flex: 2;
+            margin-right: 20px;
+            max-width: 70%;
+        }
 
-      .other-bidders {
-        flex: 1;
-        max-width: 28%;
-        border: 1px solid #ddd;
-        padding: 10px;
-        margin: 10px;
-        background-color: #f9f9f9;
-      }
+        .other-bidders {
+            flex: 1;
+            max-width: 28%;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px;
+            background-color: #f9f9f9;
+        }
 
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #333;
-        position: relative;
-      }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            position: relative;
+        }
 
-      .header h2 {
-        margin: 0;
-      }
+        .header h2 {
+            margin: 0;
+        }
 
-      .leave-button-header {
-        background-color: #cf2115;
-        color: rgb(255, 255, 255);
-        border: none;
-        padding: 8px 15px;
-        border-radius: 5px;
-        font-size: 1.5rem;
-        cursor: pointer;
-      }
+        .leave-button-header {
+            background-color: #e41515;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
 
-      .leave-button-header:hover {
-        background-color: #718872;
-      }
+        .leave-button-header:hover {
+            background-color: #2fece3;
+        }
 
-      .timer {
-        text-align: center;
-        font-size: 1.5rem;
-        margin: 10px 0;
-      }
+        .timer {
+            text-align: center;
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
 
-      .leaderboard {
-        display: flex;
-        justify-content: space-between;
-        margin: 10px 0;
-      }
+        .leaderboard {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+        }
 
-      .card {
-        border: 1px solid #ddd;
-        padding: 10px;
-        text-align: center;
-        flex: 1;
-        font-size: 1.2rem;
-        margin: 5px;
-        border-radius: 5px;
-        box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
-      }
+        .card {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            flex: 1;
+            margin: 5px;
+            border-radius: 5px;
+            box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+        }
 
-      .card.active {
-        border: 2px solid #4caf50;
-      }
+        .card.active {
+            border: 2px solid #4caf50;
+        }
 
-      .input-section {
-        text-align: center;
-        margin-top: 20px;
-      }
+        .input-section {
+            text-align: center;
+            margin-top: 20px;
+        }
 
-      .btn {
-        background-color: #4caf50;
-        color: white;
-        padding: 10px 15px;
-        border: none;
-        cursor: pointer;
-        border-radius: 3px;
-      }
+        .btn {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            border-radius: 3px;
+        }
 
-      .btn:hover {
-        background-color: #45a049;
-      }
+        .btn:hover {
+            background-color: #45a049;
+        }
 
-      .product-image {
-        width: 40%; /* Reduced size of the image */
-        height: auto;
-        max-width: 70%;
-        margin: 0 auto;
-      }
+        .product-image {
+          width: 40%; /* Reduced size of the image */
+          height: auto;
+          max-width: 50%;
+          margin: 0 auto;
+    }
 
-      .product-details {
-        margin-bottom: 15px;
-      }
+        .product-details {
+            margin-bottom: 15px;
+        }
 
-      .product-details p {
-        margin: 5px 0;
-        font-size: 1.5rem;
-      }
+        .product-details p {
+            margin: 5px 0;
+            font-size: 1.5rem;
+            padding: 5px;
+            font-weight: bold;
+        }
 
-      .other-bidders h3 {
-        margin-bottom: 10px;
-        font-size: 1.3rem;
-        font-weight: bold;
-      }
+        .other-bidders h3 {
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
 
-      .other-bidders .bidder {
-        flex: 1;
-        border: 1px solid #ddd;
-        padding: 10px;
-        margin: 5px;
-        text-align: center;
-        font-size: 1rem;
-        background-color: #f9f9f9;
-        border-radius: 5px;
-        box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
-      }
+        .other-bidders .bidder {
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
 
-      .other-bidders .bidder p {
-        margin: 5px 0;
-      }
+        .input-section input {
+            padding: 10px;
+            font-size: 1rem;
+            width: 100%;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
 
-      .other-bidders .bidder .rank {
-        font-weight: bold;
-        color: #070202;
-        font-size: 1.2rem;
-      }
+        .input-section button {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+        }
 
-      .input-section input {
-        padding: 12px;
-        font-size: 1.3rem; /* Increase font size for inputs */
-        width: 100%;
-        margin: 10px 0;
-        border-radius: 5px;
-        border: 1px solid #ddd; 
-      }
-
-      .input-section button {
-        width: 100%;
-        padding: 12px;
-        font-size: 1.3rem; /* Adjust button size accordingly */
-        border-radius: 5px;
-        cursor: pointer;
-        background-color: #4caf50;
-        color: white;
-        border: none;
-      }
-
-      .input-section button:hover {
-        background-color: #45a049;
-      }
-
-      input[type="number"] {
-        width: 30%;
-        padding: 12px;
-        font-size: 1.2rem;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        margin-bottom: 15px;
-        box-sizing: border-box; /* Ensures padding doesn't increase overall width */
-      }
-
-      .btn {
-        background-color: #4caf50;
-        color: white;
-        padding: 15px 20px; /* Increased padding for larger button */
-        font-size: 1.2rem; /* Increased font size */
-        border: none;
-        cursor: pointer;
-        border-radius: 5px;
-        width: 20%;
-        box-sizing: border-box; /* Ensures padding doesn't increase overall width */
-      }
-
-      .btn:hover {
-        background-color: #45a049;
-      }
+        .input-section button:hover {
+            background-color: #45a049;
+        }
     </style>
-  </head>
+</head>
 
-  <body>
+<body>
     <div class="session-container">
-      <!-- Main Content Area -->
-      <div class="main-content">
-        <!-- Header -->
-        <div class="header">
-          <h2>Auction Session Room</h2>
-          <!-- Leave Bid Button in Header -->
-          <button class="leave-button-header" onclick="leaveBid()">
-            Leave Bid
-          </button>
-        </div>
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <h2>Auction Session Room</h2>
+                <!-- Leave Bid Button in Header -->
+                <button class="leave-button-header" onclick="leaveBid()">Leave Bid</button>
+            </div>
 
-        <!-- Timer -->
-        <div class="timer">
-          <p>
-            Auction Start:
-            <strong><%= new Date(auctionStart).toLocaleString() %></strong>
-          </p>
-          <p>
-            Auction End:
-            <strong><%= new Date(auctionEnd).toLocaleString() %></strong>
-          </p>
-          <p>Session Time Left: <strong id="timer">Loading...</strong></p>
-        </div>
+            <!-- Timer -->
+            <div class="timer">
+                <p>Auction Start: <strong><%= new Date(auctionStart).toLocaleString() %></strong></p>
+                <p>Auction End: <strong><%= new Date(auctionEnd).toLocaleString() %></strong></p>
+                <p>Session Time Left: <strong id="timer">Loading...</strong></p>
+            </div>
 
-        <!-- Leaderboard Section -->
-        <div class="leaderboard">
-          <% topBids.forEach((bid, index) => { %> <% if (index < 3) { %>
-          <div class="card">
-            <p><strong><%= index + 1 %></strong></p>
-            <!-- Ranking Number -->
-            <p>
-              Name:
-              <strong
-                ><%= bid.buyer.firstName ?? '' %> <%= bid.buyer.lastName ?? ''
-                %></strong
-              >
-            </p>
-            <p>Phone: <strong><%= bid.buyer.phoneNumber || 'N/A' %></strong></p>
-            <p>Currently Submit: <strong>&#128176; ₱<%= bid.bid %></strong></p>
-          </div>
-          <% } %> <% }) %>
-        </div>
+            <!-- Leaderboard Section -->
+            <div class="leaderboard">
+                <% topBids.forEach((bid, index) => { %>
+                    <% if (index < 3) { %>
+                        <div class="card">
+                            <p><strong><%= index + 1 %></strong></p> <!-- Ranking Number -->
+                            <p>Name: <strong><%= bid.buyer.firstName ?? '' %> <%= bid.buyer.lastName ?? '' %></strong></p>
+                            <p>Phone: <%= bid.buyer.phoneNumber || 'N/A' %></p>
+                            <p>Currently Submit: <strong>&#128176; ₱<%= bid.bid %></strong></p>
+                        </div>
+                    <% } %>
+                <% }) %>
+            </div>
 
         <!-- Submit Price Section -->
         <div class="card">
-            <form action="/buyer/auction/room/<%= product._id %>" method="POST">
+            <form action="" method="post">
               <img src="/public<%= product.image %>" class="product-image" />
             </a>
             <div class="product-details">
@@ -287,70 +230,63 @@
               name="submitPrice"
               placeholder="Enter Your Price"
             />
-            <button type="submit" class="btn">Submit</button>
+            <button class="btn" onclick="submitPrice()">Submit</button>
           </form>
         </div>
       </div>
 
-      <!-- Other Bidders Section -->
-      <div class="other-bidders">
-        <% topBids.forEach((bid, index) => { %> <% if (index > 2) { %>
-        <div class="bidder">
-          <p class="rank"><%= index + 1 %></p>
-          <!-- Ranking -->
-          <p>
-            Name:
-            <strong
-              ><%= bid.buyer.firstName ?? '' %> <%= bid.buyer.lastName ?? ''
-              %></strong
-            >
-          </p>
-          <p>Submitted Price: <strong>₱<%= bid.bid %></strong></p>
+        <!-- Other Bidders Section -->
+        <div class="other-bidders">
+            <h3>Other Bidders</h3>
+            <% topBids.forEach((bid, index) => { %>
+                <% if (index > 2) { %>
+                    <div class="bidder">
+                        <p>Name: <strong><%= bid.buyer.firstName ?? '' %> <%= bid.buyer.lastName ?? '' %></strong></p>
+                        <p>Submitted Price: <strong> ₱<%= bid.bid %></strong></p>
+                    </div>
+                <% } %>
+            <% }) %>
         </div>
-        <% } %> <% }) %>
-      </div>
     </div>
 
     <!-- JavaScript -->
     <script>
-
-      function leaveBid() {
-        alert("You have left the auction.");
-        window.location.href = "/buyer/index";
-      }
-
-      function startCountdown(auctionEndTime) {
-        function updateTimer() {
-          const now = new Date().getTime();
-          const endTime = new Date(auctionEndTime).getTime();
-          const remainingTime = endTime - now;
-
-          if (remainingTime > 0) {
-            let hours = Math.floor((remainingTime / (1000 * 60 * 60)) % 24);
-            let minutes = Math.floor((remainingTime / (1000 * 60)) % 60);
-            let seconds = Math.floor((remainingTime / 1000) % 60);
-
-            hours = hours < 10 ? "0" + hours : hours;
-            minutes = minutes < 10 ? "0" + minutes : minutes;
-            seconds = seconds < 10 ? "0" + seconds : seconds;
-
-            document.getElementById("timer").textContent =
-              hours + " : " + minutes + " : " + seconds;
-          } else {
-            document.getElementById("timer").textContent = "Auction Ended";
-            clearInterval(timerInterval);
-          }
+        function leaveBid() {
+            alert("You have left the auction.");
+            window.location.href = "/buyer/index";
         }
 
-        updateTimer();
-        const timerInterval = setInterval(updateTimer, 1000);
-      }
+        function startCountdown(auctionEndTime) {
+            function updateTimer() {
+                const now = new Date().getTime();
+                const endTime = new Date(auctionEndTime).getTime();
+                const remainingTime = endTime - now;
 
-      window.onload = function () {
-        const auctionEndTime = "<%= auctionEnd %>"; // Pass from server
-        startCountdown(auctionEndTime);
-      };
+                if (remainingTime > 0) {
+                    let hours = Math.floor((remainingTime / (1000 * 60 * 60)) % 24);
+                    let minutes = Math.floor((remainingTime / (1000 * 60)) % 60);
+                    let seconds = Math.floor((remainingTime / 1000) % 60);
+
+                    hours = hours < 10 ? "0" + hours : hours;
+                    minutes = minutes < 10 ? "0" + minutes : minutes;
+                    seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                    document.getElementById("timer").textContent = hours + " : " + minutes + " : " + seconds;
+                } else {
+                    document.getElementById("timer").textContent = "Auction Ended";
+                    clearInterval(timerInterval);
+                }
+            }
+
+            updateTimer();
+            const timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        window.onload = function () {
+            const auctionEndTime = "<%= auctionEnd %>"; // Pass from server
+            startCountdown(auctionEndTime);
+        };
     </script>
-  </body>
-</html>
+</body>
 
+</html>

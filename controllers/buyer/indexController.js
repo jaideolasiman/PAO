@@ -202,6 +202,7 @@ module.exports.confirmParticipation = async (req, res) => {
     }
     const checkParticipation = await AuctionParticipation.findOne({
       product: productId,
+      buyer: req.session.login,
     });
     if (checkParticipation) {
       req.flash("success", "You already participated to this Product .");

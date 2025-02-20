@@ -8,6 +8,7 @@ const AuctionParticipation = require("../../models/participateAuction.js");
 const AuctionSession = require("../../models/auctionSession");
 const mongoose = require('mongoose')
 
+
 module.exports.index = async (req, res) => {
   try {
     console.log("Session Data:", req.session);
@@ -97,7 +98,7 @@ module.exports.doBid = async (req, res) => {
   try {
     console.log("Session Data:", req.session);
     console.log("req", req.body);
-    console.log("req.params.productId:", req.params.productId); // Log the productId in the route params
+    console.log("req", req.params.productId);
 
     // Check if user is logged in
     const userLogin = await User.findById(req.session.login);
@@ -106,9 +107,9 @@ module.exports.doBid = async (req, res) => {
       return res.redirect("/login");
     }
 
-    // Fetch auction product details using req.params.productId
+    // Fetch auction product details
     const product = await Product.findOne({
-      _id: new mongoose.Types.ObjectId(req.params.productId),
+      _id: new mongoose.Types.ObjectId(req.body.productId),
       status: "approved",
     }).populate("seller", "firstName lastName");
 
@@ -117,33 +118,47 @@ module.exports.doBid = async (req, res) => {
       return res.redirect("/buyer");
     }
 
-    // Get the highest bid so far (if any)
-    const highestBid = await AuctionSession.findOne({ product: req.params.productId }).sort({ bid: -1 });
-
-    const submittedPrice = parseFloat(req.body.submitPrice);
-
-    // Check if the submitted price is higher than the highest bid or the minimum price
-    if (submittedPrice <= (highestBid ? highestBid.bid : product.minPrice)) {
-      req.flash("error", "Your bid must be higher than the current bid.");
+    const submittedBid = parseFloat(req.body.submitPrice);
+    if (isNaN(submittedBid) || submittedBid <= 0) {
+      req.flash("error", "Invalid bid amount.");
       return res.redirect(`/buyer/auction/room/${req.params.productId}`);
+    }
+
+    // Ensure bid is higher than the minimum price
+    if (submittedBid < product.minPrice) {
+      req.flash("success", `Bid must be higher than ₱${product.minPrice}.`);
+      return res.redirect(`/buyer/auction/room/${req.params.productId}`);
+    }
+
+    // Check for the highest bid in the auction session
+    const highestBid = await AuctionSession.findOne({ product: product._id }).sort({ bid: -1 });
+
+    if (highestBid && highestBid.bid.amount >= submittedBid) {
+      req.flash("success", `Bid must be higher than the current highest bid of ₱${highestBid.bid}.`);
+      res.redirect(`/buyer/auction/room/${req.params.productId}`);
     }
 
     // Save the new bid
     const newBid = new AuctionSession({
-      product: req.params.productId,
+      messages: req.flash(),
+      product: req.body.productId,
       seller: req.body.sellerId,
+      req: req.params.productId,
       buyer: userLogin._id,
-      bid: submittedPrice,
+      bid: submittedBid,
+      highestBid: {
+        amount: submittedBid,
+        bidder: userLogin._id,
+      },
     });
 
     await newBid.save();
 
     req.flash("success", "Your bid has been placed successfully!");
-    return res.redirect(`/buyer/auction/room/${req.params.productId}`);
-  } catch (error) {
-    console.error("Error placing bid:", error);
-    req.flash("error", "Something went wrong with placing your bid.");
     res.redirect(`/buyer/auction/room/${req.params.productId}`);
+
+  } catch (error) {
+    console.error("Error processing bid:", error);
+    req.flash("error", "Something went wrong.");
   }
 };
-
