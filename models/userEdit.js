@@ -44,24 +44,6 @@ var schema = mongoose.Schema({
         type: String, // URL to the image location
         default: ''
     },
-    birthday: {
-        day: {
-            type: Number,
-            required: true,
-            min: 1,
-            max: 31
-        },
-        month: {
-            type: Number,
-            required: true,
-            min: 1,
-            max: 12
-        },
-        year: {
-            type: Number,
-            required: true
-        }
-    },
     gender: {
         type: String,
         enum: ['male', 'female'],

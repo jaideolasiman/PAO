@@ -1,15 +1,15 @@
 // controllers/buyer/orderController.js
 const Order = require('../../models/order');
 const Product = require('../../models/product');
-const User = require('../../models/user');
+const User = require('../../models/user'); 
 
 module.exports.placeOrder = async (req, res) => {
     try {
         const { productId, quantity } = req.body;
         const buyerId = req.session.login;
-        const products = await Product.find()
-            .populate('category', 'name')
-            .populate('seller');
+        //const products = await Product.find()
+            //.populate('category', 'name')
+            //.populate('seller');
         
         if (!buyerId) {
             return res.status(401).json({ success: false, message: 'Please log in first.' });
@@ -23,6 +23,7 @@ module.exports.placeOrder = async (req, res) => {
         const totalPrice = product.minPrice * quantity;
         const newOrder = new Order({
             buyer: buyerId,
+            phoneNumber: buyerId.phoneNumber,
             seller: product.seller,
             product: productId,
             quantity,

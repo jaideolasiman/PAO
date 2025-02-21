@@ -33,24 +33,24 @@
                 </button></li>
 
     
-                <!-- Currently Bids Icon -->
-            <li>
-                <button class="bids-btn" onclick="viewCurrentBids()">
-                    <img src="/public/img/clock_user.png" alt="Currently Bids Icon" class="bids-icon">
-                    <span class="icon-label">Currently in Bid</span>
-                </button>
-            </li>
+                    <!-- Currently Bids Icon -->
+                <li>
+                    <button class="bids-btn" onclick="viewCurrentBids()">
+                        <img src="/public/img/clock_user.png" alt="Currently Bids Icon" class="bids-icon">
+                        <span class="icon-label">Currently in Bid</span>
+                    </button>
+                </li>
 
-            <!-- Modal for Displaying Current Bids -->
-            <div id="currentBidsModal" class="modal">
-                <div class="modal-content">
-                    <span class="close-btn" onclick="closeModal()">&times;</span>
-                    <h2>Current Auction Bids</h2>
-                    <div id="bidList">
-                        <!-- Auction items will be loaded here dynamically -->
+                <!-- Modal for Displaying Current Bids -->
+                <div id="currentBidsModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close-btn" onclick="closeModal()">&times;</span>
+                        <h2>Current Auction Bids</h2>
+                        <div id="bidList">
+                            <!-- Auction items will be loaded here dynamically -->
+                        </div>
                     </div>
                 </div>
-            </div>
             </ul>
             <!-- Dropdown Profile Container -->
             <div id="profileDropdown" class="profile-dropdown" style="display: none;">
@@ -170,19 +170,30 @@
                                     <h4><%= product.name %></h4>
                                     <p>Minimum Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
                                     <p>Pickup Address: <%= product.pickupAddress || 'Not Available' %></p>
-                                    <button class="participated" 
-                                        onclick="openParticipateModal(
-                                            '<%= product._id %>',
-                                            '<%= product.name %>',
-                                            '<%= product.productType %>',
-                                            '<%= product.minPrice ? product.minPrice.toFixed(2) : `Not Available` %>',
-                                            '<%= product.seller ? product.seller.firstName + `` + product.seller.lastName : `Unknown Seller` %>',
-                                            '<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : `/public/img/default.png` %>',
-                                            '<%= product.auctionStart %>',
-                                            '<%= product.auctionEnd %>'
-                                        )">
-                                        Participate
-                                    </button>
+                                    <%
+                                    const auctionEndTime = new Date(product.auctionEnd);
+                                    const currentTime = new Date();
+                                    const isAuctionEnded = currentTime >= auctionEndTime;
+                                    %>
+
+                                    <% if (!isAuctionEnded) { %>
+                                        <button class="participated" 
+                                            onclick="openParticipateModal(
+                                                '<%= product._id %>',
+                                                '<%= product.name %>',
+                                                '<%= product.productType %>',
+                                                '<%= product.minPrice ? product.minPrice.toFixed(2) : `Not Available` %>',
+                                                '<%= product.seller ? product.seller.firstName + ` ` + product.seller.lastName : `Unknown Seller` %>',
+                                                '<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : `/public/img/default.png` %>',
+                                                '<%= product.auctionStart %>',
+                                                '<%= product.auctionEnd %>'
+                                            )">
+                                            Participate
+                                        </button>
+                                    <% } else { %>
+                                        <button class="ended" disabled>Ended</button>
+                                        <button class="show-winner" onclick="showWinner('<%= product._id %>')">Show Winner</button>
+                                    <% } %>
                                 </div>
                             <% } %>
                         <% }) %>
@@ -239,19 +250,30 @@
                                             <h4><%= product.name %></h4>
                                             <p>Minimum Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
                                             <p>Pickup Address: <%= product.pickupAddress || 'Not Available' %></p>
-                                            <button class="participated" 
-                                                onclick="openParticipateModal(
-                                                    '<%= product._id %>',
-                                                    '<%= product.name %>',
-                                                    '<%= product.productType %>',
-                                                    '<%= product.minPrice ? product.minPrice.toFixed(2) : `Not Available` %>',
-                                                    '<%= product.seller ? product.seller.firstName + `` + product.seller.lastName : `Unknown Seller` %>',
-                                                    '<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : `/public/img/default.png` %>',
-                                                    '<%= product.auctionStart %>',
-                                                    '<%= product.auctionEnd %>'
-                                                )">
-                                                Participate
-                                            </button>
+                                            <%
+                                            const auctionEndTime = new Date(product.auctionEnd);
+                                            const currentTime = new Date();
+                                            const isAuctionEnded = currentTime >= auctionEndTime;
+                                            %>
+
+                                            <% if (!isAuctionEnded) { %>
+                                                <button class="participated" 
+                                                    onclick="openParticipateModal(
+                                                        '<%= product._id %>',
+                                                        '<%= product.name %>',
+                                                        '<%= product.productType %>',
+                                                        '<%= product.minPrice ? product.minPrice.toFixed(2) : `Not Available` %>',
+                                                        '<%= product.seller ? product.seller.firstName + ` ` + product.seller.lastName : `Unknown Seller` %>',
+                                                        '<%= product.image ? '/public/img/product/' + product.image.split('/').pop() : `/public/img/default.png` %>',
+                                                        '<%= product.auctionStart %>',
+                                                        '<%= product.auctionEnd %>'
+                                                    )">
+                                                    Participate
+                                                </button>
+                                            <% } else { %>
+                                                <button class="ended" disabled>Ended</button>
+                                                <button class="show-winner" onclick="showWinner('<%= product._id %>')">Show Winner</button>
+                                            <% } %>
                                         </div>
                                     <% } %>
                                 <% }) %>
@@ -268,7 +290,7 @@
         <!-- Buy Now Modal -->
         <div id="buyNowModal" class="modal">
             <div class="modal-content">
-                <span class="close" onclick="closeModal()">&times;</span>
+                <span class="close" onclick="closebuyNowModal()">&times;</span>
                 <h2>Product Details</h2>
                 <!-- Product Image -->
                 <img id="modal-product-image" src="/img/default.png" alt="Product Image" style="width: 100%; max-height: 300px; object-fit: contain;">
@@ -477,6 +499,10 @@ window.onclick = function(event) {
         closeModal();
     }
 }
+function searchProducts() {
+    console.log("Search button clicked");
+}
+
 function updateClock() {
     const currentTime = document.getElementById('currentTime');
     const now = new Date();
@@ -598,7 +624,7 @@ function openBuyNowModal(id, name, type, description, price, seller, image) {
 }
 
 // Function to close the modal
-function closeModal() {
+function closebuyNowModal() {
     document.getElementById('buyNowModal').style.display = 'none';
 }
 

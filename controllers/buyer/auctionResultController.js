@@ -1,7 +1,7 @@
 const AuctionSession = require("../../models/auctionSession");
 const User = require("../../models/user"); // Assuming User model exists for fetching buyer info
 
-module.exports.showAuctionResults = async (req, res) => {
+module.exports.results = async (req, res) => {
     try {
       const auctionSession = await AuctionSession.findOne({
         product: req.params.productId,

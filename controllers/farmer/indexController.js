@@ -148,19 +148,35 @@ module.exports.addProduct = (req, res) => {
 
 module.exports.getBuyers = async (req, res) => {
   try {
-    // Find orders where the product belongs to the farmer
-    const orders = await Order.find({})
-      .populate("buyer", "name")
-      .populate("product", "name");
+    const farmerId = req.session.login; // ✅ Ensure farmer is logged in
 
-    if (!orders || orders.length === 0) {
-      return res.json([]);
+    if (!farmerId) {
+      return res.status(401).json({ error: "Unauthorized. Please log in." });
     }
 
-    const buyerData = orders.map((order) => ({
+    // ✅ Find orders where the product belongs to the logged-in farmer
+    const orders = await Order.find({})
+      .populate({
+        path: "buyer",
+        select: "firstName lastName phoneNumber", // ✅ Include phoneNumber
+      })
+      .populate({
+        path: "product",
+        select: "name seller",
+      });
+
+    // ✅ Filter orders where the seller (farmer) matches the logged-in farmer
+    const filteredOrders = orders.filter(order => order.product.seller.toString() === farmerId);
+
+    if (!filteredOrders.length) {
+      return res.json([]); // Return empty array if no orders found
+    }
+
+    const buyerData = filteredOrders.map(order => ({
       _id: order._id,
-      buyerName: order.buyer.name,
-      productName: order.product.name, // Ensure this is the correct field in your Product schema
+      buyerName: `${order.buyer.firstName} ${order.buyer.lastName}`,
+      phoneNumber: order.buyer.phoneNumber, // ✅ Include phone number
+      productName: order.product.name,
       quantity: order.quantity,
       status: order.status,
     }));
@@ -171,6 +187,7 @@ module.exports.getBuyers = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
 
 module.exports.markNotificationAsRead = async (req, res) => {
   try {
@@ -206,7 +223,7 @@ module.exports.getFarmerOrders = async (req, res) => {
         match: { seller: farmerId },
         select: "name seller status", // Ensure seller is included
       })
-      .populate("buyer", "firstName lastName email"); // Fetch buyer details
+      .populate("buyer", "firstName lastName email phoneNumber"); // Fetch buyer details
 
     // Debugging output
     console.log(
@@ -305,7 +322,7 @@ module.exports.deleteOrder = async (req, res) => {
   }
 };
 
-module.exports.showBuyer = async (req, res) => {
+module.exports.showBuyers = async (req, res) => {
     try {
         const productId = req.query.productId;
         if (!productId) {

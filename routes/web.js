@@ -14,6 +14,7 @@ const adminManageItemController = require('../controllers/admin/manageItemsContr
 
 
 const farmerIndexController = require('../controllers/farmer/indexController');
+const farmerEditProfileController = require('../controllers/farmer/editProfileController');
 
 
 const buyerIndexController = require('../controllers/buyer/indexController');
@@ -59,8 +60,11 @@ module.exports = function (app) {
   app.get('/farmer/getFarmerOrders', farmerIndexController.getFarmerOrders);
   app.post('/farmer/processOrder', farmerIndexController.processOrder);
   app.get('/farmer/deleteOrder/:id', farmerIndexController.deleteOrder);
-  app.get('/farmer/showBuyer', farmerIndexController.showBuyer);
+  app.get('/farmer/showBuyers', farmerIndexController.showBuyers);
   app.get('/farmer/showParticipated', farmerIndexController.showParticipated);
+  app.get('/farmer/edit-profile', farmerEditProfileController.editProfile);
+  app.post('/farmer/update-profile/:id', farmerEditProfileController.updateProfile);
+  
 
 
   
@@ -73,6 +77,6 @@ module.exports = function (app) {
   app.get('/buyer/current-bids', buyerIndexController.getCurrentBids);
   app.get('/buyer/auction/room/:productId', currentbidController.index);
   app.post('/buyer/auction/room/:productId', currentbidController.doBid);
-  app.get('/buyer/auction/:productId/results', auctionResultController.showAuctionResults);
+  app.get('/buyer/auction/:productId/results', auctionResultController.results);
 
 };

@@ -1,56 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sign Up</title>
-  <link rel="stylesheet" href="/public/css/styless.css"> </head>
+  <link rel="stylesheet" href="/public/css/styless.css"> 
+</head>
+
 <body>
-  <form id="signUpForm" action="/doRegister" method="POST" enctype="multipart/form-data">
-  <div class="form-container" id="form-container">
-    <h2>Create an Account</h2>
-    <p>It's free and always will be.</p>
+  <main>
+    <!-- Information Section -->
+    <section class="info-container">
+      <h1>Welcome to Our Farmer to Customer Marketplace!</h1>
+      <p>Buy fresh produce directly from farmers or auction your products to the highest bidder.</p>
+      <ul>
+        <li><strong>For Farmers:</strong> Reach more customers and auction your produce.</li>
+        <li><strong>For Buyers:</strong> Get fresh products at fair prices and join auctions.</li>
+        <li><strong>Secure Transactions:</strong> Safe and smooth buying and selling experience.</li>
+        <li><strong>Easy Communication:</strong> Stay connected with farmers and buyers.</li>
+      </ul>
+      <p>Sign up now and start trading!</p>
+    </section>
 
-    <div class="preview-container">
-      <img id="profilePreview" src="" alt="Profile Picture Preview">
-    </div>
-    <label for="image">Choose Profile Picture</label>
-    <input type="file" id="image" name="image" accept="image/*" onchange="previewImage(event)">
+    <!-- Registration Form -->
+    <section>
+      <form id="signUpForm" action="/doRegister" method="POST" enctype="multipart/form-data">
+        <div class="form-container" id="form-container">
+          <h1>Create an Account</h1>
+          <p>It's free and always will be.</p>
 
-      <div class="radio-group">
-        <label><input type="radio" name="role" value="farmer" required> I am a Farmer/Seller</label>
-        <label><input type="radio" name="role" value="buyer" required> I am a Buyer</label>
-      </div>
+          <div class="preview-container">
+            <img id="profilePreview" src="" alt="Profile Picture Preview">
+          </div>
+          <label for="image">Choose Profile Picture</label>
+          <input type="file" id="image" name="image" accept="image/*" onchange="previewImage(event)">
 
-      <div class="row">
-        <input type="text" name="firstName" placeholder="First Name" required>
-        <span class="checkmark">✔</span>
-        <input type="text" name="lastName" placeholder="Last Name" required>
-        <span class="checkmark">✔</span>
-      </div>
+          <div class="radio-group">
+            <label><input type="radio" name="role" value="farmer" required> I am a Farmer/Seller</label>
+            <label><input type="radio" name="role" value="buyer" required> I am a Buyer</label>
+          </div>
 
-      <input type="email" name= "email" placeholder="Email" required>
-      <span class="checkmark">✔</span>
+          <div class="row">
+            <input type="text" name="firstName" placeholder="First Name" required>
+            <input type="text" name="lastName" placeholder="Last Name" required>
+          </div>
 
-      <div class="row">
-        <input type="password" name="password" placeholder="Enter your password" required>
-        <input type="password" name="confirmPassword" placeholder="Confirm your password" required>
-      </div>
+          <div class="row">
+            <input type="email" name="email" placeholder="Email" required>
+          </div>     
 
-      <input type="text" name="phoneNumber" placeholder="Phone Number" required>
+          <div class="row">
+            <input type="password" name="password" placeholder="Enter your password" required>
+            <input type="password" name="confirmPassword" placeholder="Confirm your password" required>
+          </div>
 
-      <label>Your Gender</label>
-      <div class="radio-group">
-        <label><input type="radio" name="gender" value="male" required> Male</label>
-        <label><input type="radio" name="gender" value="female" required> Female</label>
-      </div>
+          
+          <div class="row">
+            <input type="text" name="phoneNumber" placeholder="Phone Number" required>
+          </div>
 
-      <button type="submit">Create an Account</button>
+          <label>Your Gender</label>
+          <div class="radio-group">
+            <label><input type="radio" name="gender" value="male" required> Male</label>
+            <label><input type="radio" name="gender" value="female" required> Female</label>
+          </div>
 
-    <div class="form-toggle">
-      <p>Already have an account?</p>
-        <a href="/login" onclick="toggleForms()">Sign In</a> </div>
-  </div>
-  
-  </form>
+          <button type="submit">Create an Account</button>
+
+          <div class="form-toggle">
+            <p>Already have an account?</p>
+            <a href="/login">Sign In</a> 
+          </div>
+        </div>
+      </form>
+    </section>
+  </main>  
+
   <script>
     function previewImage(event) {
       const reader = new FileReader();
@@ -62,4 +87,9 @@
     }
   </script>
 </body>
+
+<footer>
+  <p>&copy; 2025 Marketplace for Farmer Direct to Customer. All Rights Reserved.</p>
+</footer>
+
 </html>

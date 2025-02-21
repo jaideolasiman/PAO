@@ -3,21 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign In Form</title>
+  <title>Sign In</title>
   <link rel="stylesheet" href="/public/css/styless.css"> 
 </head>
 <body>
-  <div class="form-container" id="signInContainer">
-    <h2>Sign In</h2>
+
+  <main>
+    <!-- Information Section -->
+  <section class="info-container">
+    <h1>Welcome to Our Farmer to Customer Marketplace!</h1>
+    <p>Buy fresh produce directly from farmers or auction your products to the highest bidder.</p>
+    <ul>
+      <li><strong>For Farmers:</strong> Reach more customers and auction your produce.</li>
+      <li><strong>For Buyers:</strong> Get fresh products at fair prices and join auctions.</li>
+      <li><strong>Secure Transactions:</strong> Safe and smooth buying and selling experience.</li>
+      <li><strong>Easy Communication:</strong> Stay connected with farmers and buyers.</li>
+    </ul>
+    <p>Sign up now and start trading!</p>
+  </section>
+
+  <section class="form-container" id="signInContainer">
+    <h1>Sign In</h1>
 
     <form id="signInForm" action="/doLogin" method="POST">
-      <% if (messages.error && messages.error.length > 0) { %>
-        <div class="error-message">
-          <% messages.error.forEach(function(msg) { %>
-            <p><%= msg %></p>
-          <% }) %>
-        </div>
-      <% } %> 
+        <% if (messages.error && messages.error.length > 0) { %>
+          <div class="error-message">
+            <% messages.error.forEach(function(msg) { %>
+              <p><%= msg %></p>
+            <% }) %>
+          </div>
+        <% } %> 
+      
 
       <div class="form-group position-relative">
         <label for="email" class=" form-control-label">Email</label>
@@ -34,14 +50,20 @@
       <p>Don't have an account?</p>
       <a href="/register" onclick="toggleForms()">Sign Up</a> 
     </div>
-  </div>
+  </section>
 
   <script>
     function toggleForms() {
       // Add toggle functionality if needed
     }
   </script>
+</main>
 </body>
+
+<footer>
+  <p>&copy; 2025 Marketplace for Farmer Direct to Customer. All Rights Reserved.</p>
+</footer>
+
 </html>
 
  

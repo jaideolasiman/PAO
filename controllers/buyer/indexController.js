@@ -136,6 +136,7 @@ module.exports.confirmPurchase = async (req, res) => {
       product: productId,
       seller: product.seller, // Store seller info
       buyer: req.session.login, // Buyer from session
+      phoneNumber: buyer.phoneNumber,
       quantity,
       totalPrice,
     });
@@ -191,6 +192,14 @@ module.exports.confirmParticipation = async (req, res) => {
     const product = await Product.findById(productId).populate("seller");
     if (!product) {
       req.flash("error", "Auction product not found.");
+      return res.redirect("/buyer/index");
+    }
+
+    // Check if the auction has ended
+    const auctionEndTime = new Date(product.auctionEnd);
+    const currentTime = new Date();
+    if (currentTime >= auctionEndTime) {
+      req.flash("error", "Auction has already ended.");
       return res.redirect("/buyer/index");
     }
 
