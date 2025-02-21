@@ -658,20 +658,24 @@ function displayOrders() {
         row.id = `order-${order._id}`;  // Unique ID for each order row
         row.innerHTML = `
             <td>${order.buyerName}</td>
-            <td>${order.phoneNumber}</td> <!-- 📞 Buyer’s phone number -->
+            <td>${order.phoneNumber}</td> 
             <td>${order.productName}</td>
             <td>${order.quantity}</td>
             <td>${order.totalPrice}</td>
             <td>${order.status}</td>
-            <td class="action-buttons">
-                <button class="approve-btn" id="approve-${order._id}" onclick="processOrder('${order._id}', 'approve')" 
-                    ${order.status.toLowerCase() === "approved" ? "disabled" : ""}>
-                    ${order.status.toLowerCase() === "approved" ? "✔ Approved" : "✔ Approve"}
-                </button>
-                <button class="reject-btn" id="reject-${order._id}" onclick="processOrder('${order._id}', 'reject')" 
-                    ${order.status === "Rejected" ? "disabled" : ""} style="${order.status === 'Approved' ? 'display:none' : ''}">
-                    ${order.status === "Rejected" ? "❌ Rejected" : "❌ Reject"}
-                </button>
+            <td class="action-buttons" id="order-${order._id}">
+                ${order.status.toLowerCase() !== "approved" && order.status.toLowerCase() !== "rejected" ? `
+                    <button class="approve-btn" id="approve-${order._id}" onclick="processOrder('${order._id}', 'approve')">
+                        ✔ Approve
+                    </button>
+                    <button class="reject-btn" id="reject-${order._id}" onclick="processOrder('${order._id}', 'reject')">
+                        ✖ Reject
+                    </button>
+                ` : order.status.toLowerCase() === "approved" ? `
+                    <button class="approve-btn" id="approve-${order._id}" disabled>✔ Approved</button>
+                ` : `
+                    <button class="reject-btn" id="reject-${order._id}" disabled>✖ Rejected</button>
+                `}             
                 <button class="delete-btn" onclick="deleteOrder('${order._id}')">🗑 Delete</button>
             </td>
         `;
@@ -719,25 +723,45 @@ function processOrder(orderId, action) {
 
         // Refresh order list to show the updated status
         displayOrders();
+
+        // Update the UI for action buttons
+        const approveBtn = document.getElementById(`approve-${orderId}`);
+        const rejectBtn = document.getElementById(`reject-${orderId}`);
+
+        if (action === "approve") {
+            if (approveBtn) {
+                approveBtn.innerText = "✔ Approved";
+                approveBtn.disabled = true;
+            }
+            if (rejectBtn) rejectBtn.remove(); // Remove reject button
+        } else if (action === "reject") {
+            if (rejectBtn) {
+                rejectBtn.innerText = "✔ Rejected";
+                rejectBtn.disabled = true;
+            }
+            if (approveBtn) approveBtn.remove(); // Remove approve button
+        }
     })
     .catch(error => console.error("Error processing order:", error));
 }
 
 // Function to Delete Order from the Table (Not the Database)
 function deleteOrder(orderId) {
-    // Find the row based on orderId and remove it from the table
-    const row = document.querySelector(`#order-${orderId}`);
-    if (row) row.remove();
-
-    // Optionally, send a request to the backend to remove the order from the database
-    fetch(`/buyer/deleteOrder/${orderId}`, { method: 'DELETE' })
+    if (confirm("Are you sure you want to delete this order?")) {
+        fetch(`/buyer/deleteOrder/${orderId}`, { method: 'DELETE' })
         .then(response => response.json())
         .then(data => {
             console.log(data.message);
-            // Remove order from local array
+            
+            // Remove from local array
             ordersData = ordersData.filter(order => order._id !== orderId);
+            
+            // Remove the row from the table
+            const row = document.querySelector(`#order-${orderId}`);
+            if (row) row.remove();
         })
         .catch(error => console.error('Error deleting order:', error));
+    }
 }
 
 // Close Modal Function

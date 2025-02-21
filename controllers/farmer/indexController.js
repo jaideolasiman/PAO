@@ -243,6 +243,7 @@ module.exports.getFarmerOrders = async (req, res) => {
       buyerName: order.buyer
         ? `${order.buyer.firstName} ${order.buyer.lastName}`
         : "Unknown Buyer", // Fix missing name issue
+      phoneNumber: order.phoneNumber || "No Phone",
       productName: order.product ? order.product.name : "Unknown Product",
       quantity: order.quantity,
       totalPrice: order.totalPrice, // ✅ Added total price
