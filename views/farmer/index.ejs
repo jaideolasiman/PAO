@@ -37,9 +37,9 @@
                 </li>
                 
                 <!-- Edit Profile Modal -->
-            <div id="editProfileModal" class="modal">
+                <div id="editProfileModal" class="modal">
                 <div class="modal-content">
-                    <span class="close" onclick="closeModal()">&times;</span>
+                    <span class="close" onclick="closeEditProfileModal()">&times;</span>
                     <h2>Edit Profile</h2>
 
                     <form id="editProfileForm">
@@ -90,18 +90,18 @@
                         <button type="submit">Save Changes</button>
                     </form>
                 </div>
-            </div>
+                </div>
 
     
                <!-- Product Management Button -->
-            <li>
+                <li>
                 <button class="fullscreen-btn btn btn-secondary" onclick="openOrdersModal()">
                     <img src="/public/img/cart.png" alt="Cart Icon" class="cart-icon">
                     <span class="icon-label">Product Management</span>
                 </button>
-            </li>
+                </li>
 
-            <!-- Modal Overlay -->
+                <!-- Modal Overlay -->
                 <div class="modal-overlay" id="modalOverlay" onclick="closeOrdersModal()" style="display: none;"></div>
 
                 <!-- Product Orders Modal -->
@@ -126,13 +126,38 @@
                     <div id="pagination" class="pagination-container"></div>
                     <button class="close-btn" onclick="closeOrdersModal()">Close</button>
                 </div>
+                    <!-- Auction Management Modal -->
+                <li>
+                    <button class="fullscreen-btn" onclick="openAuctionResultsModal()">
+                        <img src="/public/img/profile/trophy.webp.jpg" alt="Auction Icon" class="auction-icon">
+                        <span class="icon-label">Auction Management</span>
+                    </button>
+                </li>
 
+                <!-- Modal Overlay -->
+                <div class="modal-overlay" id="auctionModalOverlay" onclick="closeAuctionResultsModal()" style="display: none;"></div>
 
-                <!-- Currently Bids Icon
-                <li><button class="bids-btn" onclick="viewCurrentBids()">
-                    <img src="/public/img/clock_user.png" alt="Currently Bids Icon" class="bids-icon">
-                    <span class="icon-label">Currently in Bid</span> 
-                </button></li>-->
+                <!-- Auction Results Modal -->
+                <div id="auctionResultsModal" class="modal" style="display: none;">
+                    <h3 id="auctionTitle">Auction Results</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Winner Name</th>
+                                <th>Product</th>
+                                <th>Winning Bid</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="auctionResultsList">
+                            <tr><td colspan="5">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                    <div id="auctionPagination" class="pagination-container"></div>
+                    <button class="close-btn" onclick="closeAuctionResultsModal()">Close</button>
+                </div>
+
             </ul>
             <!-- Dropdown Profile Container -->
             <div id="profileDropdown" class="profile-dropdown" style="display: none;">
@@ -278,7 +303,7 @@
             <div id="all-products-section">        
                 <!-- Retail Products -->
                 <% if (retailProducts.length > 0) { %>
-                    <h2>Retail Products</h2>
+                    <h1>Retail Products</h1>
                     <div class="product-container">
                         <% retailProducts.forEach(product => { %>
                             <% if (product.status === 'approved') { %>  <!-- ✅ Display only approved products -->
@@ -299,7 +324,7 @@
         
                 <!-- Wholesale Products -->
                 <% if (wholesaleProducts.length > 0) { %>
-                    <h2>Wholesale Products</h2>
+                    <h1>Wholesale Products</h1>
                     <div class="product-container">
                         <% wholesaleProducts.forEach(product => { %>
                             <% if (product.status === 'approved') { %>  <!-- ✅ Display only approved products -->
@@ -315,7 +340,7 @@
                                         class="participated"
                                         data-auction-start="<%= product.auctionStart %>" 
                                         data-auction-end="<%= product.auctionEnd %>">
-                                        Loading...
+                                        <button class="participated" onclick="participateAuction('<%= product._id %>')">Show Participated</button>
                                     </button>
                                 </div>
                             <% } %>
@@ -330,7 +355,7 @@
                     <div class="category-section" data-category-id="<%= group.category._id %>">
                         <!-- Retail Products -->
                         <% if (group.retailProducts.length > 0) { %>
-                            <h2>Retail Products</h2>
+                            <h1>Retail Products</h1>
                             <div class="product-container">
                                 <% group.retailProducts.forEach(product => { %>
                                     <% if (product.status === 'approved') { %>  <!-- ✅ Display only approved products -->
@@ -351,7 +376,7 @@
         
                         <!-- Wholesale Products -->
                         <% if (group.wholesaleProducts.length > 0) { %>
-                            <h2>Wholesale Products</h2>
+                            <h1>Wholesale Products</h1>
                             <div class="product-container">
                                 <% group.wholesaleProducts.forEach(product => { %>
                                     <% if (product.status === 'approved') { %>  <!-- ✅ Display only approved products -->
@@ -367,7 +392,7 @@
                                                 class="participated"
                                                 data-auction-start="<%= product.auctionStart %>" 
                                                 data-auction-end="<%= product.auctionEnd %>">
-                                                Loading...
+                                            <button class="participated" onclick="participateAuction('<%= product._id %>')">Show Participated</button>
                                             </button>
                                         </div>
                                     <% } %>
@@ -573,7 +598,7 @@
        };
 
        
-       let ordersData = []; // Stores all fetched orders
+let ordersData = []; // Stores all fetched orders
 let currentPage = 1;
 const itemsPerPage = 5;
 const totalPages = 10; // Fixed 1-10 pages
@@ -726,6 +751,69 @@ function closeModal(modalId) {
     document.getElementById(productModal).style.display = "none";
 }
 
+// Close modal if user clicks outside the modal content
+window.onclick = function(event) {
+    const modal = document.getElementById("showBuyersModal");
+    if (event.target === modal) {
+        modal.style.display = "none";
+    }
+};
+//////////////////////////////////////////
+document.addEventListener("DOMContentLoaded", function () {
+    // Function to open the auction results modal
+    window.openAuctionResultsModal = function () {
+        document.getElementById("auctionModalOverlay").style.display = "block";
+        document.getElementById("auctionResultsModal").style.display = "block";
+
+        // Fetch auction results
+        fetchAuctionResults();
+    };
+
+    // Function to close the auction results modal
+    window.closeAuctionResultsModal = function () {
+        document.getElementById("auctionModalOverlay").style.display = "none";
+        document.getElementById("auctionResultsModal").style.display = "none";
+    };
+
+    // Function to fetch auction results dynamically
+    function fetchAuctionResults() {
+        fetch("/auction/results") // Adjust API route as needed
+            .then(response => response.json())
+            .then(data => {
+                const resultsTable = document.getElementById("auctionResultsList");
+                resultsTable.innerHTML = ""; // Clear previous data
+
+                if (data.length === 0) {
+                    resultsTable.innerHTML = `<tr><td colspan="5">No auction results available.</td></tr>`;
+                    return;
+                }
+
+                data.forEach(result => {
+                    const row = `
+                        <tr>
+                            <td>${result.winnerName}</td>
+                            <td>${result.productName}</td>
+                            <td>₱${result.winningBid.toFixed(2)}</td>
+                            <td>${result.status}</td>
+                            <td><button onclick="viewWinnerDetails('${result.winnerId}')">View</button></td>
+                        </tr>
+                    `;
+                    resultsTable.innerHTML += row;
+                });
+            })
+            .catch(error => {
+                console.error("Error fetching auction results:", error);
+                document.getElementById("auctionResultsList").innerHTML = `<tr><td colspan="5">Error loading results.</td></tr>`;
+            });
+    }
+
+    // Function to view winner details (can be expanded for modal or redirect)
+    window.viewWinnerDetails = function (winnerId) {
+        alert("Viewing details for Winner ID: " + winnerId);
+        // Implement logic to show detailed info in a modal or redirect
+    };
+});
+///////////////////////////////
 
 // Function to fetch buyers and show the modal
 async function showBuyers(productId) {

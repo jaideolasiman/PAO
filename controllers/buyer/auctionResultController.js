@@ -1,51 +1,78 @@
-const AuctionSession = require("../../models/auctionSession");
-const User = require("../../models/user"); // Assuming User model exists for fetching buyer info
+//onst ResultAuction = require('../../models/resultAuction'); 
+const AuctionSession = require('../../models/auctionSession'); // Import AuctionSession model
+const Product = require('../../models/product'); // Import Product model (if needed)
 
 module.exports.results = async (req, res) => {
     try {
-      const auctionSession = await AuctionSession.findOne({
-        product: req.params.productId,
-        endTime: { $lt: new Date() }, // Ensure the auction has ended
-      })
+        const { productId } = req.query;
+
+        const auctionSession = await AuctionSession.findOne({ 
+            'product': productId 
+        })
         .populate('product')
-        .populate('bids.buyer') // Assuming bids have a "buyer" reference
-        .lean();
-  
-      if (!auctionSession) {
-        req.flash("error", "Auction session not found or hasn't ended yet.");
-        return res.redirect("/buyer");
-      }
-  
-      // Find the highest bid (winning bid)
-      const winningBid = auctionSession.bids.reduce((max, bid) => bid.amount > max.amount ? bid : max, auctionSession.bids[0]);
-  
-      // Collect bid rankings
-      const bidRanking = auctionSession.bids
-        .sort((a, b) => b.amount - a.amount) // Sort by bid amount descending
-        .map((bid, index) => ({
-          rank: index + 1,
-          name: bid.buyer ? `${bid.buyer.firstName} ${bid.buyer.lastName}` : 'Anonymous',
-          bidAmount: bid.amount,
-        }));
-  
-      // Prepare winner and product data
-      const winner = winningBid ? {
-        name: `${winningBid.buyer.firstName} ${winningBid.buyer.lastName}`,
-        phone: winningBid.buyer.phone,  // Assuming phone is stored in the buyer object
-        bidAmount: winningBid.amount,
-        profilePicture: winningBid.buyer.profilePicture || '/default.jpg',
-      } : null;
-  
-      res.render("auctionResult", {
-        site_title: "Auction Result",
-        auctionSession,
-        winner,
-        bids: bidRanking,
-      });
+        .populate('seller')
+        .populate('buyer'); // Ensure the buyer is populated
+         
+
+        if (!auctionSession) {
+            return res.status(404).render('buyer/auctionResult', {
+                message: 'Auction session not found or no bids placed.',
+                auctionSession: null,
+                highestBid: null,
+                winner: null,
+                bidRanking: []
+            });
+        }
+
+        
+
+        const highestBid = auctionSession.bid;
+        const winner = auctionSession.buyer;
+
+        // Create the bidRanking array by sorting bids in descending order (highest to lowest)
+        const bidRanking = auctionSession.bid
+            ? auctionSession.bid
+                .sort((a, b) => b.amount - a.amount)  // Sorting bids in descending order (highest to lowest)
+                .map((bid, index) => ({
+                    rank: index + 1,
+                    bidder: bid.bidder, // The bidder is the buyer
+                    bidAmount: bid.amount
+                }))
+            : []; // Default to an empty array if no bids exist
+
+        const resultAuction = new auctionResult({
+            product: auctionSession.product,
+            highestBid: {
+                bidAmount: highestBid,
+                bidder: winner._id
+            },
+            auctionEnded: true,
+            resultDate: new Date()
+        });
+
+        try {
+            await resultAuction.save();
+            console.log('Auction result saved:', resultAuction);
+        } catch (err) {
+            console.error('Error saving auction result:', err);
+        }
+
+        // Pass the bidRanking data to the view
+        res.render('buyer/auctionResults', {
+            auctionSession,
+            highestBid,
+            winner,
+            bidRanking // Send the bidRanking to the view
+        });
+
     } catch (error) {
-      console.error("Error fetching auction results:", error);
-      req.flash("error", "Something went wrong.");
-      res.redirect("/buyer");
+        console.error(error);
+        res.status(500).render('buyer/auctionResult', {
+            message: 'An error occurred while fetching the auction result.',
+            auctionSession: null,
+            highestBid: null,
+            winner: null,
+            bidRanking: []
+        });
     }
-  };
-  
+};

@@ -14,7 +14,7 @@ const auctionSession = new mongoose.Schema({
     bid: { type: String, ref: 'User', required: true },
     highestBid: { type: highestBid, default: () => ({ amount: 0, bidder: null }) }
 }, { timestamps: true });  // Automatically adds createdAt and updatedAt fields
-
+    
 // Create the AuctionSession model
 const AuctionSession = mongoose.model('AuctionSession', auctionSession);
 

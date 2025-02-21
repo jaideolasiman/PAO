@@ -250,6 +250,7 @@
                                             <h4><%= product.name %></h4>
                                             <p>Minimum Price: ₱<%= product.minPrice ? product.minPrice.toFixed(2) : 'Not Available' %></p>
                                             <p>Pickup Address: <%= product.pickupAddress || 'Not Available' %></p>
+                                            
                                             <%
                                             const auctionEndTime = new Date(product.auctionEnd);
                                             const currentTime = new Date();
