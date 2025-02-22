@@ -243,11 +243,21 @@ module.exports.getFarmerOrders = async (req, res) => {
       buyerName: order.buyer
         ? `${order.buyer.firstName} ${order.buyer.lastName}`
         : "Unknown Buyer", // Fix missing name issue
-      phoneNumber: order.phoneNumber || "No Phone",
+       phoneNumber: order.phoneNumber || "No Phone",
       productName: order.product ? order.product.name : "Unknown Product",
       quantity: order.quantity,
       totalPrice: order.totalPrice, // ✅ Added total price
       status: order.status,
+      date:
+      order.status === "complete"
+        ? order.completedAt
+          ? new Date(order.completedAt).toLocaleString()
+          : "No Date"
+        : order.status === "failed"
+        ? order.failedAt
+          ? new Date(order.failedAt).toLocaleString()
+          : "No Date"
+        : "—",
     }));
 
     res.json(ordersData);
@@ -261,7 +271,7 @@ module.exports.processOrder = async (req, res) => {
   const { orderId, action } = req.body;
 
   try {
-    const updatedStatus = action === "approve" ? "Approved" : "Rejected";
+    const updatedStatus = action === "complete" ? "Complete" : "Failed";
 
     // ✅ Find and update the order
     const order = await Order.findByIdAndUpdate(
@@ -282,10 +292,10 @@ module.exports.processOrder = async (req, res) => {
     }
 
     // ✅ Create notification for the buyer if the order is approved
-    if (updatedStatus === "Approved") {
+    if (updatedStatus === "complete") {
       const notification = new Notification({
         user: order.buyer, // Buyer ID
-        message: `Your order for '${order.product.name}' has been approved by the seller. Your order is ready to pick up.`,
+        message:  `Your order for '${order.product.name}' has been successfully completed! 🎉 Thank you for your purchase. We appreciate your trust in our marketplace. Feel free to shop with us again!`,
         status: "unread",
       });
 
@@ -316,7 +326,7 @@ module.exports.deleteOrder = async (req, res) => {
     console.log(`Order with ID: ${orderId} has been deleted.`); // Log for debugging
 
     // Redirect back to the manage orders page after deletion
-    res.redirect('/admin/manageAuctions');  // Update with the correct route if needed
+    res.redirect("/farmer/index");  // Update with the correct route if needed
   } catch (error) {
     console.error('Error deleting order:', error);
     res.status(500).send('Internal Server Error');

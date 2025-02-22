@@ -3,6 +3,37 @@
     position: fixed;
     top: 50%;
     left: 50%;
+    right: 50%;
+    transform: translate(-50%, -50%);
+    background: rgb(179, 177, 177);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    max-width: 100%;
+    width: 1050px;
+    max-height: 90vh; /* Prevents overflow */
+    overflow-y: auto; /* Enables vertical scrolling */
+}
+
+#showBuyersModal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgb(179, 177, 177);
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    max-width: 90%;
+    width: 700px;
+    max-height: 90vh; /* Prevents overflow */
+    overflow-y: auto; /* Enables vertical scrolling */
+}
+
+#auctionResultsModal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
     background: rgb(179, 177, 177);
     padding: 25px;
@@ -53,7 +84,7 @@ html {
 
 
 /* Responsive for Smaller Screens */
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
     #buyersModal {
         width: 95%; /* Adjust width for tablets & smaller screens */
         padding: 20px;
@@ -96,6 +127,7 @@ th, td {
     padding: 10px;
     text-align: center;
     border-bottom: 1px solid #ddd;
+    border-width: 1px solid #ddd;
 }
 
 th {
@@ -130,26 +162,29 @@ th {
 
 /* Fix Column Widths */
 th:nth-child(1), td:nth-child(1) { width: 20%; } /* Buyer Name */
-th:nth-child(2), td:nth-child(2) { width: 20%; } /* Product */
-th:nth-child(3), td:nth-child(3) { width: 10%; } /* Quantity */
-th:nth-child(4), td:nth-child(4) { width: 15%; } /* Price */
-th:nth-child(5), td:nth-child(5) { width: 35%; } /* Actions */
+th:nth-child(2), td:nth-child(2) { width: 20%; } /* Phone Number */
+th:nth-child(3), td:nth-child(3) { width: 20%; } /* Product */
+th:nth-child(4), td:nth-child(4) { width: 10%; } /* Quantity */
+th:nth-child(5), td:nth-child(5) { width: 15%; } /* Price */
+th:nth-child(6), td:nth-child(6) { width: 35%; } /* Status */
+th:nth-child(7), td:nth-child(7) { width: 20%; } /* Transaction */
+th:nth-child(8), td:nth-child(8) { width: 20%; } /* Date */
 
 /* Action Buttons */
 .action-buttons button {
     padding: 6px 10px;
     margin: 3px;
-    font-size: 13px;
+    font-size: 14px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
 }
 
 /* Button Colors */
-.approve-btn { background-color: #4CAF50; color: rgb(13, 2, 61); }
-.reject-btn { background-color: #FF9800; color: rgb(13, 2, 41); }
+.complete-btn { background-color: #4CAF50; color: rgb(13, 2, 61); }
+.failed-btn { background-color: #FF9800; color: rgb(13, 2, 41); }
 .delete-btn { background-color: #F44336; color: rgb(15, 2, 49); }
 
-.approve-btn:hover { background-color: #45a049; }
-.reject-btn:hover { background-color: #e68a00; }
+.complete-btn:hover { background-color: #45a049; }
+.failed-btn:hover { background-color: #e68a00; }
 .delete-btn:hover { background-color: #d32f2f; }

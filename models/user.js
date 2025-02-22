@@ -21,7 +21,7 @@ var schema = mongoose.Schema({
         type: String,
     },
     phoneNumber: {
-        type: String,
+        type: Number,
     },
     profilePicture: {
         type: String, 

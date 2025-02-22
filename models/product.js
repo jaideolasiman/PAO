@@ -8,10 +8,11 @@ const productSchema = new mongoose.Schema({
     productInfo: { type: String, required: true },
     image: { type: String, required: true }, // Storing the relative image path
     seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' }, 
+    status: { type: String, enum: ['pending', 'complete', 'failed'], default: 'pending' }, 
     auctionStart: { type: Date, default: null }, // New field for auction start time
     auctionEnd: { type: Date, default: null }, // New field for auction end time
-    pickupAddress: { type: String, required: true } // 🆕 New field for pickup address
+    pickupAddress: { type: String, required: true }, // 🆕 New field for pickup address
+    
 });
 
 const Product = mongoose.model('Product', productSchema);

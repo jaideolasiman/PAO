@@ -38,58 +38,58 @@
                 
                 <!-- Edit Profile Modal -->
                 <div id="editProfileModal" class="modal">
-                <div class="modal-content">
-                    <span class="close" onclick="closeEditProfileModal()">&times;</span>
-                    <h2>Edit Profile</h2>
+                    <div class="modal-content">
+                        <span class="close" onclick="closeEditProfileModal()">&times;</span>
+                        <h2>Edit Profile</h2>
 
-                    <form id="editProfileForm">
-                        <!-- Profile Picture -->
-                        <div class="profile-picture-container">
-                            <img 
-                                src="<%= userLogin.profilePicture ? userLogin.profilePicture : '/public/img/default-profile.png' %>" 
-                                alt="Profile Picture" 
-                                class="profile-picture">
-                            <input type="file" id="profilePicture" name="profilePicture" accept="image/*">
-                        </div>
+                        <form id="editProfileForm">
+                            <!-- Profile Picture -->
+                            <div class="profile-picture-container">
+                                <img 
+                                    src="<%= userLogin.profilePicture ? userLogin.profilePicture : '/public/img/default-profile.png' %>" 
+                                    alt="Profile Picture" 
+                                    class="profile-picture">
+                                <input type="file" id="profilePicture" name="profilePicture" accept="image/*">
+                            </div>
 
-                        <!-- First Name -->
-                        <label for="firstName">First Name:</label>
-                        <input type="text" id="firstName" name="firstName" value="<%= userLogin.firstName %>" required>
+                            <!-- First Name -->
+                            <label for="firstName">First Name:</label>
+                            <input type="text" id="firstName" name="firstName" value="<%= userLogin.firstName %>" required>
 
-                        <!-- Last Name -->
-                        <label for="lastName">Last Name:</label>
-                        <input type="text" id="lastName" name="lastName" value="<%= userLogin.lastName %>" required>
+                            <!-- Last Name -->
+                            <label for="lastName">Last Name:</label>
+                            <input type="text" id="lastName" name="lastName" value="<%= userLogin.lastName %>" required>
 
-                        <!-- Email -->
-                        <label for="email">Email:</label>
-                        <input type="email" id="email" name="email" value="<%= userLogin.email %>" required>
+                            <!-- Email -->
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" name="email" value="<%= userLogin.email %>" required>
 
-                        <!-- Phone Number -->
-                        <label for="phoneNumber">Phone Number:</label>
-                        <input type="text" id="phoneNumber" name="phoneNumber" value="<%= userLogin.phoneNumber %>" required>
+                            <!-- Phone Number -->
+                            <label for="phoneNumber">Phone Number:</label>
+                            <input type="text" id="phoneNumber" name="phoneNumber" value="<%= userLogin.phoneNumber %>" required>
 
-                        <!-- Role -->
-                        <label for="role">Role:</label>
-                        <input type="text" id="role" name="role" value="<%= userLogin.role %>" readonly>
+                            <!-- Role -->
+                            <label for="role">Role:</label>
+                            <input type="text" id="role" name="role" value="<%= userLogin.role %>" readonly>
 
-                        <!-- Gender -->
-                        <label for="gender">Gender:</label>
-                        <select id="gender" name="gender">
-                            <option value="Male" <%= userLogin.gender === 'Male' ? 'selected' : '' %>>Male</option>
-                            <option value="Female" <%= userLogin.gender === 'Female' ? 'selected' : '' %>>Female</option>
-                        </select>
+                            <!-- Gender -->
+                            <label for="gender">Gender:</label>
+                            <select id="gender" name="gender">
+                                <option value="Male" <%= userLogin.gender === 'Male' ? 'selected' : '' %>>Male</option>
+                                <option value="Female" <%= userLogin.gender === 'Female' ? 'selected' : '' %>>Female</option>
+                            </select>
 
-                        <!-- Password -->
-                        <label for="password">New Password:</label>
-                        <input type="password" id="password" name="password" placeholder="Enter new password (optional)">
+                            <!-- Password -->
+                            <label for="password">New Password:</label>
+                            <input type="password" id="password" name="password" placeholder="Enter new password (optional)">
 
-                        <!-- Confirm Password -->
-                        <label for="confirmPassword">Confirm Password:</label>
-                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password">
+                            <!-- Confirm Password -->
+                            <label for="confirmPassword">Confirm Password:</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password">
 
-                        <button type="submit">Save Changes</button>
-                    </form>
-                </div>
+                            <button type="submit">Save Changes</button>
+                        </form>
+                    </div>
                 </div>
 
     
@@ -104,7 +104,7 @@
                 <!-- Modal Overlay -->
                 <div class="modal-overlay" id="modalOverlay" onclick="closeOrdersModal()" style="display: none;"></div>
 
-                <!-- Product Orders Modal -->
+                <!-- Product Management  Modal -->
                 <div id="buyersModal" class="modal" style="display: none;">
                     <h3 id="productTitle">Product Orders</h3>
                     <table>
@@ -116,7 +116,8 @@
                                 <th>Quantity</th>
                                 <th>Total Price</th>
                                 <th>Status</th>
-                                <th>Action</th>
+                                <th>Transaction</th>
+                                <th>Date</th>
                             </tr>
                         </thead>
                         <tbody id="buyersList">
@@ -126,13 +127,14 @@
                     <div id="pagination" class="pagination-container"></div>
                     <button class="close-btn" onclick="closeOrdersModal()">Close</button>
                 </div>
+                
                     <!-- Auction Management Modal -->
-                <li>
-                    <button class="fullscreen-btn" onclick="openAuctionResultsModal()">
-                        <img src="/public/img/profile/trophy.webp.jpg" alt="Auction Icon" class="auction-icon">
-                        <span class="icon-label">Auction Management</span>
-                    </button>
-                </li>
+                    <li>
+                        <button class="fullscreen-btn" onclick="openAuctionResultsModal()">
+                            <img src="/public/img/profile/trophy.webp.jpg" alt="Auction Icon" class="auction-icon">
+                            <span class="icon-label">Auction Management</span>
+                        </button>
+                    </li>
 
                 <!-- Modal Overlay -->
                 <div class="modal-overlay" id="auctionModalOverlay" onclick="closeAuctionResultsModal()" style="display: none;"></div>
@@ -403,17 +405,27 @@
                 <% }) %>
             </div>
         </section>
-        
-        
+           
     </main>
-
-    <div id="showBuyersModal" class="modal" style="display: none;">
-        <div class="modal-content">
+    <!-- Show Buyers Modal -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeOrdersModal()" style="display: none;"></div>
+        <div id="showBuyersModal" class="modal">        
             <span class="close" onclick="closeShowBuyersModal()">&times;</span>
             <h2>Buyers for this Product</h2>
-            <ul id="buyersList">
-                <li>No buyers yet.</li>
-            </ul>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Quantity</th>
+                        <th>Total Price</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="buyersList"></tbody>
+            </table>
         </div>
     </div>
     
@@ -620,14 +632,28 @@ function fetchOrdersOnPageLoad() {
                 ...order,
                 quantity: order.quantity || Math.floor(Math.random() * 10) + 1, 
                 totalPrice: order.totalPrice ? `₱${order.totalPrice.toFixed(2)}` : "₱" + (Math.floor(Math.random() * 500) + 100),
-                phoneNumber: order.phoneNumber || "No Phone"
-            }));
+                phoneNumber: order.phoneNumber || "No Phone",
+                 // ✅ Include Status
+                 status: order.status || "Pending",
 
-            // Refresh UI with latest data
+                // ✅ Format Action based on status
+                action: order.status.toLowerCase() === "pending" ? "Processing" 
+                    : order.status.toLowerCase() === "complete" ? "Completed" 
+                    : "Failed",
+
+                // ✅ Format Date (CreatedAt or CompletedAt/FailedAt)
+                date: order.completedAt 
+                    ? new Date(order.completedAt).toLocaleDateString() 
+                    : order.failedAt 
+                    ? new Date(order.failedAt).toLocaleDateString() 
+                    : new Date(order.createdAt).toLocaleDateString()
+                }));
+
+                // Refresh UI with latest data
             displayOrders();
             generatePagination();
         })
-        .catch(error => console.error('Error fetching orders:', error));
+    .catch(error => console.error('Error fetching orders:', error));
 }
 
 // Function to Open Orders Modal and Fetch Data
@@ -664,19 +690,32 @@ function displayOrders() {
             <td>${order.totalPrice}</td>
             <td>${order.status}</td>
             <td class="action-buttons" id="order-${order._id}">
-                ${order.status.toLowerCase() !== "approved" && order.status.toLowerCase() !== "rejected" ? `
-                    <button class="approve-btn" id="approve-${order._id}" onclick="processOrder('${order._id}', 'approve')">
-                        ✔ Approve
+                ${order.status.toLowerCase() !== "complete" && order.status.toLowerCase() !== "failed" ? `
+                    <button class="complete-btn" id="complete-${order._id}" onclick="processOrder('${order._id}', 'complete')">
+                        ✔ Complete
                     </button>
-                    <button class="reject-btn" id="reject-${order._id}" onclick="processOrder('${order._id}', 'reject')">
-                        ✖ Reject
+                    <button class="failed-btn" id="failed-${order._id}" onclick="processOrder('${order._id}', 'failed')">
+                        ✖ Failed
                     </button>
-                ` : order.status.toLowerCase() === "approved" ? `
-                    <button class="approve-btn" id="approve-${order._id}" disabled>✔ Approved</button>
+                ` : order.status.toLowerCase() === "complete" ? `
+                    <button class="complete-btn" id="complete-${order._id}" disabled>✔ Complete</button>
                 ` : `
-                    <button class="reject-btn" id="reject-${order._id}" disabled>✖ Rejected</button>
+                    <button class="failed-btn" id="failed-${order._id}" disabled>✖ Failed</button>
                 `}             
-                <button class="delete-btn" onclick="deleteOrder('${order._id}')">🗑 Delete</button>
+                <button class="delete-btn" onclick="delete('${order._id}')">🗑 Delete</button>
+            </td>
+            <td>
+                ${
+                order.status.toLowerCase() === "Complete"
+                    ? order.completedAt
+                    ? new Date(order.completedAt).toLocaleString()
+                    : "No Date"
+                    : order.status.toLowerCase() === "failed"
+                    ? order.failedAt
+                    ? new Date(order.failedAt).toLocaleString()
+                    : "No Date"
+                    : "—"
+                }
             </td>
         `;
         buyersListContainer.appendChild(row);
@@ -716,7 +755,7 @@ function processOrder(orderId, action) {
         // Update local ordersData array to reflect changes
         ordersData = ordersData.map(order => {
             if (order._id === orderId) {
-                order.status = action === "approve" ? "Approved" : "Rejected";
+                order.status = action === "complete" ? "Complete" : "Failed";
             }
             return order;
         });
@@ -725,21 +764,21 @@ function processOrder(orderId, action) {
         displayOrders();
 
         // Update the UI for action buttons
-        const approveBtn = document.getElementById(`approve-${orderId}`);
-        const rejectBtn = document.getElementById(`reject-${orderId}`);
+        const completeBtn = document.getElementById(`complete-${orderId}`);
+        const failedBtn = document.getElementById(`failed-${orderId}`);
 
-        if (action === "approve") {
-            if (approveBtn) {
-                approveBtn.innerText = "✔ Approved";
-                approveBtn.disabled = true;
+        if (action === "complete") {
+            if (completeBtn) {
+                completeBtn.innerText = "✔ Complete";
+                completeBtn.disabled = true;
             }
-            if (rejectBtn) rejectBtn.remove(); // Remove reject button
-        } else if (action === "reject") {
-            if (rejectBtn) {
-                rejectBtn.innerText = "✔ Rejected";
-                rejectBtn.disabled = true;
+            if (failedBtn) failedBtn.remove(); // Remove reject button
+        } else if (action === "failed") {
+            if (failedBtn) {
+                failedBtn.innerText = "✔ Failed";
+                failedBtn.disabled = true;
             }
-            if (approveBtn) approveBtn.remove(); // Remove approve button
+            if (completeBtn) completeBtn.remove(); // Remove approve button
         }
     })
     .catch(error => console.error("Error processing order:", error));
@@ -757,7 +796,7 @@ function deleteOrder(orderId) {
             ordersData = ordersData.filter(order => order._id !== orderId);
             
             // Remove the row from the table
-            const row = document.querySelector(`#order-${orderId}`);
+            const row = document.querySelector(`delete-${orderId}`);
             if (row) row.remove();
         })
         .catch(error => console.error('Error deleting order:', error));
@@ -777,7 +816,7 @@ function closeModal(modalId) {
 
 // Close modal if user clicks outside the modal content
 window.onclick = function(event) {
-    const modal = document.getElementById("showBuyersModal");
+    const modal = document.getElementById("buyersModal");
     if (event.target === modal) {
         modal.style.display = "none";
     }
@@ -843,14 +882,12 @@ document.addEventListener("DOMContentLoaded", function () {
 async function showBuyers(productId) {
     try {
         const response = await fetch(`/farmer/showBuyers?productId=${productId}`, {
-            method: "GET", // Explicitly defining the request method
-            headers: {
-                "Content-Type": "application/json"
-            }
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
         });
 
         const data = await response.json();
-        console.log("API Response:", data); // Debugging log
+        console.log("API Response:", data);
 
         if (data.error) {
             alert("Error fetching buyers: " + data.error);
@@ -858,19 +895,30 @@ async function showBuyers(productId) {
         }
 
         const buyersList = document.getElementById("buyersList");
-        buyersList.innerHTML = ""; // Clear previous list
+        buyersList.innerHTML = ""; // Clear previous data
 
         if (data.buyers && data.buyers.length > 0) {
             data.buyers.forEach(buyer => {
-                let listItem = document.createElement("li");
-                listItem.textContent = `${buyer.firstName} ${buyer.lastName}`;
-                buyersList.appendChild(listItem);
+                let row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${buyer.firstName} ${buyer.lastName}</td>
+                    <td>${buyer.email}</td>
+                    <td>${buyer.phoneNumber}</td>
+                    <td>${buyer.quantity}</td>
+                    <td>${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(buyer.totalPrice)}</td>
+                    <td>${buyer.status}</td>
+                    <td style="color: ${buyer.transactionStatus === 'Success' ? 'green' : 'red'};">
+                        ${buyer.transactionStatus}
+                    </td>
+                    <td>${buyer.createdAt}</td>
+                `;
+                buyersList.appendChild(row);
             });
         } else {
-            buyersList.innerHTML = "<li>No buyers yet.</li>";
+            buyersList.innerHTML = "<tr><td colspan='8'>No buyers yet.</td></tr>";
         }
 
-        // Show the modal
+        // Open the modal
         document.getElementById("showBuyersModal").style.display = "block";
 
     } catch (error) {
@@ -880,7 +928,7 @@ async function showBuyers(productId) {
 }
 
 // Function to close the modal
-function closeModal() {
+function closeShowBuyersModal() {
     document.getElementById("showBuyersModal").style.display = "none";
 }
 
@@ -888,7 +936,7 @@ function closeModal() {
 window.onclick = function(event) {
     const modal = document.getElementById("showBuyersModal");
     if (event.target === modal) {
-        closeModal();
+        closeShowBuyersModal();
     }
 };
 
