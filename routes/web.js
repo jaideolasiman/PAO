@@ -59,8 +59,10 @@ module.exports = function (app) {
   app.get('/farmer/notification', farmerIndexController.markNotificationAsRead);
   app.get('/farmer/getFarmerOrders', farmerIndexController.getFarmerOrders);
   app.post('/farmer/processOrder', farmerIndexController.processOrder);
-  app.get('/farmer/deleteOrder/:id', farmerIndexController.deleteOrder);
+  app.post('/farmer/deleteOrder/:id', farmerIndexController.deleteOrder);
   app.get('/farmer/showBuyers', farmerIndexController.showBuyers);
+  app.post('/farmer/updateupdateOrderStatus', farmerIndexController.updateOrderStatus);
+  app.post('/farmer/deleteProductOrder/:id', farmerIndexController.deleteProductOrder);
   app.get('/farmer/showParticipated', farmerIndexController.showParticipated);
   app.get('/farmer/edit-profile', farmerEditProfileController.editProfile);
   app.post('/farmer/update-profile/:id', farmerEditProfileController.updateProfile);

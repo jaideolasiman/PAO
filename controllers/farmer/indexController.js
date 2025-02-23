@@ -127,6 +127,7 @@ module.exports.addProduct = (req, res) => {
         auctionStart: productType === "wholesale" ? auctionStart || null : null,
         auctionEnd: productType === "wholesale" ? auctionEnd || null : null,
         status: "pending", // ✅ Default status: pending approval
+        orderStatus: "pending",
       });
 
       await newProduct.save();
@@ -157,13 +158,17 @@ module.exports.getBuyers = async (req, res) => {
     // ✅ Find orders where the product belongs to the logged-in farmer
     const orders = await Order.find({})
       .populate({
-        path: "buyer",
-        select: "firstName lastName phoneNumber", // ✅ Include phoneNumber
-      })
-      .populate({
         path: "product",
-        select: "name seller",
-      });
+        match: { seller: farmerId },
+        select: "name seller status", // Ensure seller is included
+      })
+      .populate("buyer", "firstName lastName email phoneNumber"); // Fetch buyer details
+
+    // Debugging output
+    console.log(
+      "Orders with populated buyer:",
+      JSON.stringify(orders, null, 2)
+    );
 
     // ✅ Filter orders where the seller (farmer) matches the logged-in farmer
     const filteredOrders = orders.filter(order => order.product.seller.toString() === farmerId);
@@ -178,7 +183,7 @@ module.exports.getBuyers = async (req, res) => {
       phoneNumber: order.buyer.phoneNumber, // ✅ Include phone number
       productName: order.product.name,
       quantity: order.quantity,
-      status: order.status,
+      orderStatus:order.orderStatus
     }));
 
     res.json(buyerData);
@@ -247,13 +252,14 @@ module.exports.getFarmerOrders = async (req, res) => {
       productName: order.product ? order.product.name : "Unknown Product",
       quantity: order.quantity,
       totalPrice: order.totalPrice, // ✅ Added total price
+      orderStatus:order.orderStatus,
       status: order.status,
       date:
-      order.status === "complete"
+      order.orderStatus === "complete"
         ? order.completedAt
           ? new Date(order.completedAt).toLocaleString()
           : "No Date"
-        : order.status === "failed"
+        : order.orderStatus === "failed"
         ? order.failedAt
           ? new Date(order.failedAt).toLocaleString()
           : "No Date"
@@ -271,12 +277,12 @@ module.exports.processOrder = async (req, res) => {
   const { orderId, action } = req.body;
 
   try {
-    const updatedStatus = action === "complete" ? "Complete" : "Failed";
+    const updatedOrderStatus = action === "complete" ? "Complete" : "Failed";
 
     // ✅ Find and update the order
     const order = await Order.findByIdAndUpdate(
       orderId,
-      { status: updatedStatus },
+      { status: updatedOrderStatus },
       { new: true }
     ).populate("product"); // Ensure we get the product details
 
@@ -292,7 +298,7 @@ module.exports.processOrder = async (req, res) => {
     }
 
     // ✅ Create notification for the buyer if the order is approved
-    if (updatedStatus === "complete") {
+    if (updatedOrderStatus === "complete") {
       const notification = new Notification({
         user: order.buyer, // Buyer ID
         message:  `Your order for '${order.product.name}' has been successfully completed! 🎉 Thank you for your purchase. We appreciate your trust in our marketplace. Feel free to shop with us again!`,
@@ -302,7 +308,7 @@ module.exports.processOrder = async (req, res) => {
       await notification.save();
     }
 
-    res.json({ message: `Order ${updatedStatus.toLowerCase()} successfully!` });
+    res.json({ message: `Order ${updatedOrderStatus.toLowerCase()} successfully!` });
   } catch (error) {
     console.error("❌ Error processing order:", error);
     res.status(500).json({ message: "Server error", error });
@@ -334,29 +340,73 @@ module.exports.deleteOrder = async (req, res) => {
 };
 
 module.exports.showBuyers = async (req, res) => {
-    try {
-        const productId = req.query.productId;
-        if (!productId) {
-            return res.status(400).json({ error: "Product ID is required" });
-        }
+  try {
+      const productId = req.query.productId;
+      if (!productId) return res.status(400).json({ error: "Product ID is required" });
 
-        // Fetch orders for the given productId
-        const orders = await Order.find({ product: productId }).populate('buyer', 'firstName lastName');
-console.log('b',orders)
-        // Extract buyer details
-        const buyers = orders.map(order => ({
-            firstName: order.buyer ? order.buyer.firstName : "Unknown",
-            lastName: order.buyer ? order.buyer.lastName : "Buyer"
-        }));
+      const orders = await Order.find({ product: productId })
+          .populate('buyer', 'firstName lastName email')
+          .lean();
 
-        // Send JSON response instead of rendering a new page
-        return res.json({ buyers });
+      const buyers = orders.map(order => ({
+          _id: order._id,
+          firstName: order.buyer?.firstName || "Unknown",
+          lastName: order.buyer?.lastName || "Buyer",
+          email: order.buyer?.email || "N/A",
+          phoneNumber: order.phoneNumber,
+          quantity: order.quantity,
+          totalPrice: order.totalPrice,
+          status: order.product.status,
+          orderStatus: order.orderStatus
+      }));
 
-    } catch (error) {
-        console.error("Error fetching buyers:", error);
-        return res.status(500).json({ error: "Server error" });
-    }
+      return res.json({ buyers });
+  } catch (error) {
+      console.error("Error fetching buyers:", error);
+      return res.status(500).json({ error: "Server error" });
+  }
 };
+
+// Update Order Status (Approve/Reject)
+module.exports.updateOrderStatus = async (req, res) => {
+  try {
+      const { orderId, status } = req.body;
+      if (!orderId || !status) return res.status(400).json({ error: "Order ID and status required." });
+
+      const order = await Order.findById(orderId).populate("buyer");
+      if (!order) return res.status(404).json({ error: "Order not found." });
+
+      order.status = status; 
+      await order.save();
+
+      // Notify Buyer (Optional: Implement notification system here)
+      console.log(`Notifying buyer ${order.buyer.email}: Your order has been ${status}`);
+
+      return res.json({ success: true, message: `Order marked as ${status}` });
+  } catch (error) {
+      console.error("Error updating order:", error);
+      return res.status(500).json({ error: "Server error" });
+  }
+};
+
+// Delete Order
+module.exports.deleteProductOrder = async (req, res) => {
+  try {
+      const { orderId } = req.body;
+      if (!orderId) return res.status(400).json({ error: "Order ID is required." });
+
+      const order = await Order.findById(orderId);
+      if (!order) return res.status(404).json({ error: "Order not found." });
+
+      await Order.findByIdAndDelete(orderId);
+
+      return res.json({ success: true, message: "Order deleted successfully." });
+  } catch (error) {
+      console.error("Error deleting order:", error);
+      return res.status(500).json({ error: "Server error" });
+  }
+};
+
 module.exports.showParticipated = async (req, res) => {
   try {
     const orders = await Order.find({ buyer: req.session.login })

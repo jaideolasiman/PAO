@@ -32,7 +32,7 @@ module.exports.index = async (req, res) => {
 module.exports.approveProduct = async (req, res) => {
   try {
     const productId = req.params.id;
-    const product = await Product.findByIdAndUpdate(productId, { status: 'approved' }, { new: true });
+    const product = await Product.findByIdAndUpdate(productId, { orderStatus: 'approved' }, { new: true });
 
     if (product) {
       const seller = await User.findById(product.seller);
@@ -55,7 +55,7 @@ module.exports.approveProduct = async (req, res) => {
 module.exports.rejectProduct = async (req, res) => {
   try {
     const productId = req.params.id;
-    const product = await Product.findByIdAndUpdate(productId, { status: 'rejected' }, { new: true });
+    const product = await Product.findByIdAndUpdate(productId, { orderStatus: 'rejected' }, { new: true });
 
     if (product) {
       const seller = await User.findById(product.seller);

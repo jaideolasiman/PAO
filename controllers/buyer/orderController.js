@@ -29,7 +29,8 @@ module.exports.placeOrder = async (req, res) => {
             quantity,
             totalPrice,
             session: req.session,
-            status: 'Pending'
+            status: 'Pending',
+            orderStatus: 'Pending'
         });
 
         await newOrder.save();

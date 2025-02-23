@@ -60,9 +60,9 @@
                                               <td>₱<%= order.totalPrice %></td>
                                               <td>
                                                 <!-- Display Status -->
-                                                <% if (order.status === 'Approved') { %>
+                                                <% if (order.orderStatus === 'Approved') { %>
                                                   <span class="badge badge-success">Approved</span>
-                                                <% } else if (order.status === 'Rejected') { %>
+                                                <% } else if (order.orderStatus === 'Rejected') { %>
                                                   <span class="badge badge-danger">Rejected</span>
                                                 <% } else { %>
                                                   <span class="badge badge-warning">Pending</span>

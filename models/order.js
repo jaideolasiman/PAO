@@ -7,15 +7,10 @@ const orderSchema = new mongoose.Schema({
     phoneNumber: { type: Number, required: true },
     quantity: { type: Number, required: true, min: 1 },
     totalPrice: { type: Number, required: true, min: 0 },
-    status: { type: String, enum: ['pending', 'complete', 'failed'], default: 'pending' },  // ✅ Updated status value      
-    completedAt: { type: Date, default: null }, // ✅ Store completion timestamp
-    failedAt: { type: Date, default: null }, // ✅ Store failure timestamp
-}, { timestamps: true }); 
-
-// ✅ Auto-update `updatedAt` field whenever an order is modified
-orderSchema.pre('save', function (next) {
-    this.updatedAt = new Date();
-    next();
-});
+    status: { type: String, enum: ['pending', 'complete', 'failed'], default: 'pending' },
+    orderStatus: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
+    completedAt: { type: Date, default: null },
+    failedAt: { type: Date, default: null }
+}, { timestamps: true });
 
 module.exports = mongoose.model('Order', orderSchema);
